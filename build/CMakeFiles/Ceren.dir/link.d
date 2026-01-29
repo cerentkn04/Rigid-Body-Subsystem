@@ -5,6 +5,7 @@ Ceren: \
   CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o \
   CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o \
   CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o \
+  CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o \
   CMakeFiles/Ceren.dir/src/main.cpp.o \
   CMakeFiles/Ceren.dir/vendored/imgui/imgui.cpp.o \
   CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.o \
@@ -54,6 +55,8 @@ CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o:
 CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o:
 
 CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o:
+
+CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o:
 
 CMakeFiles/Ceren.dir/src/main.cpp.o:
 

@@ -13,6 +13,7 @@
 #include <RegionTracker.hpp>
 #include <RegionType.hpp>
 #include <RegionExtractor.hpp>
+#include <RegionStability.hpp>
 constexpr int WINDOW_WIDTH = 800;
 constexpr int WINDOW_HEIGHT = 600;
 constexpr int CELL_SIZE = 4;
@@ -36,8 +37,14 @@ class SandSimulation {
 public:
     std::vector<Cell> grid;
     std::mt19937 rng;
+     //for step 6--------------------------
+     std::vector<uint64_t> region_revisions; 
+    uint64_t world_revision_counter = 1;
+    //----------------------------------------
 
-    SandSimulation() : grid(GRID_WIDTH * GRID_HEIGHT), rng(std::random_device{}()) {}
+    SandSimulation() : grid(GRID_WIDTH * GRID_HEIGHT),
+                       region_revisions(GRID_WIDTH * GRID_HEIGHT, 0),
+                       rng(std::random_device{}()) {}
 
     Cell& at(int x, int y) { return grid[y * GRID_WIDTH + x]; }
     const Cell& at(int x, int y) const { return grid[y * GRID_WIDTH + x]; }
@@ -128,6 +135,7 @@ public:
 
     void update() {
         // Reset update flags
+        world_revision_counter++;
         for (auto& cell : grid) {
             cell.updated = false;
         }
@@ -164,10 +172,15 @@ public:
                     if (type == CellType::Empty || at(nx, ny).type == CellType::Empty) {
                         at(nx, ny).type = type;
                         at(nx, ny).colorVariation = dist(rng);
+                        mark_changed(nx, ny);
                     }
                 }
             }
         }
+    }
+    void mark_changed(int x, int y) {
+        if (!inBounds(x, y)) return;
+        region_revisions[y * GRID_WIDTH + x] = world_revision_counter;
     }
 
     void clear() {
@@ -202,8 +215,17 @@ world::CellSolidity solidity_callback(int x, int y) {
     }
     return world::CellSolidity::Empty;
 }
-world::WorldRevision revision_callback() { return 0; }
-world::WorldRevision region_rev_callback(int x, int y) { return 0; }
+world::WorldRevision revision_callback() {
+  return g_pixel_sim_ptr ? g_pixel_sim_ptr->world_revision_counter : 0;
+}
+
+world::WorldRevision region_rev_callback(int x, int y) {
+    if (g_pixel_sim_ptr && g_pixel_sim_ptr->inBounds(x, y)) {
+        return g_pixel_sim_ptr->region_revisions[y * GRID_WIDTH + x];
+    }
+
+  return 0;
+}
 
 
 int main(int argc, char* argv[]) {  if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -262,6 +284,7 @@ auto get_id_color = [&](rigid::RegionID id) -> SDL_Color {
         255
     };
 };
+StabilitySystem stability;
 
     // Setup ImGui
     IMGUI_CHECKVERSION();
@@ -344,13 +367,39 @@ SDL_Event event;
                 accumulator -= fixedDeltaTime;
             }
         }
+        stability.sync_with_tracker(tracker.get_active_regions());
 
         // 4. TOPOLOGY PHASE (READ WORLD)
         // Move extraction here so it sees the results of Sim and Mouse placement
-        extractor.extract(view, build_records);
-        tracker.process_frame(extractor.label_grid(), build_records, GRID_WIDTH, GRID_HEIGHT);
-        
+
         const auto& label_grid = extractor.label_grid();
+        uint64_t current_world_rev = view.world_revision();
+        const auto& active_regions = tracker.get_active_regions();
+        stability.reset_dirty_flags(0);
+
+for (uint32_t i = 0; i < stability.active_snapshots.size(); ++i) {
+    if (!stability.validate_snapshot(i, view)) {
+        stability.dirty_flags[i] = 1;
+    }
+}
+        stability.propagate_dirty_bounds();
+        bool needs_extract = false;
+        for (uint8_t flag : stability.dirty_flags) {
+          if (flag == 1) { needs_extract = true; break; }
+        }
+        if (active_regions.empty() && current_world_rev > 0) needs_extract = true;
+
+if (needs_extract) {
+    extractor.extract(view, build_records);
+    tracker.process_frame(extractor.label_grid(), build_records, GRID_WIDTH, GRID_HEIGHT);
+    
+    // 4.4 Update Snapshots (Commit)
+    // We update stability snapshots for the FINAL regions produced by the tracker
+    const auto& finalized_regions = tracker.get_active_regions();
+    for (const auto& [id, record] : finalized_regions) {
+        stability.update_snapshot(id, record.bounds, current_world_rev);
+    }
+}
 
         // 5. RENDER PHASE (CONVERT TO PIXELS)
         // const auto& label_grid = extractor.label_grid();

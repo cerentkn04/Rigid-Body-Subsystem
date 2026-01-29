@@ -298,6 +298,30 @@ src/RigidPixelSystem.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.s
 .PHONY : src/RigidPixelSystem.cpp.s
 
+src/StabilitySystem.o: src/StabilitySystem.cpp.o
+.PHONY : src/StabilitySystem.o
+
+# target to build an object file
+src/StabilitySystem.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o
+.PHONY : src/StabilitySystem.cpp.o
+
+src/StabilitySystem.i: src/StabilitySystem.cpp.i
+.PHONY : src/StabilitySystem.i
+
+# target to preprocess a source file
+src/StabilitySystem.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.i
+.PHONY : src/StabilitySystem.cpp.i
+
+src/StabilitySystem.s: src/StabilitySystem.cpp.s
+.PHONY : src/StabilitySystem.s
+
+# target to generate assembly for a file
+src/StabilitySystem.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.s
+.PHONY : src/StabilitySystem.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -516,6 +540,9 @@ help:
 	@echo "... src/RigidPixelSystem.o"
 	@echo "... src/RigidPixelSystem.i"
 	@echo "... src/RigidPixelSystem.s"
+	@echo "... src/StabilitySystem.o"
+	@echo "... src/StabilitySystem.i"
+	@echo "... src/StabilitySystem.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

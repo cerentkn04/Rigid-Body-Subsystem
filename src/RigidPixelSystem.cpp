@@ -178,3 +178,4 @@ const RigidPixelStats* RigidPixelSystem::stats() const {
 }
 
 } // namespace rigid
+

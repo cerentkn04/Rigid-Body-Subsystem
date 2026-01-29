@@ -6,6 +6,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o.d"
   "CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o"
   "CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o.d"
+  "CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o"
+  "CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o.d"
   "CMakeFiles/Ceren.dir/src/main.cpp.o"
   "CMakeFiles/Ceren.dir/src/main.cpp.o.d"
   "CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdl3.cpp.o"
