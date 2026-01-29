@@ -217,7 +217,6 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: \
  /usr/include/c++/15.2.1/bits/ranges_algobase.h \
  /usr/include/c++/15.2.1/pstl/glue_algorithm_defs.h \
  /home/ceen/projects/ceren/include/RigidPixelWorldView.hpp \
- /home/ceen/projects/ceren/include/RigidPixelSystem.hpp \
  /home/ceen/projects/ceren/include/RigidPixelTypes.hpp \
  /home/ceen/projects/ceren/include/regionScratch.hpp \
  /home/ceen/projects/ceren/include/RegionTracker.hpp \
