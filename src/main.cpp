@@ -1,4 +1,3 @@
-
 #include <SDL3/SDL.h>
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
@@ -7,7 +6,6 @@
 #include <random>
 #include <algorithm>
 #include <RigidPixelWorldView.hpp>
-#include <RigidPixelSystem.hpp>
 #include <RigidPixelTypes.hpp>
 #include <regionScratch.hpp>
 #include <RegionTracker.hpp>
@@ -370,107 +368,124 @@ SDL_Event event;
         stability.sync_with_tracker(tracker.get_active_regions());
 
         // 4. TOPOLOGY PHASE (READ WORLD)
-        // Move extraction here so it sees the results of Sim and Mouse placement
-
         const auto& label_grid = extractor.label_grid();
-        uint64_t current_world_rev = view.world_revision();
-        const auto& active_regions = tracker.get_active_regions();
-        stability.reset_dirty_flags(0);
+const auto& index_mapping = tracker.get_index_mapping(); 
+uint64_t current_world_rev = view.world_revision();
 
+// Keep track of the last revision we actually processed to avoid infinite loops
+static uint64_t last_processed_rev = 0; 
+
+stability.reset_dirty_flags(0);
+
+// 4.1 Check if existing rocks moved or changed
 for (uint32_t i = 0; i < stability.active_snapshots.size(); ++i) {
     if (!stability.validate_snapshot(i, view)) {
         stability.dirty_flags[i] = 1;
     }
 }
-        stability.propagate_dirty_bounds();
-        bool needs_extract = false;
-        for (uint8_t flag : stability.dirty_flags) {
-          if (flag == 1) { needs_extract = true; break; }
-        }
-        if (active_regions.empty() && current_world_rev > 0) needs_extract = true;
+stability.propagate_dirty_bounds();
+
+// 4.2 Logic: Do we actually need to run the heavy Extractor?
+bool needs_extract = false;
+
+for (uint8_t flag : stability.dirty_flags) {
+    if (flag == 1) { needs_extract = true; break; }
+}
+
+// Force extraction if the world changed or tracker is empty
+if (current_world_rev > last_processed_rev || index_mapping.empty()) {
+    if (current_world_rev > 0) needs_extract = true;
+}
 
 if (needs_extract) {
     extractor.extract(view, build_records);
     tracker.process_frame(extractor.label_grid(), build_records, GRID_WIDTH, GRID_HEIGHT);
     
-    // 4.4 Update Snapshots (Commit)
-    // We update stability snapshots for the FINAL regions produced by the tracker
+    last_processed_rev = current_world_rev;
+
+    // Update snapshots for the NEW positions of the rocks
     const auto& finalized_regions = tracker.get_active_regions();
     for (const auto& [id, record] : finalized_regions) {
         stability.update_snapshot(id, record.bounds, current_world_rev);
     }
 }
+               // 5. RENDER PHASE (CONVERT TO PIXELS)
+        // --- 5. RENDER PHASE (CONVERT TO PIXELS) ---
+        //
+        //
+        const auto& index_to_id = tracker.get_index_mapping();
+const size_t num_mappings = index_to_id.size();
 
-        // 5. RENDER PHASE (CONVERT TO PIXELS)
-        // const auto& label_grid = extractor.label_grid();
-const auto& index_to_id = tracker.get_index_mapping();
-        size_t num_regions = index_to_id.size();
-        
-        // Pre-calculate colors for the few regions we have
-        std::vector<uint32_t> color_cache(num_regions);
-        for (size_t i = 0; i < num_regions; ++i) {
-            SDL_Color c = get_id_color(index_to_id[i]);
-            color_cache[i] = (c.r << 24) | (c.g << 16) | (c.b << 8) | c.a;
-        }
+// 5.1 PRE-CALCULATE COLORS (Do this ONCE per frame, not 480k times!)
+static std::vector<uint32_t> color_cache;
+if (color_cache.size() < num_mappings) color_cache.resize(num_mappings);
+for (size_t i = 0; i < num_mappings; ++i) {
+    SDL_Color c = get_id_color(index_to_id[i]);
+    color_cache[i] = (c.r << 24) | (c.g << 16) | (c.b << 8) | c.a;
+}
 
-        uint32_t* pixel_ptr = pixels.data();
-        const Cell* cell_ptr = sim.grid.data();
-        const rigid::RegionIndex* label_ptr = label_grid.data();
-        int total_cells = GRID_WIDTH * GRID_HEIGHT;
+// 5.2 TIGHT PIXEL LOOP
+uint32_t* __restrict pixel_ptr = pixels.data();
+const Cell* __restrict cell_ptr = sim.grid.data();
+const rigid::RegionIndex* __restrict label_ptr = label_grid.data();
+const int total_cells = GRID_WIDTH * GRID_HEIGHT;
+const uint32_t* __restrict cached_colors = color_cache.data();
 
-        for (int i = 0; i < total_cells; ++i) {
-            if (cell_ptr[i].type == CellType::Wall) {
-                rigid::RegionIndex rIdx = label_ptr[i];
-                if (rIdx < num_regions) {
-                    pixel_ptr[i] = color_cache[rIdx];
-                } else {
-                    pixel_ptr[i] = 0x646464FF; // Default Gray
-                }
-            } else {
-                // Inline the getCellColor logic to avoid function call overhead
-                const Cell& cell = cell_ptr[i];
-                int v = cell.colorVariation;
-                if (cell.type == CellType::Sand) 
-                    pixel_ptr[i] = ((220-v) << 24) | ((180-v) << 16) | ((80-v) << 8) | 0xFF;
-                else if (cell.type == CellType::Water)
-                    pixel_ptr[i] = ((30+v) << 24) | ((100+v) << 16) | ((200+v) << 8) | 0xC8;
-                else 
-                    pixel_ptr[i] = 0x14141EFA; // Empty/Background
-            }
-        }
-
-/*for (int y = 0; y < GRID_HEIGHT; ++y) {
-  
-    for (int x = 0; x < GRID_WIDTH; ++x) {
-        int pixelIdx = y * GRID_WIDTH + x;
-        const auto& cell = sim.at(x, y);
-        
-        // Default color for empty space/sand/water
-        SDL_Color finalColor = getCellColor(cell);
-
-        if (cell.type == CellType::Wall) {
-            rigid::RegionIndex rIdx = label_grid[pixelIdx];
-            rigid::RegionID pId = rigid::InvalidRegionID;
-
-            // Method A: Check the fast mapping vector
-            if (rIdx != rigid::InvalidRegionIndex && rIdx < index_to_id.size()) {
-                pId = index_to_id[rIdx];
-            }
-
-            // Method B: Emergency Fallback (If Mapping is empty/broken)
-            // If the fast map failed but we have an index, find who owns it
-            if (pId == rigid::InvalidRegionID && rIdx != rigid::InvalidRegionIndex) {
-                // We know this pixel belongs to a region, let's find which one
-                // based on the ID sequence (rIdx + 1 is a common sequence start)
-                pId = rIdx + 1; 
-            }
-
-            finalColor = get_id_color(pId);
-        }
-
-        pixels[pixelIdx] = (finalColor.r << 24) | (finalColor.g << 16) | (finalColor.b << 8) | finalColor.a;
+for (int i = 0; i < total_cells; ++i) {
+    const Cell& cell = cell_ptr[i];
+    
+    if (cell.type == CellType::Wall) {
+        const rigid::RegionIndex rIdx = label_ptr[i];
+        // Branchless-style lookup
+        pixel_ptr[i] = (rIdx < num_mappings) ? cached_colors[rIdx] : 0x646464FF;
+    } else {
+        const uint8_t v = cell.colorVariation;
+        // Optimized material coloring
+        if (cell.type == CellType::Sand) 
+            pixel_ptr[i] = ((220-v) << 24) | ((180-v) << 16) | ((80-v) << 8) | 0xFF;
+        else if (cell.type == CellType::Water)
+            pixel_ptr[i] = ((30+v) << 24) | ((100+v) << 16) | ((200+v) << 8) | 0xC8;
+        else 
+            pixel_ptr[i] = 0x14141EFA; 
     }
-} */
+}
+/*
+const auto& index_to_id = tracker.get_index_mapping();
+const size_t num_mappings = index_to_id.size();
+
+// Cache pointers for speed
+uint32_t* pixel_ptr = pixels.data();
+const Cell* cell_ptr = sim.grid.data();
+const rigid::RegionIndex* label_ptr = label_grid.data();
+const int total_cells = GRID_WIDTH * GRID_HEIGHT;
+
+for (int i = 0; i < total_cells; ++i) {
+    const Cell& cell = cell_ptr[i];
+    
+    if (cell.type == CellType::Wall) {
+        rigid::RegionIndex rIdx = label_ptr[i];
+        
+        // Check if our tracker knows about this region index
+        if (rIdx < num_mappings) {
+            rigid::RegionID pId = index_to_id[rIdx];
+            SDL_Color c = get_id_color(pId);
+            pixel_ptr[i] = (c.r << 24) | (c.g << 16) | (c.b << 8) | c.a;
+        } else {
+            pixel_ptr[i] = 0x646464FF; // Default Gray for unknown regions
+        }
+    } else {
+        // Sand, Water, and Background logic
+        int v = cell.colorVariation;
+        if (cell.type == CellType::Sand) 
+            pixel_ptr[i] = ((220-v) << 24) | ((180-v) << 16) | ((80-v) << 8) | 0xFF;
+        else if (cell.type == CellType::Water)
+            pixel_ptr[i] = ((30+v) << 24) | ((100+v) << 16) | ((200+v) << 8) | 0xC8;
+        else 
+            pixel_ptr[i] = 0x14141EFA; 
+    }
+}
+
+*/
                // 6. DRAW TO SCREEN
         SDL_UpdateTexture(gridTexture, nullptr, pixels.data(), GRID_WIDTH * sizeof(uint32_t));
         SDL_SetRenderDrawColor(renderer, 20, 20, 30, 255);

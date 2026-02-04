@@ -1,4 +1,4 @@
-#include "RigidPixelSystem.hpp"
+/*#include "RigidPixelSystem.hpp"
 #include "RigidPixelTypes.hpp" 
 #include "regionScratch.hpp"
 #include <vector>
@@ -179,3 +179,4 @@ const RigidPixelStats* RigidPixelSystem::stats() const {
 
 } // namespace rigid
 
+*/
