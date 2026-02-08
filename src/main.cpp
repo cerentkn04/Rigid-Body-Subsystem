@@ -159,23 +159,36 @@ public:
         }
     }
 
-    void placeCell(int x, int y, CellType type, int brushSize = 1) {
-        std::uniform_int_distribution<uint8_t> dist(0, 30);
+void placeCell(int x, int y, CellType type, int brushSize = 1) {
+    std::uniform_int_distribution<uint8_t> dist(0, 30);
 
-        for (int dy = -brushSize + 1; dy < brushSize; ++dy) {
-            for (int dx = -brushSize + 1; dx < brushSize; ++dx) {
-                int nx = x + dx;
-                int ny = y + dy;
-                if (inBounds(nx, ny)) {
-                    if (type == CellType::Empty || at(nx, ny).type == CellType::Empty) {
-                        at(nx, ny).type = type;
-                        at(nx, ny).colorVariation = dist(rng);
-                        mark_changed(nx, ny);
-                    }
-                }
+    bool topology_changed = false;
+
+    for (int dy = -brushSize + 1; dy < brushSize; ++dy) {
+        for (int dx = -brushSize + 1; dx < brushSize; ++dx) {
+            int nx = x + dx;
+            int ny = y + dy;
+            if (!inBounds(nx, ny)) continue;
+
+            CellType old = at(nx, ny).type;
+            if (old == type) continue;
+
+            at(nx, ny).type = type;
+            at(nx, ny).colorVariation = dist(rng);
+
+            // Only walls affect topology
+            if (old == CellType::Wall || type == CellType::Wall) {
+                topology_changed = true;
+                mark_changed(nx, ny);
             }
         }
     }
+
+    if (topology_changed) {
+        world_revision_counter++;
+    }
+}
+
     void mark_changed(int x, int y) {
         if (!inBounds(x, y)) return;
         region_revisions[y * GRID_WIDTH + x] = world_revision_counter;
@@ -378,11 +391,14 @@ static uint64_t last_processed_rev = 0;
 stability.reset_dirty_flags(0);
 
 // 4.1 Check if existing rocks moved or changed
-for (uint32_t i = 0; i < stability.active_snapshots.size(); ++i) {
-    if (!stability.validate_snapshot(i, view)) {
-        stability.dirty_flags[i] = 1;
+if (current_world_rev != last_processed_rev) {
+    for (uint32_t i = 0; i < stability.active_snapshots.size(); ++i) {
+        if (!stability.validate_snapshot(i, view)) {
+            stability.dirty_flags[i] = 1;
+        }
     }
 }
+
 stability.propagate_dirty_bounds();
 
 // 4.2 Logic: Do we actually need to run the heavy Extractor?
@@ -449,43 +465,7 @@ for (int i = 0; i < total_cells; ++i) {
             pixel_ptr[i] = 0x14141EFA; 
     }
 }
-/*
-const auto& index_to_id = tracker.get_index_mapping();
-const size_t num_mappings = index_to_id.size();
 
-// Cache pointers for speed
-uint32_t* pixel_ptr = pixels.data();
-const Cell* cell_ptr = sim.grid.data();
-const rigid::RegionIndex* label_ptr = label_grid.data();
-const int total_cells = GRID_WIDTH * GRID_HEIGHT;
-
-for (int i = 0; i < total_cells; ++i) {
-    const Cell& cell = cell_ptr[i];
-    
-    if (cell.type == CellType::Wall) {
-        rigid::RegionIndex rIdx = label_ptr[i];
-        
-        // Check if our tracker knows about this region index
-        if (rIdx < num_mappings) {
-            rigid::RegionID pId = index_to_id[rIdx];
-            SDL_Color c = get_id_color(pId);
-            pixel_ptr[i] = (c.r << 24) | (c.g << 16) | (c.b << 8) | c.a;
-        } else {
-            pixel_ptr[i] = 0x646464FF; // Default Gray for unknown regions
-        }
-    } else {
-        // Sand, Water, and Background logic
-        int v = cell.colorVariation;
-        if (cell.type == CellType::Sand) 
-            pixel_ptr[i] = ((220-v) << 24) | ((180-v) << 16) | ((80-v) << 8) | 0xFF;
-        else if (cell.type == CellType::Water)
-            pixel_ptr[i] = ((30+v) << 24) | ((100+v) << 16) | ((200+v) << 8) | 0xC8;
-        else 
-            pixel_ptr[i] = 0x14141EFA; 
-    }
-}
-
-*/
                // 6. DRAW TO SCREEN
         SDL_UpdateTexture(gridTexture, nullptr, pixels.data(), GRID_WIDTH * sizeof(uint32_t));
         SDL_SetRenderDrawColor(renderer, 20, 20, 30, 255);

@@ -5,8 +5,35 @@
 
 // Internal helper for AABB intersection logic
 static bool intersects(const rigid::CellAABB& a, const rigid::CellAABB& b) {
+   
     return (a.min_x <= b.max_x && a.max_x >= b.min_x) &&
            (a.min_y <= b.max_y && a.max_y >= b.min_y);
+}
+void StabilitySystem::init_bins(int world_width, int world_height) {
+    bins_x = (world_width  + BIN_SIZE - 1) / BIN_SIZE;
+    bins_y = (world_height + BIN_SIZE - 1) / BIN_SIZE;
+
+    bins.clear();
+    bins.resize(bins_x * bins_y);
+}
+void StabilitySystem::rebuild_bins() {
+    for (auto& bin : bins)
+        bin.region_indices.clear();
+
+    for (uint32_t i = 0; i < active_snapshots.size(); ++i) {
+        const auto& b = active_snapshots[i].influence_bounds;
+
+        int bx0 = std::max(0, b.min_x / BIN_SIZE);
+        int by0 = std::max(0, b.min_y / BIN_SIZE);
+        int bx1 = std::min(bins_x - 1, b.max_x / BIN_SIZE);
+        int by1 = std::min(bins_y - 1, b.max_y / BIN_SIZE);
+
+        for (int by = by0; by <= by1; ++by) {
+            for (int bx = bx0; bx <= bx1; ++bx) {
+                bins[by * bins_x + bx].region_indices.push_back(i);
+            }
+        }
+    }
 }
 void StabilitySystem::sync_with_tracker(const std::unordered_map<rigid::RegionID, rigid::RegionRecord>& active_regions) {
     std::vector<RegionSnapshot> next_snapshots;
@@ -108,15 +135,28 @@ void StabilitySystem::propagate_dirty_bounds() {
         const auto& dirty_bounds = active_snapshots[dirty_idx].influence_bounds;
 
         // Check against all other regions in the active set
-        for (uint32_t i = 0; i < active_snapshots.size(); ++i) {
-            // If already dirty, no need to process it again
-            if (dirty_flags[i] == 1) continue;
+        int bx0 = std::max(0, dirty_bounds.min_x / BIN_SIZE);
+int by0 = std::max(0, dirty_bounds.min_y / BIN_SIZE);
+int bx1 = std::min(bins_x - 1, dirty_bounds.max_x / BIN_SIZE);
+int by1 = std::min(bins_y - 1, dirty_bounds.max_y / BIN_SIZE);
 
-            if (intersects(dirty_bounds, active_snapshots[i].influence_bounds)) {
-                dirty_flags[i] = 1;
-                work_queue.push_back(i); // This neighbor is now dirty; push to check ITS neighbors
+for (int by = by0; by <= by1; ++by) {
+    for (int bx = bx0; bx <= bx1; ++bx) {
+        const auto& bin = bins[by * bins_x + bx];
+
+        for (uint32_t region_idx : bin.region_indices) {
+            if (dirty_flags[region_idx]) continue;
+
+            // Optional narrow-phase check (usually cheap)
+            if (intersects(dirty_bounds,
+                           active_snapshots[region_idx].influence_bounds)) {
+                dirty_flags[region_idx] = 1;
+                work_queue.push_back(region_idx);
             }
         }
+    }
+}
+
     }
 }
 
