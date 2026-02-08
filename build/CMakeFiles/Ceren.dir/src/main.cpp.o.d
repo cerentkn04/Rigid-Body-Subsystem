@@ -230,4 +230,5 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: \
  /usr/include/c++/15.2.1/bits/erase_if.h \
  /home/ceen/projects/ceren/include/RegionType.hpp \
  /home/ceen/projects/ceren/include/RegionExtractor.hpp \
- /home/ceen/projects/ceren/include/RegionStability.hpp
+ /home/ceen/projects/ceren/include/RegionStability.hpp \
+ /home/ceen/projects/ceren/include/RigidPixelSystem.hpp

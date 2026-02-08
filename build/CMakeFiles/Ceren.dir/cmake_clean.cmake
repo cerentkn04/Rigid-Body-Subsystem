@@ -2,6 +2,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/Ceren.dir/link.d"
   "CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o"
   "CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o.d"
+  "CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o"
+  "CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o.d"
   "CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o"
   "CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o.d"
   "CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o"

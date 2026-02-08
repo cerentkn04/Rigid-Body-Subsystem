@@ -1,3 +1,4 @@
+
 #include <SDL3/SDL.h>
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
@@ -12,48 +13,31 @@
 #include <RegionType.hpp>
 #include <RegionExtractor.hpp>
 #include <RegionStability.hpp>
+#include "RigidPixelSystem.hpp"
 constexpr int WINDOW_WIDTH = 800;
 constexpr int WINDOW_HEIGHT = 600;
 constexpr int CELL_SIZE = 4;
 constexpr int GRID_WIDTH = WINDOW_WIDTH / CELL_SIZE;
 constexpr int GRID_HEIGHT = WINDOW_HEIGHT / CELL_SIZE;
 
-enum class CellType : uint8_t {
-    Empty = 0,
-    Sand,
-    Water,
-    Wall
-};
-
-struct Cell {
-    CellType type = CellType::Empty;
-    bool updated = false;
-    uint8_t colorVariation = 0;
-};
+enum class CellType : uint8_t { Empty = 0, Sand, Water, Wall };
+struct Cell { CellType type = CellType::Empty; bool updated = false; uint8_t colorVariation = 0; };
 
 class SandSimulation {
 public:
     std::vector<Cell> grid;
-    std::mt19937 rng;
-     //for step 6--------------------------
-     std::vector<uint64_t> region_revisions; 
+    std::vector<uint64_t> region_revisions; 
     uint64_t world_revision_counter = 1;
-    //----------------------------------------
+    std::mt19937 rng;
 
-    SandSimulation() : grid(GRID_WIDTH * GRID_HEIGHT),
+    SandSimulation() : grid(GRID_WIDTH * GRID_HEIGHT), 
                        region_revisions(GRID_WIDTH * GRID_HEIGHT, 0),
                        rng(std::random_device{}()) {}
 
     Cell& at(int x, int y) { return grid[y * GRID_WIDTH + x]; }
     const Cell& at(int x, int y) const { return grid[y * GRID_WIDTH + x]; }
-
-    bool inBounds(int x, int y) const {
-        return x >= 0 && x < GRID_WIDTH && y >= 0 && y < GRID_HEIGHT;
-    }
-
-    bool isEmpty(int x, int y) const {
-        return inBounds(x, y) && at(x, y).type == CellType::Empty;
-    }
+    bool inBounds(int x, int y) const { return x >= 0 && x < GRID_WIDTH && y >= 0 && y < GRID_HEIGHT; }
+    bool isEmpty(int x, int y) const { return inBounds(x, y) && at(x, y).type == CellType::Empty; }
 
     bool canDisplace(int x, int y, CellType displacing) const {
         if (!inBounds(x, y)) return false;
@@ -71,260 +55,109 @@ public:
 
     void updateSand(int x, int y) {
         if (at(x, y).updated) return;
-
-        // Try to fall straight down
-        if (canDisplace(x, y + 1, CellType::Sand)) {
-            swap(x, y, x, y + 1);
-            return;
-        }
-
-        // Try to fall diagonally
+        if (canDisplace(x, y + 1, CellType::Sand)) { swap(x, y, x, y + 1); return; }
         bool canLeft = canDisplace(x - 1, y + 1, CellType::Sand);
         bool canRight = canDisplace(x + 1, y + 1, CellType::Sand);
-
-        if (canLeft && canRight) {
-            int dir = (rng() % 2) ? -1 : 1;
-            swap(x, y, x + dir, y + 1);
-        } else if (canLeft) {
-            swap(x, y, x - 1, y + 1);
-        } else if (canRight) {
-            swap(x, y, x + 1, y + 1);
-        }
+        if (canLeft && canRight) swap(x, y, x + ((rng() % 2) ? -1 : 1), y + 1);
+        else if (canLeft) swap(x, y, x - 1, y + 1);
+        else if (canRight) swap(x, y, x + 1, y + 1);
     }
 
     void updateWater(int x, int y) {
         if (at(x, y).updated) return;
-
-        // Try to fall straight down
-        if (isEmpty(x, y + 1)) {
-            swap(x, y, x, y + 1);
-            return;
-        }
-
-        // Try to fall diagonally
-        bool canDownLeft = isEmpty(x - 1, y + 1);
-        bool canDownRight = isEmpty(x + 1, y + 1);
-
-        if (canDownLeft && canDownRight) {
-            int dir = (rng() % 2) ? -1 : 1;
-            swap(x, y, x + dir, y + 1);
-            return;
-        } else if (canDownLeft) {
-            swap(x, y, x - 1, y + 1);
-            return;
-        } else if (canDownRight) {
-            swap(x, y, x + 1, y + 1);
-            return;
-        }
-
-        // Try to spread horizontally
-        bool canLeft = isEmpty(x - 1, y);
-        bool canRight = isEmpty(x + 1, y);
-
-        if (canLeft && canRight) {
-            int dir = (rng() % 2) ? -1 : 1;
-            swap(x, y, x + dir, y);
-        } else if (canLeft) {
-            swap(x, y, x - 1, y);
-        } else if (canRight) {
-            swap(x, y, x + 1, y);
-        }
+        if (isEmpty(x, y + 1)) { swap(x, y, x, y + 1); return; }
+        bool cDL = isEmpty(x - 1, y + 1), cDR = isEmpty(x + 1, y + 1);
+        if (cDL && cDR) { swap(x, y, x + ((rng() % 2) ? -1 : 1), y + 1); return; }
+        else if (cDL) { swap(x, y, x - 1, y + 1); return; }
+        else if (cDR) { swap(x, y, x + 1, y + 1); return; }
+        bool cL = isEmpty(x - 1, y), cR = isEmpty(x + 1, y);
+        if (cL && cR) swap(x, y, x + ((rng() % 2) ? -1 : 1), y);
+        else if (cL) swap(x, y, x - 1, y);
+        else if (cR) swap(x, y, x + 1, y);
     }
 
     void update() {
-        // Reset update flags
         world_revision_counter++;
-        for (auto& cell : grid) {
-            cell.updated = false;
-        }
-
-        // Update from bottom to top, alternating left-right direction
+        for (auto& cell : grid) cell.updated = false;
         for (int y = GRID_HEIGHT - 1; y >= 0; --y) {
             bool leftToRight = (rng() % 2) == 0;
-
             for (int i = 0; i < GRID_WIDTH; ++i) {
                 int x = leftToRight ? i : (GRID_WIDTH - 1 - i);
-
                 switch (at(x, y).type) {
-                    case CellType::Sand:
-                        updateSand(x, y);
-                        break;
-                    case CellType::Water:
-                        updateWater(x, y);
-                        break;
-                    default:
-                        break;
+                    case CellType::Sand: updateSand(x, y); break;
+                    case CellType::Water: updateWater(x, y); break;
                 }
             }
         }
     }
 
-void placeCell(int x, int y, CellType type, int brushSize = 1) {
-    std::uniform_int_distribution<uint8_t> dist(0, 30);
-
-    bool topology_changed = false;
-
-    for (int dy = -brushSize + 1; dy < brushSize; ++dy) {
-        for (int dx = -brushSize + 1; dx < brushSize; ++dx) {
-            int nx = x + dx;
-            int ny = y + dy;
-            if (!inBounds(nx, ny)) continue;
-
-            CellType old = at(nx, ny).type;
-            if (old == type) continue;
-
-            at(nx, ny).type = type;
-            at(nx, ny).colorVariation = dist(rng);
-
-            // Only walls affect topology
-            if (old == CellType::Wall || type == CellType::Wall) {
-                topology_changed = true;
-                mark_changed(nx, ny);
+    void placeCell(int x, int y, CellType type, int brushSize = 1) {
+        std::uniform_int_distribution<uint8_t> dist(0, 30);
+        bool topology_changed = false;
+        for (int dy = -brushSize + 1; dy < brushSize; ++dy) {
+            for (int dx = -brushSize + 1; dx < brushSize; ++dx) {
+                int nx = x + dx, ny = y + dy;
+                if (!inBounds(nx, ny)) continue;
+                CellType old = at(nx, ny).type;
+                if (old == type) continue;
+                at(nx, ny).type = type;
+                at(nx, ny).colorVariation = dist(rng);
+                if (old == CellType::Wall || type == CellType::Wall) {
+                    topology_changed = true;
+                    region_revisions[ny * GRID_WIDTH + nx] = world_revision_counter;
+                }
             }
         }
+        if (topology_changed) world_revision_counter++;
     }
 
-    if (topology_changed) {
-        world_revision_counter++;
-    }
-}
-
-    void mark_changed(int x, int y) {
-        if (!inBounds(x, y)) return;
-        region_revisions[y * GRID_WIDTH + x] = world_revision_counter;
-    }
-
-    void clear() {
-        for (auto& cell : grid) {
-            cell.type = CellType::Empty;
-            cell.colorVariation = 0;
-        }
-    }
+    void clear() { for (auto& cell : grid) { cell.type = CellType::Empty; cell.colorVariation = 0; } }
 };
 
-SDL_Color getCellColor(const Cell& cell) {
-    int v = cell.colorVariation;
-    switch (cell.type) {
-        case CellType::Sand:
-            return {static_cast<uint8_t>(220 - v), static_cast<uint8_t>(180 - v), static_cast<uint8_t>(80 - v), 255};
-        case CellType::Water:
-            return {static_cast<uint8_t>(30 + v), static_cast<uint8_t>(100 + v), static_cast<uint8_t>(200 + v), 200};
-        case CellType::Wall:
-            return {static_cast<uint8_t>(100 - v), static_cast<uint8_t>(100 - v), static_cast<uint8_t>(100 - v), 255};
-        default:
-            return {20, 20, 30, 255};
-    }
-}
-
 static SandSimulation* g_pixel_sim_ptr = nullptr;
-
 world::CellSolidity solidity_callback(int x, int y) {
-    if (g_pixel_sim_ptr && g_pixel_sim_ptr->inBounds(x, y)) {
-        // Only "Wall" counts as Solid for our Rigid Body system
-        return g_pixel_sim_ptr->at(x, y).type == CellType::Wall ? 
-               world::CellSolidity::Solid : world::CellSolidity::Empty;
-    }
-    return world::CellSolidity::Empty;
+    return (g_pixel_sim_ptr && g_pixel_sim_ptr->inBounds(x, y) && g_pixel_sim_ptr->at(x, y).type == CellType::Wall) ? world::CellSolidity::Solid : world::CellSolidity::Empty;
 }
-world::WorldRevision revision_callback() {
-  return g_pixel_sim_ptr ? g_pixel_sim_ptr->world_revision_counter : 0;
-}
-
+world::WorldRevision revision_callback() { return g_pixel_sim_ptr ? g_pixel_sim_ptr->world_revision_counter : 0; }
 world::WorldRevision region_rev_callback(int x, int y) {
-    if (g_pixel_sim_ptr && g_pixel_sim_ptr->inBounds(x, y)) {
-        return g_pixel_sim_ptr->region_revisions[y * GRID_WIDTH + x];
-    }
-
-  return 0;
+    return (g_pixel_sim_ptr && g_pixel_sim_ptr->inBounds(x, y)) ? g_pixel_sim_ptr->region_revisions[y * GRID_WIDTH + x] : 0;
 }
 
+SDL_Color get_id_color(rigid::RegionID id) {
+    if (id == rigid::InvalidRegionID) return { 50, 50, 50, 255 };
+    uint32_t h = id;
+    h = ((h >> 16) ^ h) * 0x45d9f3b; h = ((h >> 16) ^ h) * 0x45d9f3b; h = (h >> 16) ^ h;
+    return { static_cast<uint8_t>(h & 0xFF), static_cast<uint8_t>((h >> 8) & 0xFF), static_cast<uint8_t>((h >> 16) & 0xFF), 255 };
+}
 
-int main(int argc, char* argv[]) {  if (!SDL_Init(SDL_INIT_VIDEO)) {
-        SDL_Log("SDL_Init failed: %s", SDL_GetError());
-        return 1;
-    }
-
-    SDL_Window* window = SDL_CreateWindow(
-        "Sand Falling Simulation",
-        WINDOW_WIDTH, WINDOW_HEIGHT,
-        SDL_WINDOW_RESIZABLE
-    );
-
-    if (!window) {
-        SDL_Log("SDL_CreateWindow failed: %s", SDL_GetError());
-        SDL_Quit();
-        return 1;
-    }
-
+int main(int argc, char* argv[]) {
+    if (!SDL_Init(SDL_INIT_VIDEO)) return 1;
+    SDL_Window* window = SDL_CreateWindow("Sand Falling Simulation", WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, nullptr);
-    if (!renderer) {
-        SDL_Log("SDL_CreateRenderer failed: %s", SDL_GetError());
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return 1;
-    }
+    
     SandSimulation sim;
     g_pixel_sim_ptr = &sim;
 
-rigid::RegionExtractor extractor;
-rigid::RegionTracker tracker;
-std::vector<rigid::RegionBuildRecord> build_records;
+    rigid::RigidPixelSystem rigidSystem;
 
-world::WorldView view;
-view.width = GRID_WIDTH;
-view.height = GRID_HEIGHT;
-view.solidity_at = solidity_callback;
-view.world_revision = revision_callback;
-view.region_revision = region_rev_callback;
+    world::WorldView view;
+    view.width = GRID_WIDTH; view.height = GRID_HEIGHT;
+    view.solidity_at = solidity_callback;
+    view.world_revision = revision_callback;
+    view.region_revision = region_rev_callback;
 
-// For debug visualization: a unique color for each persistent RegionID
-std::unordered_map<rigid::RegionID, SDL_Color> region_colors;
-auto get_id_color = [&](rigid::RegionID id) -> SDL_Color {
-    if (id == rigid::InvalidRegionID) return { 50, 50, 50, 255 };
-
-    // Simple deterministic hash to get unique colors per ID
-    uint32_t h = id;
-    h = ((h >> 16) ^ h) * 0x45d9f3b;
-    h = ((h >> 16) ^ h) * 0x45d9f3b;
-    h = (h >> 16) ^ h;
-
-    return {
-        static_cast<uint8_t>((h >> 0) & 0xFF),
-        static_cast<uint8_t>((h >> 8) & 0xFF),
-        static_cast<uint8_t>((h >> 16) & 0xFF),
-        255
-    };
-};
-StabilitySystem stability;
-
-    // Setup ImGui
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    ImGui::StyleColorsDark();
-
     ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
     ImGui_ImplSDLRenderer3_Init(renderer);
 
-
-    bool running = true;
-    bool paused = false;
-    int selectedMaterial = 0;
+    bool running = true, paused = false, mouseDown = false;
+    int selectedMaterial = 0, brushSize = 3;
     const char* materials[] = {"Sand", "Water", "Wall", "Eraser"};
-    int brushSize = 3;
-    bool mouseDown = false;
 
-    SDL_Texture* gridTexture = SDL_CreateTexture(
-        renderer,
-        SDL_PIXELFORMAT_RGBA8888,
-        SDL_TEXTUREACCESS_STREAMING,
-        GRID_WIDTH, GRID_HEIGHT
-    );
-
-    // Set nearest-neighbor scaling for crisp pixels
+    SDL_Texture* gridTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, GRID_WIDTH, GRID_HEIGHT);
     SDL_SetTextureScaleMode(gridTexture, SDL_SCALEMODE_NEAREST);
-
     std::vector<uint32_t> pixels(GRID_WIDTH * GRID_HEIGHT);
 
     Uint64 lastTime = SDL_GetTicks();
@@ -332,9 +165,7 @@ StabilitySystem stability;
     const float fixedDeltaTime = 1.0f / 60.0f;
 
     while (running) {
-
-SDL_Event event;
-        // 1. Process Input Events
+        SDL_Event event;
         while (SDL_PollEvent(&event)) {
             ImGui_ImplSDL3_ProcessEvent(&event);
             if (event.type == SDL_EVENT_QUIT) running = false;
@@ -352,179 +183,81 @@ SDL_Event event;
             }
         }
 
-        // 2. Handle Mouse Drawing (MUTATE WORLD)
         if (mouseDown && !io.WantCaptureMouse) {
-            float mx, my;
-            SDL_GetMouseState(&mx, &my);
-            int winW, winH;
-            SDL_GetWindowSize(window, &winW, &winH);
+            float mx, my; SDL_GetMouseState(&mx, &my);
+            int winW, winH; SDL_GetWindowSize(window, &winW, &winH);
             int gx = static_cast<int>((mx / winW) * GRID_WIDTH);
             int gy = static_cast<int>((my / winH) * GRID_HEIGHT);
-
-            CellType type = (selectedMaterial == 0) ? CellType::Sand : 
-                            (selectedMaterial == 1) ? CellType::Water : 
-                            (selectedMaterial == 2) ? CellType::Wall : CellType::Empty;
+            CellType type = (selectedMaterial == 0) ? CellType::Sand : (selectedMaterial == 1) ? CellType::Water : (selectedMaterial == 2) ? CellType::Wall : CellType::Empty;
             sim.placeCell(gx, gy, type, brushSize);
         }
 
-        // 3. Update Simulation (MUTATE WORLD)
         Uint64 currentTime = SDL_GetTicks();
-        float deltaTime = (currentTime - lastTime) / 1000.0f;
-        lastTime = currentTime;
+        float deltaTime = (currentTime - lastTime) / 1000.0f; lastTime = currentTime;
         if (!paused) {
             accumulator += deltaTime;
-            while (accumulator >= fixedDeltaTime) {
-                sim.update();
-                accumulator -= fixedDeltaTime;
+            while (accumulator >= fixedDeltaTime) { sim.update(); accumulator -= fixedDeltaTime; }
+        }
+
+        // --- RIGID SYSTEM ---
+        rigidSystem.update(view);
+
+        // --- RENDER (Restored Tight Loop) ---
+        const auto& index_to_id = rigidSystem.tracker.get_index_mapping();
+        const size_t num_mappings = index_to_id.size();
+        static std::vector<uint32_t> color_cache;
+        if (color_cache.size() < num_mappings) color_cache.resize(num_mappings);
+        for (size_t i = 0; i < num_mappings; ++i) {
+            SDL_Color c = get_id_color(index_to_id[i]);
+            color_cache[i] = (c.r << 24) | (c.g << 16) | (c.b << 8) | 255;
+        }
+
+        uint32_t* __restrict pixel_ptr = pixels.data();
+        const Cell* __restrict cell_ptr = sim.grid.data();
+        const rigid::RegionIndex* __restrict label_ptr = rigidSystem.extractor.label_grid().data();
+        const uint32_t* __restrict cached_colors = color_cache.data();
+
+        for (int i = 0; i < GRID_WIDTH * GRID_HEIGHT; ++i) {
+            const Cell& cell = cell_ptr[i];
+            if (cell.type == CellType::Wall) {
+                const rigid::RegionIndex rIdx = label_ptr[i];
+                pixel_ptr[i] = (rIdx < num_mappings) ? cached_colors[rIdx] : 0x646464FF;
+            } else {
+                const uint8_t v = cell.colorVariation;
+                if (cell.type == CellType::Sand) pixel_ptr[i] = ((220-v) << 24) | ((180-v) << 16) | ((80-v) << 8) | 0xFF;
+                else if (cell.type == CellType::Water) pixel_ptr[i] = ((30+v) << 24) | ((100+v) << 16) | ((200+v) << 8) | 0xC8;
+                else pixel_ptr[i] = 0x14141EFA; 
             }
         }
-        stability.sync_with_tracker(tracker.get_active_regions());
 
-        // 4. TOPOLOGY PHASE (READ WORLD)
-        const auto& label_grid = extractor.label_grid();
-const auto& index_mapping = tracker.get_index_mapping(); 
-uint64_t current_world_rev = view.world_revision();
-
-// Keep track of the last revision we actually processed to avoid infinite loops
-static uint64_t last_processed_rev = 0; 
-
-stability.reset_dirty_flags(0);
-
-// 4.1 Check if existing rocks moved or changed
-if (current_world_rev != last_processed_rev) {
-    for (uint32_t i = 0; i < stability.active_snapshots.size(); ++i) {
-        if (!stability.validate_snapshot(i, view)) {
-            stability.dirty_flags[i] = 1;
-        }
-    }
-}
-
-stability.propagate_dirty_bounds();
-
-// 4.2 Logic: Do we actually need to run the heavy Extractor?
-bool needs_extract = false;
-
-for (uint8_t flag : stability.dirty_flags) {
-    if (flag == 1) { needs_extract = true; break; }
-}
-
-// Force extraction if the world changed or tracker is empty
-if (current_world_rev > last_processed_rev || index_mapping.empty()) {
-    if (current_world_rev > 0) needs_extract = true;
-}
-
-if (needs_extract) {
-    extractor.extract(view, build_records);
-    tracker.process_frame(extractor.label_grid(), build_records, GRID_WIDTH, GRID_HEIGHT);
-    
-    last_processed_rev = current_world_rev;
-
-    // Update snapshots for the NEW positions of the rocks
-    const auto& finalized_regions = tracker.get_active_regions();
-    for (const auto& [id, record] : finalized_regions) {
-        stability.update_snapshot(id, record.bounds, current_world_rev);
-    }
-}
-               // 5. RENDER PHASE (CONVERT TO PIXELS)
-        // --- 5. RENDER PHASE (CONVERT TO PIXELS) ---
-        //
-        //
-        const auto& index_to_id = tracker.get_index_mapping();
-const size_t num_mappings = index_to_id.size();
-
-// 5.1 PRE-CALCULATE COLORS (Do this ONCE per frame, not 480k times!)
-static std::vector<uint32_t> color_cache;
-if (color_cache.size() < num_mappings) color_cache.resize(num_mappings);
-for (size_t i = 0; i < num_mappings; ++i) {
-    SDL_Color c = get_id_color(index_to_id[i]);
-    color_cache[i] = (c.r << 24) | (c.g << 16) | (c.b << 8) | c.a;
-}
-
-// 5.2 TIGHT PIXEL LOOP
-uint32_t* __restrict pixel_ptr = pixels.data();
-const Cell* __restrict cell_ptr = sim.grid.data();
-const rigid::RegionIndex* __restrict label_ptr = label_grid.data();
-const int total_cells = GRID_WIDTH * GRID_HEIGHT;
-const uint32_t* __restrict cached_colors = color_cache.data();
-
-for (int i = 0; i < total_cells; ++i) {
-    const Cell& cell = cell_ptr[i];
-    
-    if (cell.type == CellType::Wall) {
-        const rigid::RegionIndex rIdx = label_ptr[i];
-        // Branchless-style lookup
-        pixel_ptr[i] = (rIdx < num_mappings) ? cached_colors[rIdx] : 0x646464FF;
-    } else {
-        const uint8_t v = cell.colorVariation;
-        // Optimized material coloring
-        if (cell.type == CellType::Sand) 
-            pixel_ptr[i] = ((220-v) << 24) | ((180-v) << 16) | ((80-v) << 8) | 0xFF;
-        else if (cell.type == CellType::Water)
-            pixel_ptr[i] = ((30+v) << 24) | ((100+v) << 16) | ((200+v) << 8) | 0xC8;
-        else 
-            pixel_ptr[i] = 0x14141EFA; 
-    }
-}
-
-               // 6. DRAW TO SCREEN
         SDL_UpdateTexture(gridTexture, nullptr, pixels.data(), GRID_WIDTH * sizeof(uint32_t));
-        SDL_SetRenderDrawColor(renderer, 20, 20, 30, 255);
         SDL_RenderClear(renderer);
         SDL_RenderTexture(renderer, gridTexture, nullptr, nullptr);
-               // Start ImGui frame
-        ImGui_ImplSDLRenderer3_NewFrame();
-        ImGui_ImplSDL3_NewFrame();
-        ImGui::NewFrame();
 
-        // Control panel
+        // --- IMGUI (Original Controls) ---
+        ImGui_ImplSDLRenderer3_NewFrame(); ImGui_ImplSDL3_NewFrame(); ImGui::NewFrame();
         ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
         ImGui::Begin("Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-
         ImGui::Text("Material (1-4):");
         for (int i = 0; i < 4; ++i) {
             if (i > 0) ImGui::SameLine();
-            if (ImGui::RadioButton(materials[i], selectedMaterial == i)) {
-                selectedMaterial = i;
-            }
+            if (ImGui::RadioButton(materials[i], selectedMaterial == i)) selectedMaterial = i;
         }
-
         ImGui::SliderInt("Brush Size", &brushSize, 1, 10);
-
         ImGui::Checkbox("Paused (Space)", &paused);
-
-        if (ImGui::Button("Clear (C)")) {
-            sim.clear();
-        }
-        const auto& active = tracker.get_active_regions();
-ImGui::Text("Total Active Regions: %zu", active.size());
-
-
+        if (ImGui::Button("Clear (C)")) sim.clear();
+        ImGui::Text("Total Active Regions: %zu", rigidSystem.tracker.get_active_regions().size());
         ImGui::Separator();
         ImGui::Text("FPS: %.1f", io.Framerate);
-
         ImGui::End();
-
-
- 
-
-
 
         ImGui::Render();
         ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
-
         SDL_RenderPresent(renderer);
     }
 
-
-    // Cleanup
     SDL_DestroyTexture(gridTexture);
-    ImGui_ImplSDLRenderer3_Shutdown();
-    ImGui_ImplSDL3_Shutdown();
-    ImGui::DestroyContext();
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-
+    ImGui_ImplSDLRenderer3_Shutdown(); ImGui_ImplSDL3_Shutdown(); ImGui::DestroyContext();
+    SDL_DestroyRenderer(renderer); SDL_DestroyWindow(window); SDL_Quit();
     return 0;
 }
-

@@ -250,6 +250,30 @@ src/RegionExtractor.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.s
 .PHONY : src/RegionExtractor.cpp.s
 
+src/RegionMesher.o: src/RegionMesher.cpp.o
+.PHONY : src/RegionMesher.o
+
+# target to build an object file
+src/RegionMesher.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o
+.PHONY : src/RegionMesher.cpp.o
+
+src/RegionMesher.i: src/RegionMesher.cpp.i
+.PHONY : src/RegionMesher.i
+
+# target to preprocess a source file
+src/RegionMesher.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RegionMesher.cpp.i
+.PHONY : src/RegionMesher.cpp.i
+
+src/RegionMesher.s: src/RegionMesher.cpp.s
+.PHONY : src/RegionMesher.s
+
+# target to generate assembly for a file
+src/RegionMesher.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RegionMesher.cpp.s
+.PHONY : src/RegionMesher.cpp.s
+
 src/RegionTracker.o: src/RegionTracker.cpp.o
 .PHONY : src/RegionTracker.o
 
@@ -534,6 +558,9 @@ help:
 	@echo "... src/RegionExtractor.o"
 	@echo "... src/RegionExtractor.i"
 	@echo "... src/RegionExtractor.s"
+	@echo "... src/RegionMesher.o"
+	@echo "... src/RegionMesher.i"
+	@echo "... src/RegionMesher.s"
 	@echo "... src/RegionTracker.o"
 	@echo "... src/RegionTracker.i"
 	@echo "... src/RegionTracker.s"

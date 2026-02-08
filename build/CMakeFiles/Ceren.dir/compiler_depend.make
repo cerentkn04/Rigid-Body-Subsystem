@@ -134,6 +134,94 @@ CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o: /home/ceen/projects/ceren/src/Re
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h
 
+CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o: /home/ceen/projects/ceren/src/RegionMesher.cpp \
+  /home/ceen/projects/ceren/include/RegionMesher.hpp \
+  /home/ceen/projects/ceren/include/RegionType.hpp \
+  /home/ceen/projects/ceren/include/RigidPixelTypes.hpp \
+  /home/ceen/projects/ceren/include/regionScratch.hpp \
+  /usr/include/bits/libc-header-start.h \
+  /usr/include/bits/long-double.h \
+  /usr/include/bits/stdint-intn.h \
+  /usr/include/bits/stdint-least.h \
+  /usr/include/bits/stdint-uintn.h \
+  /usr/include/bits/time64.h \
+  /usr/include/bits/timesize.h \
+  /usr/include/bits/types.h \
+  /usr/include/bits/typesizes.h \
+  /usr/include/bits/wchar.h \
+  /usr/include/bits/wordsize.h \
+  /usr/include/c++/15.2.1/array \
+  /usr/include/c++/15.2.1/backward/binders.h \
+  /usr/include/c++/15.2.1/bit \
+  /usr/include/c++/15.2.1/bits/alloc_traits.h \
+  /usr/include/c++/15.2.1/bits/allocator.h \
+  /usr/include/c++/15.2.1/bits/concept_check.h \
+  /usr/include/c++/15.2.1/bits/cpp_type_traits.h \
+  /usr/include/c++/15.2.1/bits/exception.h \
+  /usr/include/c++/15.2.1/bits/exception_defines.h \
+  /usr/include/c++/15.2.1/bits/functexcept.h \
+  /usr/include/c++/15.2.1/bits/functional_hash.h \
+  /usr/include/c++/15.2.1/bits/hash_bytes.h \
+  /usr/include/c++/15.2.1/bits/invoke.h \
+  /usr/include/c++/15.2.1/bits/iterator_concepts.h \
+  /usr/include/c++/15.2.1/bits/max_size_type.h \
+  /usr/include/c++/15.2.1/bits/memory_resource.h \
+  /usr/include/c++/15.2.1/bits/memoryfwd.h \
+  /usr/include/c++/15.2.1/bits/move.h \
+  /usr/include/c++/15.2.1/bits/new_allocator.h \
+  /usr/include/c++/15.2.1/bits/predefined_ops.h \
+  /usr/include/c++/15.2.1/bits/ptr_traits.h \
+  /usr/include/c++/15.2.1/bits/range_access.h \
+  /usr/include/c++/15.2.1/bits/ranges_base.h \
+  /usr/include/c++/15.2.1/bits/ranges_cmp.h \
+  /usr/include/c++/15.2.1/bits/ranges_util.h \
+  /usr/include/c++/15.2.1/bits/refwrap.h \
+  /usr/include/c++/15.2.1/bits/requires_hosted.h \
+  /usr/include/c++/15.2.1/bits/stl_algobase.h \
+  /usr/include/c++/15.2.1/bits/stl_bvector.h \
+  /usr/include/c++/15.2.1/bits/stl_construct.h \
+  /usr/include/c++/15.2.1/bits/stl_function.h \
+  /usr/include/c++/15.2.1/bits/stl_iterator.h \
+  /usr/include/c++/15.2.1/bits/stl_iterator_base_funcs.h \
+  /usr/include/c++/15.2.1/bits/stl_iterator_base_types.h \
+  /usr/include/c++/15.2.1/bits/stl_pair.h \
+  /usr/include/c++/15.2.1/bits/stl_uninitialized.h \
+  /usr/include/c++/15.2.1/bits/stl_vector.h \
+  /usr/include/c++/15.2.1/bits/uses_allocator.h \
+  /usr/include/c++/15.2.1/bits/uses_allocator_args.h \
+  /usr/include/c++/15.2.1/bits/utility.h \
+  /usr/include/c++/15.2.1/bits/vector.tcc \
+  /usr/include/c++/15.2.1/bits/version.h \
+  /usr/include/c++/15.2.1/compare \
+  /usr/include/c++/15.2.1/concepts \
+  /usr/include/c++/15.2.1/cstddef \
+  /usr/include/c++/15.2.1/cstdint \
+  /usr/include/c++/15.2.1/debug/assertions.h \
+  /usr/include/c++/15.2.1/debug/debug.h \
+  /usr/include/c++/15.2.1/ext/alloc_traits.h \
+  /usr/include/c++/15.2.1/ext/numeric_traits.h \
+  /usr/include/c++/15.2.1/ext/type_traits.h \
+  /usr/include/c++/15.2.1/initializer_list \
+  /usr/include/c++/15.2.1/new \
+  /usr/include/c++/15.2.1/numbers \
+  /usr/include/c++/15.2.1/pstl/pstl_config.h \
+  /usr/include/c++/15.2.1/tuple \
+  /usr/include/c++/15.2.1/type_traits \
+  /usr/include/c++/15.2.1/vector \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++allocator.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/cpu_defines.h \
+  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/os_defines.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/gnu/stubs-64.h \
+  /usr/include/gnu/stubs.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdint.h \
+  /usr/include/sys/cdefs.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h
+
 CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o: /home/ceen/projects/ceren/src/RegionTracker.cpp \
   /home/ceen/projects/ceren/include/RegionTracker.hpp \
   /home/ceen/projects/ceren/include/RegionType.hpp \
@@ -425,6 +513,7 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: /home/ceen/projects/ceren/src/main.cpp \
   /home/ceen/projects/ceren/include/RegionStability.hpp \
   /home/ceen/projects/ceren/include/RegionTracker.hpp \
   /home/ceen/projects/ceren/include/RegionType.hpp \
+  /home/ceen/projects/ceren/include/RigidPixelSystem.hpp \
   /home/ceen/projects/ceren/include/RigidPixelTypes.hpp \
   /home/ceen/projects/ceren/include/RigidPixelWorldView.hpp \
   /home/ceen/projects/ceren/include/regionScratch.hpp \
@@ -556,10 +645,8 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: /home/ceen/projects/ceren/src/main.cpp \
   /usr/include/bits/waitstatus.h \
   /usr/include/bits/wchar.h \
   /usr/include/bits/wordsize.h \
-  /usr/include/c++/15.2.1/algorithm \
   /usr/include/c++/15.2.1/backward/binders.h \
   /usr/include/c++/15.2.1/bit \
-  /usr/include/c++/15.2.1/bits/algorithmfwd.h \
   /usr/include/c++/15.2.1/bits/alloc_traits.h \
   /usr/include/c++/15.2.1/bits/allocator.h \
   /usr/include/c++/15.2.1/bits/basic_string.h \
@@ -594,8 +681,6 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: /home/ceen/projects/ceren/src/main.cpp \
   /usr/include/c++/15.2.1/bits/random.h \
   /usr/include/c++/15.2.1/bits/random.tcc \
   /usr/include/c++/15.2.1/bits/range_access.h \
-  /usr/include/c++/15.2.1/bits/ranges_algo.h \
-  /usr/include/c++/15.2.1/bits/ranges_algobase.h \
   /usr/include/c++/15.2.1/bits/ranges_base.h \
   /usr/include/c++/15.2.1/bits/ranges_cmp.h \
   /usr/include/c++/15.2.1/bits/ranges_util.h \
@@ -603,18 +688,15 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: /home/ceen/projects/ceren/src/main.cpp \
   /usr/include/c++/15.2.1/bits/requires_hosted.h \
   /usr/include/c++/15.2.1/bits/specfun.h \
   /usr/include/c++/15.2.1/bits/std_abs.h \
-  /usr/include/c++/15.2.1/bits/stl_algo.h \
   /usr/include/c++/15.2.1/bits/stl_algobase.h \
   /usr/include/c++/15.2.1/bits/stl_bvector.h \
   /usr/include/c++/15.2.1/bits/stl_construct.h \
   /usr/include/c++/15.2.1/bits/stl_function.h \
-  /usr/include/c++/15.2.1/bits/stl_heap.h \
   /usr/include/c++/15.2.1/bits/stl_iterator.h \
   /usr/include/c++/15.2.1/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/15.2.1/bits/stl_iterator_base_types.h \
   /usr/include/c++/15.2.1/bits/stl_numeric.h \
   /usr/include/c++/15.2.1/bits/stl_pair.h \
-  /usr/include/c++/15.2.1/bits/stl_tempbuf.h \
   /usr/include/c++/15.2.1/bits/stl_uninitialized.h \
   /usr/include/c++/15.2.1/bits/stl_vector.h \
   /usr/include/c++/15.2.1/bits/string_view.tcc \
@@ -651,7 +733,6 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: /home/ceen/projects/ceren/src/main.cpp \
   /usr/include/c++/15.2.1/numbers \
   /usr/include/c++/15.2.1/numeric \
   /usr/include/c++/15.2.1/pstl/execution_defs.h \
-  /usr/include/c++/15.2.1/pstl/glue_algorithm_defs.h \
   /usr/include/c++/15.2.1/pstl/glue_numeric_defs.h \
   /usr/include/c++/15.2.1/pstl/pstl_config.h \
   /usr/include/c++/15.2.1/random \
@@ -2133,6 +2214,7 @@ Ceren: /usr/lib/Scrt1.o \
   /usr/lib/libm.so.6 \
   /usr/lib/libmvec.so.1 \
   CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o \
+  CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o \
   CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o \
   CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o \
   CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o \
@@ -2302,6 +2384,8 @@ CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2-512minmaxintrin.h:
 
+CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o:
+
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2-512convertintrin.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2-512bf16intrin.h:
@@ -2348,8 +2432,6 @@ CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp.o:
 
 /usr/include/bits/siginfo-consts.h:
 
-/usr/include/bits/sigevent-consts.h:
-
 /usr/include/bits/sigcontext.h:
 
 /usr/include/bits/pthread_stack_min-dynamic.h:
@@ -2369,8 +2451,6 @@ CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp.o:
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/xsavesintrin.h:
 
 /home/ceen/projects/ceren/vendored/imgui/imgui_internal.h:
-
-/home/ceen/projects/ceren/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/syslimits.h:
 
@@ -2439,6 +2519,16 @@ CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o:
 /usr/include/c++/15.2.1/ext/string_conversions.h:
 
 /usr/include/c++/15.2.1/cstdio:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avxifmaintrin.h:
+
+/usr/include/c++/15.2.1/clocale:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/gfniintrin.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/amxtf32intrin.h:
+
+/usr/include/c++/15.2.1/cerrno:
 
 /usr/include/bits/types/__sigval_t.h:
 
@@ -2634,14 +2724,6 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o:
 
 /usr/include/bits/select.h:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2minmaxintrin.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/amxfp16intrin.h:
-
-/usr/include/bits/thread-shared-types.h:
-
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_timer.h:
-
 /usr/include/c++/15.2.1/pstl/execution_defs.h:
 
 /usr/include/bits/atomic_wide_counter.h:
@@ -2677,6 +2759,12 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o:
 /home/ceen/projects/ceren/src/RegionTracker.cpp:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_init.h:
+
+/usr/include/c++/15.2.1/bits/stringfwd.h:
+
+/usr/include/c++/15.2.1/bits/enable_special_members.h:
+
+/home/ceen/projects/ceren/include/RigidPixelTypes.hpp:
 
 /usr/include/bits/long-double.h:
 
@@ -2826,6 +2914,16 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o:
 
 /usr/include/endian.h:
 
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2minmaxintrin.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/amxfp16intrin.h:
+
+/usr/include/bits/thread-shared-types.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_timer.h:
+
+/home/ceen/projects/ceren/include/RigidPixelSystem.hpp:
+
 /usr/include/c++/15.2.1/bits/cxxabi_forced.h:
 
 /usr/include/c++/15.2.1/bits/ranges_cmp.h:
@@ -2840,9 +2938,19 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o:
 
 /usr/include/sys/cdefs.h:
 
+/usr/include/bits/sigevent-consts.h:
+
+/home/ceen/projects/ceren/src/RegionMesher.cpp:
+
 /usr/include/sys/types.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h:
+
+/home/ceen/projects/ceren/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp:
+
+/home/ceen/projects/ceren/include/RegionMesher.hpp:
+
+/usr/include/c++/15.2.1/deque:
 
 /usr/include/c++/15.2.1/bits/erase_if.h:
 
@@ -2883,8 +2991,6 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o:
 /usr/include/locale.h:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_power.h:
-
-/usr/include/c++/15.2.1/deque:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_assert.h:
 
@@ -2988,12 +3094,6 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_surface.h:
 
-/usr/include/c++/15.2.1/bits/enable_special_members.h:
-
-/home/ceen/projects/ceren/include/RigidPixelTypes.hpp:
-
-/usr/include/c++/15.2.1/bits/stringfwd.h:
-
 /usr/include/c++/15.2.1/bits/stl_iterator_base_funcs.h:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_system.h:
@@ -3019,6 +3119,8 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o:
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_video.h:
 
 /usr/include/c++/15.2.1/bits/algorithmfwd.h:
+
+/usr/include/c++/15.2.1/array:
 
 /home/ceen/projects/ceren/vendored/imgui/backends/imgui_impl_sdl3.h:
 
@@ -3063,12 +3165,6 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o:
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avxintrin.h:
 
 /usr/include/bits/libm-simd-decl-stubs.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/gfniintrin.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/amxtf32intrin.h:
-
-/usr/include/c++/15.2.1/cerrno:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2copyintrin.h:
 
@@ -3127,7 +3223,3 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o:
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_atomic.h:
 
 /usr/include/c++/15.2.1/bits/string_view.tcc:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avxifmaintrin.h:
-
-/usr/include/c++/15.2.1/clocale:
