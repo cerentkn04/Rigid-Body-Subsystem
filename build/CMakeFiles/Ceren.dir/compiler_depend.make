@@ -137,6 +137,7 @@ CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o: /home/ceen/projects/ceren/src/Re
 CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o: /home/ceen/projects/ceren/src/RegionMesher.cpp \
   /home/ceen/projects/ceren/include/RegionMesher.hpp \
   /home/ceen/projects/ceren/include/RigidPixelTypes.hpp \
+  /home/ceen/projects/ceren/include/regionScratch.hpp \
   /usr/include/alloca.h \
   /usr/include/bits/atomic_wide_counter.h \
   /usr/include/bits/byteswap.h \
@@ -784,6 +785,7 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: /home/ceen/projects/ceren/src/main.cpp \
   /usr/include/c++/15.2.1/bits/stringfwd.h \
   /usr/include/c++/15.2.1/bits/uniform_int_dist.h \
   /usr/include/c++/15.2.1/bits/unordered_map.h \
+  /usr/include/c++/15.2.1/bits/unordered_set.h \
   /usr/include/c++/15.2.1/bits/uses_allocator.h \
   /usr/include/c++/15.2.1/bits/uses_allocator_args.h \
   /usr/include/c++/15.2.1/bits/utility.h \
@@ -835,6 +837,7 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: /home/ceen/projects/ceren/src/main.cpp \
   /usr/include/c++/15.2.1/tuple \
   /usr/include/c++/15.2.1/type_traits \
   /usr/include/c++/15.2.1/unordered_map \
+  /usr/include/c++/15.2.1/unordered_set \
   /usr/include/c++/15.2.1/vector \
   /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++allocator.h \
   /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h \
