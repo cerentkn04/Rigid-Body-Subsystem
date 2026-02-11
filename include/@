@@ -1,0 +1,119 @@
+#pragma once
+#include <vector>
+#include <unordered_map>
+#include "RigidPixelTypes.hpp"
+#include "RegionExtractor.hpp"
+#include "RegionTracker.hpp"
+#include "RegionStability.hpp"
+#include "RigidPixelWorldView.hpp"
+#include "RegionMesher.hpp"
+
+namespace rigid {
+
+class RigidPixelSystem {
+public:
+    RegionExtractor extractor;
+    RegionTracker tracker;
+    StabilitySystem stability;
+    
+    // Step 7 additions
+    RegionMesher mesher{RegionMesherConfig{}};
+    std::unordered_map<RegionID, RegionMesh> active_meshes;
+
+    std::vector<RegionBuildRecord> build_records;
+    uint64_t last_processed_rev = 0;
+
+    void update(const world::WorldView& view) {
+        uint64_t current_world_rev = view.world_revision();
+
+        // 1. Sync stability system with current tracker state
+        stability.sync_with_tracker(tracker.get_active_regions());
+        stability.reset_dirty_flags(0);
+
+        // 2. Check for changes in the world (Dirtiness detection)
+        if (current_world_rev != last_processed_rev) {
+            for (uint32_t i = 0; i < stability.active_snapshots.size(); ++i) {
+                if (!stability.validate_snapshot(i, view)) {
+                    stability.dirty_flags[i] = 1;
+                }
+            }
+        }
+        
+        // Ensure neighbors of changed pixels are also marked for checking
+        stability.propagate_dirty_bounds();
+
+        // 3. Determine if we need to run the topology extractor
+        bool needs_extract = false;
+        for (uint8_t flag : stability.dirty_flags) {
+            if (flag == 1) { needs_extract = true; break; }
+        }
+
+        const auto& mapping = tracker.get_index_mapping();
+        if (current_world_rev > last_processed_rev || mapping.empty()) {
+            if (current_world_rev > 0) needs_extract = true;
+        }
+
+        // 4. Run Extraction/Tracker only if pixels have moved or changed
+        if (needs_extract) {
+            extractor.extract(view, build_records);
+            tracker.process_frame(extractor.label_grid(), build_records, view.width, view.height);
+        }
+
+        // 5. GEOMETRY LIFECYCLE (Step 7)
+        const auto& finalized_regions = tracker.get_active_regions();
+        const auto& current_mapping = tracker.get_index_mapping();
+
+        // 5a. Garbage Collection: Remove meshes for regions that died/merged
+        for (auto it = active_meshes.begin(); it != active_meshes.end(); ) {
+            if (finalized_regions.find(it->first) == finalized_regions.end()) {
+                it = active_meshes.erase(it);
+            } else {
+                ++it;
+            }
+        }
+
+        // 5b. Incremental Geometry Rebuild
+        for (const auto& [id, record] : finalized_regions) {
+            bool should_rebuild = false;
+
+            // We use the ID to look up the stability index to check the dirty flag
+            if (id < current_mapping.size()) {
+                uint32_t stab_idx = current_mapping[id];
+                
+                bool is_dirty = (stab_idx < stability.dirty_flags.size() && stability.dirty_flags[stab_idx]);
+                bool is_missing = (active_meshes.find(id) == active_meshes.end());
+
+                if (is_dirty || is_missing) {
+                    should_rebuild = true;
+                }
+            }
+
+            if (should_rebuild) {
+                std::vector<RegionMesh> temp_out;
+                
+                // Marching Squares happens here
+                mesher.build_region(
+                    id, 
+                    record.bounds, 
+                    extractor.label_grid(), 
+                    view.width, 
+                    view.height, 
+                    temp_out
+                );
+                
+                if (!temp_out.empty()) {
+                    // Update our persistent cache with the new geometry
+                    active_meshes[id] = std::move(temp_out[0]);
+                }
+            }
+            
+            // Sync snapshots so we can detect changes in the next frame
+            stability.update_snapshot(id, record.bounds, current_world_rev);
+        }
+
+        last_processed_rev = current_world_rev;
+    }
+};
+
+} // namespace rigid
+

@@ -233,8 +233,65 @@ int main(int argc, char* argv[]) {
         SDL_UpdateTexture(gridTexture, nullptr, pixels.data(), GRID_WIDTH * sizeof(uint32_t));
         SDL_RenderClear(renderer);
         SDL_RenderTexture(renderer, gridTexture, nullptr, nullptr);
+// --- RENDER STEP 7 GEOMETRY (Universal Version) ---
+SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); 
 
-        // --- IMGUI (Original Controls) ---
+// 1. Get the actual back-buffer size (handles 4K / High DPI scaling)
+int renderW, renderH;
+SDL_GetRenderOutputSize(renderer, &renderW, &renderH);
+
+// 2. Calculate scale based on the actual pixels being drawn
+float scaleX = (float)renderW / GRID_WIDTH;
+float scaleY = (float)renderH / GRID_HEIGHT;
+
+for (auto const& [id, geo] : rigidSystem.geometry_cache) {
+    for (const auto& contour : geo.contours) {
+        const auto& points = contour.points;
+        if (points.size() < 2) continue;
+
+        for (size_t i = 0; i < points.size(); ++i) {
+            const auto& p1 = points[i];
+            const auto& p2 = points[(i + 1) % points.size()];
+
+            // 3. Map grid coordinates to the exact render output
+            float x1 = p1.x * scaleX;
+            float y1 = p1.y * scaleY;
+            float x2 = p2.x * scaleX;
+            float y2 = p2.y * scaleY;
+
+            SDL_RenderLine(renderer, x1, y1, x2, y2);
+        }
+    }
+}
+
+
+    /*// --- RENDER STEP 7 GEOMETRY ---
+SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); 
+
+for (auto const& [id, geo] : rigidSystem.geometry_cache) {
+    for (const auto& contour : geo.contours) {
+        const auto& points = contour.points;
+        if (points.size() < 2) continue;
+
+        for (size_t i = 0; i < points.size(); ++i) {
+            const auto& p1 = points[i];
+            const auto& p2 = points[(i + 1) % points.size()];
+
+            // EXTREMELY IMPORTANT: 
+            // p1.x is a value like 10.5 (cell index).
+            // We need to multiply by CELL_SIZE (4) to get 42.0 (pixel coordinate).
+            float x1 = p1.x * CELL_SIZE;
+            float y1 = p1.y * CELL_SIZE;
+            float x2 = p2.x * CELL_SIZE;
+            float y2 = p2.y * CELL_SIZE;
+
+            SDL_RenderLine(renderer, x1, y1, x2, y2);
+        }
+    }
+}
+
+*/
+         // --- IMGUI (Original Controls) ---
         ImGui_ImplSDLRenderer3_NewFrame(); ImGui_ImplSDL3_NewFrame(); ImGui::NewFrame();
         ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
         ImGui::Begin("Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
