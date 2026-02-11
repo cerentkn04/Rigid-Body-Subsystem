@@ -1,4 +1,3 @@
-
 #include <SDL3/SDL.h>
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
@@ -134,6 +133,7 @@ int main(int argc, char* argv[]) {
     if (!SDL_Init(SDL_INIT_VIDEO)) return 1;
     SDL_Window* window = SDL_CreateWindow("Sand Falling Simulation", WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, nullptr);
+
     
     SandSimulation sim;
     g_pixel_sim_ptr = &sim;
@@ -178,7 +178,7 @@ int main(int argc, char* argv[]) {
                     case SDLK_3: selectedMaterial = 2; break;
                     case SDLK_4: selectedMaterial = 3; break;
                     case SDLK_SPACE: paused = !paused; break;
-                    case SDLK_C: sim.clear(); break;
+                    case SDLK_C: sim.clear();break;
                 }
             }
         }
@@ -231,20 +231,17 @@ int main(int argc, char* argv[]) {
         }
 
         SDL_UpdateTexture(gridTexture, nullptr, pixels.data(), GRID_WIDTH * sizeof(uint32_t));
-        SDL_RenderClear(renderer);
+        
+        
         SDL_RenderTexture(renderer, gridTexture, nullptr, nullptr);
 // --- RENDER STEP 7 GEOMETRY (Universal Version) ---
-SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); 
+//
+//
 
-// 1. Get the actual back-buffer size (handles 4K / High DPI scaling)
-int renderW, renderH;
-SDL_GetRenderOutputSize(renderer, &renderW, &renderH);
-
-// 2. Calculate scale based on the actual pixels being drawn
-float scaleX = (float)renderW / GRID_WIDTH;
-float scaleY = (float)renderH / GRID_HEIGHT;
+     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 
 for (auto const& [id, geo] : rigidSystem.geometry_cache) {
+  
     for (const auto& contour : geo.contours) {
         const auto& points = contour.points;
         if (points.size() < 2) continue;
@@ -252,18 +249,23 @@ for (auto const& [id, geo] : rigidSystem.geometry_cache) {
         for (size_t i = 0; i < points.size(); ++i) {
             const auto& p1 = points[i];
             const auto& p2 = points[(i + 1) % points.size()];
+            int winW, winH;
+SDL_GetWindowSize(window, &winW, &winH);
 
-            // 3. Map grid coordinates to the exact render output
-            float x1 = p1.x * scaleX;
-            float y1 = p1.y * scaleY;
-            float x2 = p2.x * scaleX;
-            float y2 = p2.y * scaleY;
+float scaleX = (float)winW / GRID_WIDTH;
+float scaleY = (float)winH / GRID_HEIGHT;
+
+float x1 = p1.x * scaleX;
+float y1 = p1.y * scaleY;
+float x2 = p2.x * scaleX;
+float y2 = p2.y * scaleY;
+
 
             SDL_RenderLine(renderer, x1, y1, x2, y2);
         }
     }
 }
-
+ 
 
     /*// --- RENDER STEP 7 GEOMETRY ---
 SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); 
@@ -304,6 +306,7 @@ for (auto const& [id, geo] : rigidSystem.geometry_cache) {
         ImGui::Checkbox("Paused (Space)", &paused);
         if (ImGui::Button("Clear (C)")) sim.clear();
         ImGui::Text("Total Active Regions: %zu", rigidSystem.tracker.get_active_regions().size());
+        ImGui::Text("Geometry Cache: %zu", rigidSystem.geometry_cache.size());
         ImGui::Separator();
         ImGui::Text("FPS: %.1f", io.Framerate);
         ImGui::End();

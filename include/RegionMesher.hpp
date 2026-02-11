@@ -3,6 +3,7 @@
 #include <cstdint>
 #include "RigidPixelTypes.hpp"
 
+
 namespace rigid {
 
 struct Vertex { float x, y; };

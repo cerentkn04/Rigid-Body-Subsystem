@@ -1,5 +1,3 @@
-
-
 #pragma once
 #include <vector>
 #include <unordered_map>
@@ -8,7 +6,7 @@
 #include <RegionTracker.hpp>
 #include <RegionStability.hpp>
 #include <RigidPixelWorldView.hpp>
-#include "RegionMesher.hpp" // The Step 7 Header we just fixed
+#include "RegionMesher.hpp" 
 
 namespace rigid {
 
@@ -18,19 +16,17 @@ public:
     RegionTracker tracker;
     StabilitySystem stability;
     
-    // The Geometry Cache (Step 7)
-    // Map: RegionID -> The geometric contours
     std::unordered_map<uint32_t, RegionGeometry> geometry_cache;
-
     std::vector<RegionBuildRecord> build_records;
     uint64_t last_processed_rev = 0;
 
     void update(const world::WorldView& view) {
         uint64_t current_world_rev = view.world_revision();
 
+        // 1. Always keep stability map synced with tracker
         stability.sync_with_tracker(tracker.get_active_regions());
         
-        // --- Step 6: Dirtiness Logic ---
+        // 2. Dirtiness Logic
         if (current_world_rev != last_processed_rev) {
             for (uint32_t i = 0; i < stability.active_snapshots.size(); ++i) {
                 if (!stability.validate_snapshot(i, view)) {
@@ -40,76 +36,77 @@ public:
         }
         stability.propagate_dirty_bounds();
 
-        // Check if extraction is needed
+        // 3. Check if we need to run the heavy lifting
         bool needs_extract = false;
         for (uint8_t flag : stability.dirty_flags) {
             if (flag == 1) { needs_extract = true; break; }
         }
 
-        const auto& index_mapping = tracker.get_index_mapping();
-        if (current_world_rev > last_processed_rev || index_mapping.empty()) {
+        if (current_world_rev > last_processed_rev || tracker.get_active_regions().empty()) {
             if (current_world_rev > 0) needs_extract = true;
         }
 
-        // --- Core Execution ---
+        // 4. Core Execution
         if (needs_extract) {
             extractor.extract(view, build_records);
             tracker.process_frame(extractor.label_grid(), build_records, view.width, view.height);
             last_processed_rev = current_world_rev;
 
-            const auto& finalized_regions = tracker.get_active_regions();
-            
-            // --- Step 7: Geometry Extraction ---
-            // Only rebuild what is actually dirty or brand new
+            // REFRESH GEOMETRY HERE
             refresh_geometry_cache(view);
 
+            // Update stability snapshots for the next frame
+            const auto& finalized_regions = tracker.get_active_regions();
             for (const auto& [id, record] : finalized_regions) {
                 stability.update_snapshot(id, record.bounds, current_world_rev);
             }
+            
+            // 5. Reset flags ONLY after geometry and snapshots are handled
+            stability.reset_dirty_flags(0);
         }
-        
-        // Reset flags AFTER geometry is harvested
-        stability.reset_dirty_flags(0);
     }
 
 private:
     void refresh_geometry_cache(const world::WorldView& view) {
-    const auto& active_regions = tracker.get_active_regions();
-    const auto& label_grid = extractor.label_grid();
+        const auto& active_regions = tracker.get_active_regions();
+        const auto& label_grid = extractor.label_grid();
 
-    // 1. Cleanup dead regions
-    for (auto it = geometry_cache.begin(); it != geometry_cache.end(); ) {
-        if (active_regions.find(it->first) == active_regions.end()) {
-            it = geometry_cache.erase(it);
-        } else {
-            ++it;
-        }
-    }
-
-    // 2. Process active regions
-    for (const auto& [id, record] : active_regions) {
-        // Correct lookup using the unordered_map in StabilitySystem
-        auto it = stability.id_to_index.find(id);
-        if (it == stability.id_to_index.end()) continue;
-
-        uint32_t idx = it->second;
-        bool is_dirty = (stability.dirty_flags[idx] == 1);
-        bool is_missing = (geometry_cache.find(id) == geometry_cache.end());
-
-        if (is_dirty || is_missing) {
-            // Pass view.width for flat grid indexing
-            RegionGeometry new_geo = GeometryExtractor::Build(id, record.bounds, label_grid, view.width);
-            
-            if (!is_missing) {
-                new_geo.version = geometry_cache[id].version + 1;
+        // 1. Cleanup dead regions from cache
+        for (auto it = geometry_cache.begin(); it != geometry_cache.end(); ) {
+            if (active_regions.find(it->first) == active_regions.end()) {
+                it = geometry_cache.erase(it);
             } else {
-                new_geo.version = 1;
+                ++it;
             }
-            geometry_cache[id] = std::move(new_geo);
+        }
+
+        // 2. Process active regions
+        for (const auto& [id, record] : active_regions) {
+            bool is_dirty = false;
+            bool is_missing = (geometry_cache.find(id) == geometry_cache.end());
+
+            // Check if Stability System knows about this yet
+            auto it = stability.id_to_index.find(id);
+            if (it != stability.id_to_index.end()) {
+                is_dirty = (stability.dirty_flags[it->second] == 1);
+            } else {
+                // If it's not in stability yet, it's brand new. MUST BUILD.
+                is_dirty = true; 
+            }
+
+            // BUILD LOGIC
+            if (is_dirty || is_missing) {
+                RegionGeometry new_geo = GeometryExtractor::Build(id, record.bounds, label_grid, view.width);
+                
+                if (!is_missing) {
+                    new_geo.version = geometry_cache[id].version + 1;
+                } else {
+                    new_geo.version = 1;
+                }
+                geometry_cache[id] = std::move(new_geo);
+            }
         }
     }
-}
 };
 
 } // namespace rigid
-
