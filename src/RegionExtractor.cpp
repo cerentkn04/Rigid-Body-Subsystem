@@ -145,10 +145,10 @@ static std::vector<RegionIndex> root_to_final_idx;
 
             auto& rec = out_records[final_idx];
             rec.pixel_count++;
-            if (x < rec.min_x) rec.min_x = x;
-            if (x > rec.max_x) rec.max_x = x;
-            if (y < rec.min_y) rec.min_y = y; // y is always >= rec.min_y in this scan
-            if (y > rec.max_y) rec.max_y = y;
+            if (x < rec.bounds.min_x) rec.bounds.min_x = x;
+            if (x > rec.bounds.max_x) rec.bounds.max_x = x;
+            if (y < rec.bounds.min_y) rec.bounds.min_y = y; // y is always >= rec.min_y in this scan
+            if (y > rec.bounds.max_y) rec.bounds.max_y = y;
         }
     }
 

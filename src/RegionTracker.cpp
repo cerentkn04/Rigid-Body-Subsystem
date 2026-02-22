@@ -9,7 +9,7 @@ namespace rigid {
 struct RegionTracker::Impl {
     std::vector<RegionIndex> prev_label_grid;
     std::vector<RegionID> prev_index_to_id;
-    
+   const std::vector<RegionID>& get_index_mapping() const; 
     struct OverlapPair {
         RegionIndex curr_idx;
         RegionID prev_id;
@@ -46,6 +46,7 @@ void RegionTracker::process_frame(
     const size_t cell_count = static_cast<size_t>(width * height);
     const size_t num_current = current_records.size();
     if (num_current == 0) {
+      auto previous_regions = m_active_regions;
         m_active_regions.clear();
         m_index_to_id_map.clear();
         return;
@@ -81,9 +82,9 @@ void RegionTracker::process_frame(
             auto& best = best_parents[i];
 
             // Only scan the rectangle where this specific rock exists
-            for (int y = rect.min_y; y <= rect.max_y; ++y) {
+            for (int y = rect.bounds.min_y; y <= rect.bounds.max_y; ++y) {
                 const int row_offset = y * width;
-                for (int x = rect.min_x; x <= rect.max_x; ++x) {
+                for (int x = rect.bounds.min_x; x <= rect.bounds.max_x; ++x) {
                     const int idx = row_offset + x;
 
                     // If this pixel belongs to the current rock we are analyzing
@@ -137,6 +138,7 @@ void RegionTracker::process_frame(
     }
 
     // 4. STATE UPDATE
+    auto previous_regions = m_active_regions;
     m_active_regions.clear();
     for (size_t i = 0; i < num_current; ++i) {
         RegionID id = m_impl->current_index_to_id[i];
@@ -145,7 +147,26 @@ void RegionTracker::process_frame(
         rec.id = id;
         rec.generation = m_impl->generations[id];
         rec.pixel_count = build.pixel_count;
-        rec.bounds = { build.min_x, build.min_y, build.max_x, build.max_y };
+        rec.bounds = { build.bounds};
+auto prev_it = previous_regions.find(id);
+if (prev_it != previous_regions.end()) {
+    const RegionRecord& old = prev_it->second;
+
+    bool changed =
+        (old.pixel_count != build.pixel_count) ||
+        (old.bounds.min_x != build.bounds.min_x) ||
+        (old.bounds.min_y != build.bounds.min_y) ||
+        (old.bounds.max_x != build.bounds.max_x) ||
+        (old.bounds.max_y != build.bounds.max_y);
+
+    rec.version = changed ? old.version + 1 : old.version;
+} else {
+    // New body
+    rec.version = 1;
+}
+
+
+
     }
 
     m_impl->prev_label_grid = current_label_grid;

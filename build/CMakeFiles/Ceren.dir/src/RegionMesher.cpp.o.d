@@ -71,7 +71,6 @@ CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o: \
  /usr/include/bits/stdint-intn.h /usr/include/bits/stdint-uintn.h \
  /usr/include/bits/stdint-least.h \
  /home/ceen/projects/ceren/include/RigidPixelTypes.hpp \
- /home/ceen/projects/ceren/include/regionScratch.hpp \
  /usr/include/c++/15.2.1/map /usr/include/c++/15.2.1/bits/stl_tree.h \
  /usr/include/c++/15.2.1/ext/aligned_buffer.h \
  /usr/include/c++/15.2.1/bits/node_handle.h \

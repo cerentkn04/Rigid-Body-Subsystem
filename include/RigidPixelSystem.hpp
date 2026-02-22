@@ -50,9 +50,11 @@ public:
         if (needs_extract) {
             extractor.extract(view, build_records);
             tracker.process_frame(extractor.label_grid(), build_records, view.width, view.height);
+            stability.sync_with_tracker(tracker.get_active_regions());
             last_processed_rev = current_world_rev;
 
             // REFRESH GEOMETRY HERE
+           cleanup_dead_geometry(); 
             refresh_geometry_cache(view);
 
             // Update stability snapshots for the next frame
@@ -68,45 +70,72 @@ public:
 
 private:
     void refresh_geometry_cache(const world::WorldView& view) {
-        const auto& active_regions = tracker.get_active_regions();
-        const auto& label_grid = extractor.label_grid();
+    const auto& active_regions = tracker.get_active_regions();
+    const auto& label_grid = extractor.label_grid();
+    const auto& index_to_id = tracker.get_index_mapping();
+for (RegionIndex idx = 0; idx < index_to_id.size(); ++idx) {
+    RegionID id = index_to_id[idx];
+    const RegionBuildRecord& record = build_records[idx];
+    const RegionRecord& region = active_regions.at(id);
 
-        // 1. Cleanup dead regions from cache
-        for (auto it = geometry_cache.begin(); it != geometry_cache.end(); ) {
-            if (active_regions.find(it->first) == active_regions.end()) {
-                it = geometry_cache.erase(it);
-            } else {
-                ++it;
-            }
-        }
+    bool is_missing = geometry_cache.find(id) == geometry_cache.end();
+    bool version_mismatch = false;
 
-        // 2. Process active regions
-        for (const auto& [id, record] : active_regions) {
-            bool is_dirty = false;
-            bool is_missing = (geometry_cache.find(id) == geometry_cache.end());
+    if (!is_missing) {
+        version_mismatch = (geometry_cache[id].version != region.version);
+    }
 
-            // Check if Stability System knows about this yet
-            auto it = stability.id_to_index.find(id);
-            if (it != stability.id_to_index.end()) {
-                is_dirty = (stability.dirty_flags[it->second] == 1);
-            } else {
-                // If it's not in stability yet, it's brand new. MUST BUILD.
-                is_dirty = true; 
-            }
+    if (is_missing || version_mismatch) {
+        RegionGeometry geo =
+            GeometryExtractor::Build(idx, record.bounds, label_grid, view.width);
 
-            // BUILD LOGIC
-            if (is_dirty || is_missing) {
-                RegionGeometry new_geo = GeometryExtractor::Build(id, record.bounds, label_grid, view.width);
-                
-                if (!is_missing) {
-                    new_geo.version = geometry_cache[id].version + 1;
-                } else {
-                    new_geo.version = 1;
-                }
-                geometry_cache[id] = std::move(new_geo);
-            }
+        geo.version = region.version;
+        geometry_cache[id] = std::move(geo);
+    }
+}
+
+
+/*
+    // Remove dead regions
+    for (auto it = geometry_cache.begin(); it != geometry_cache.end();) {
+        if (active_regions.find(it->first) == active_regions.end())
+            it = geometry_cache.erase(it);
+        else
+            ++it;
+    }
+
+    // Build dirty or missing
+    for (RegionIndex idx = 0; idx < index_to_id.size(); ++idx) {
+        RegionID id = index_to_id[idx];
+printf("World rev: %llu\n", sim.world_revision_counter);        const RegionBuildRecord& record = build_records[idx];
+
+        bool is_missing = geometry_cache.find(id) == geometry_cache.end();
+
+        bool is_dirty = true;
+        auto stab_it = stability.id_to_index.find(id);
+        if (stab_it != stability.id_to_index.end())
+            is_dirty = stability.dirty_flags[stab_it->second] == 1;
+
+        if (is_dirty || is_missing) {
+            RegionGeometry geo =
+                GeometryExtractor::Build(idx, record.bounds, label_grid, view.width);
+
+            geo.version = is_missing ? 1 : geometry_cache[id].version + 1;
+            geometry_cache[id] = std::move(geo);
         }
     }
+  */
+}
+ void cleanup_dead_geometry() {
+    const auto& active = tracker.get_active_regions();
+
+    for (auto it = geometry_cache.begin(); it != geometry_cache.end();) {
+        if (active.find(it->first) == active.end())
+            it = geometry_cache.erase(it);
+        else
+            ++it;
+    }
+}          // 2. Process active regions
 };
 
 } // namespace rigid

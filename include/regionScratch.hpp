@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-
+#include <RigidPixelTypes.hpp>
 namespace rigid {
 
 // Temporary index into region array (frame-local)
@@ -16,13 +16,7 @@ struct RegionLabelBuffer {
 
 // Temporary region build record
 struct RegionBuildRecord {
-    // Bounding box (cell-space)
-    int32_t min_x;
-    int32_t min_y;
-    int32_t max_x;
-    int32_t max_y;
-
-    // Pixel count
+    CellAABB bounds;
     uint32_t pixel_count;
 };
 
