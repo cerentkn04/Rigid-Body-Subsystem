@@ -254,11 +254,12 @@ SDL_GetWindowSize(window, &winW, &winH);
 
 float scaleX = (float)winW / GRID_WIDTH;
 float scaleY = (float)winH / GRID_HEIGHT;
-
-float x1 = p1.x * scaleX;
-float y1 = p1.y * scaleY;
-float x2 = p2.x * scaleX;
-float y2 = p2.y * scaleY;
+float visualOffsetX = 0.5f * scaleX; 
+float visualOffsetY = 0.5f * scaleY;
+float x1 = (p1.x * scaleX) + visualOffsetX;
+float y1 = (p1.y * scaleY) + visualOffsetY;
+float x2 = (p2.x * scaleX) + visualOffsetX;
+float y2 = (p2.y * scaleY) + visualOffsetY;
 
 
             SDL_RenderLine(renderer, x1, y1, x2, y2);

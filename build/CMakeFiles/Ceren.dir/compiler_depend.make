@@ -193,7 +193,6 @@ CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o: /home/ceen/projects/ceren/src/Regio
   /usr/include/c++/15.2.1/bits/allocator.h \
   /usr/include/c++/15.2.1/bits/concept_check.h \
   /usr/include/c++/15.2.1/bits/cpp_type_traits.h \
-  /usr/include/c++/15.2.1/bits/erase_if.h \
   /usr/include/c++/15.2.1/bits/exception.h \
   /usr/include/c++/15.2.1/bits/exception_defines.h \
   /usr/include/c++/15.2.1/bits/functexcept.h \
@@ -206,7 +205,6 @@ CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o: /home/ceen/projects/ceren/src/Regio
   /usr/include/c++/15.2.1/bits/memoryfwd.h \
   /usr/include/c++/15.2.1/bits/move.h \
   /usr/include/c++/15.2.1/bits/new_allocator.h \
-  /usr/include/c++/15.2.1/bits/node_handle.h \
   /usr/include/c++/15.2.1/bits/predefined_ops.h \
   /usr/include/c++/15.2.1/bits/ptr_traits.h \
   /usr/include/c++/15.2.1/bits/range_access.h \
@@ -228,11 +226,8 @@ CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o: /home/ceen/projects/ceren/src/Regio
   /usr/include/c++/15.2.1/bits/stl_iterator.h \
   /usr/include/c++/15.2.1/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/15.2.1/bits/stl_iterator_base_types.h \
-  /usr/include/c++/15.2.1/bits/stl_map.h \
-  /usr/include/c++/15.2.1/bits/stl_multimap.h \
   /usr/include/c++/15.2.1/bits/stl_pair.h \
   /usr/include/c++/15.2.1/bits/stl_tempbuf.h \
-  /usr/include/c++/15.2.1/bits/stl_tree.h \
   /usr/include/c++/15.2.1/bits/stl_uninitialized.h \
   /usr/include/c++/15.2.1/bits/stl_vector.h \
   /usr/include/c++/15.2.1/bits/uniform_int_dist.h \
@@ -249,13 +244,11 @@ CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o: /home/ceen/projects/ceren/src/Regio
   /usr/include/c++/15.2.1/cstdlib \
   /usr/include/c++/15.2.1/debug/assertions.h \
   /usr/include/c++/15.2.1/debug/debug.h \
-  /usr/include/c++/15.2.1/ext/aligned_buffer.h \
   /usr/include/c++/15.2.1/ext/alloc_traits.h \
   /usr/include/c++/15.2.1/ext/numeric_traits.h \
   /usr/include/c++/15.2.1/ext/type_traits.h \
   /usr/include/c++/15.2.1/initializer_list \
   /usr/include/c++/15.2.1/limits \
-  /usr/include/c++/15.2.1/map \
   /usr/include/c++/15.2.1/new \
   /usr/include/c++/15.2.1/numbers \
   /usr/include/c++/15.2.1/pstl/execution_defs.h \
@@ -2608,14 +2601,6 @@ CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o:
 
 /usr/include/bits/types/struct_FILE.h:
 
-/usr/include/bits/signal_ext.h:
-
-/usr/include/bits/types/mbstate_t.h:
-
-/usr/include/bits/types/error_t.h:
-
-/usr/include/bits/types/cookie_io_functions_t.h:
-
 /usr/include/bits/types/__sigval_t.h:
 
 /usr/include/gnu/stubs-64.h:
@@ -2672,6 +2657,8 @@ libSDL3.so.0.2.24:
 
 /usr/include/c++/15.2.1/bits/vector.tcc:
 
+/usr/include/c++/15.2.1/pstl/glue_algorithm_defs.h:
+
 /usr/include/c++/15.2.1/cstdint:
 
 /usr/include/c++/15.2.1/bits/stl_pair.h:
@@ -2705,6 +2692,8 @@ libSDL3.so.0.2.24:
 /usr/include/bits/ss_flags.h:
 
 /usr/include/c++/15.2.1/bits/requires_hosted.h:
+
+/usr/include/bits/types/error_t.h:
 
 /usr/include/c++/15.2.1/bits/basic_string.tcc:
 
@@ -2769,8 +2758,6 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o:
 /usr/include/bits/types.h:
 
 /usr/include/bits/byteswap.h:
-
-/usr/include/c++/15.2.1/bits/stl_map.h:
 
 /usr/include/c++/15.2.1/tr1/special_function_util.h:
 
@@ -3042,8 +3029,6 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o:
 
 /home/ceen/projects/ceren/include/RegionMesher.hpp:
 
-/usr/include/c++/15.2.1/bits/stl_multimap.h:
-
 /usr/include/c++/15.2.1/deque:
 
 /usr/include/bits/flt-eval-method.h:
@@ -3090,27 +3075,15 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_platform_defines.h:
 
-/usr/include/c++/15.2.1/bits/erase_if.h:
-
 /usr/include/c++/15.2.1/bits/specfun.h:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_assert.h:
-
-/usr/include/c++/15.2.1/pstl/glue_algorithm_defs.h:
-
-/usr/include/c++/15.2.1/bits/stl_tree.h:
 
 /usr/include/stdint.h:
 
 /usr/include/endian.h:
 
 /usr/include/c++/15.2.1/cmath:
-
-/usr/include/c++/15.2.1/ext/aligned_buffer.h:
-
-/usr/include/features.h:
-
-/usr/include/bits/types/__FILE.h:
 
 /usr/include/c++/15.2.1/tr1/exp_integral.tcc:
 
@@ -3144,6 +3117,8 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o:
 
 /usr/include/c++/15.2.1/tr1/riemann_zeta.tcc:
 
+/usr/include/c++/15.2.1/bits/erase_if.h:
+
 /usr/include/c++/15.2.1/bits/hashtable.h:
 
 /usr/include/c++/15.2.1/bits/hashtable_policy.h:
@@ -3157,6 +3132,8 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o:
 /usr/include/c++/15.2.1/bits/unordered_set.h:
 
 /home/ceen/projects/ceren/src/StabilitySystem.cpp:
+
+/usr/include/c++/15.2.1/ext/aligned_buffer.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/prfchiintrin.h:
 
@@ -3212,10 +3189,6 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_keyboard.h:
 
-/usr/include/bits/types/__mbstate_t.h:
-
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_hidapi.h:
-
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_joystick.h:
 
 /usr/include/c++/15.2.1/numeric:
@@ -3255,6 +3228,10 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o:
 /usr/include/bits/types/clock_t.h:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_stdinc.h:
+
+/usr/include/bits/signal_ext.h:
+
+/usr/include/bits/types/mbstate_t.h:
 
 /usr/include/c++/15.2.1/bits/stl_heap.h:
 
@@ -3306,8 +3283,16 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2copyintrin.h:
 
-/usr/include/c++/15.2.1/map:
-
 /usr/include/bits/locale.h:
 
 /usr/include/bits/stdio_lim.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_hidapi.h:
+
+/usr/include/bits/types/__mbstate_t.h:
+
+/usr/include/features.h:
+
+/usr/include/bits/types/__FILE.h:
+
+/usr/include/bits/types/cookie_io_functions_t.h:
