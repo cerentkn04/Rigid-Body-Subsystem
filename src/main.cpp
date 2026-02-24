@@ -2,16 +2,9 @@
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
-#include <vector>
 #include <random>
 #include <algorithm>
-#include <RigidPixelWorldView.hpp>
-#include <RigidPixelTypes.hpp>
 #include <regionScratch.hpp>
-#include <RegionTracker.hpp>
-#include <RegionType.hpp>
-#include <RegionExtractor.hpp>
-#include <RegionStability.hpp>
 #include "RigidPixelSystem.hpp"
 constexpr int WINDOW_WIDTH = 800;
 constexpr int WINDOW_HEIGHT = 600;

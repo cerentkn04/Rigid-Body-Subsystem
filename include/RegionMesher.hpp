@@ -26,7 +26,8 @@ public:
         uint32_t regionID, 
         const CellAABB& bounds, 
         const std::vector<uint32_t>& labelGrid, // Flat vector
-        int gridWidth                           // Pass width for index math
+        int gridWidth,
+        int gridHeight
     );
 };
 

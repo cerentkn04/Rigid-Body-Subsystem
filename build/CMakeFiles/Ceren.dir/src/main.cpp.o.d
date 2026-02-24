@@ -86,65 +86,17 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: \
  /usr/include/assert.h \
  /home/ceen/projects/ceren/vendored/imgui/backends/imgui_impl_sdl3.h \
  /home/ceen/projects/ceren/vendored/imgui/backends/imgui_impl_sdlrenderer3.h \
- /usr/include/c++/15.2.1/vector \
+ /usr/include/c++/15.2.1/random \
  /usr/include/c++/15.2.1/bits/requires_hosted.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/os_defines.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/cpu_defines.h \
- /usr/include/c++/15.2.1/pstl/pstl_config.h \
- /usr/include/c++/15.2.1/bits/stl_algobase.h \
- /usr/include/c++/15.2.1/bits/functexcept.h \
- /usr/include/c++/15.2.1/bits/exception_defines.h \
+ /usr/include/c++/15.2.1/pstl/pstl_config.h /usr/include/c++/15.2.1/cmath \
  /usr/include/c++/15.2.1/bits/cpp_type_traits.h \
  /usr/include/c++/15.2.1/bits/version.h \
  /usr/include/c++/15.2.1/type_traits \
- /usr/include/c++/15.2.1/ext/type_traits.h \
- /usr/include/c++/15.2.1/ext/numeric_traits.h \
- /usr/include/c++/15.2.1/bits/stl_pair.h \
- /usr/include/c++/15.2.1/bits/move.h \
- /usr/include/c++/15.2.1/bits/utility.h /usr/include/c++/15.2.1/compare \
- /usr/include/c++/15.2.1/concepts \
- /usr/include/c++/15.2.1/bits/stl_iterator_base_types.h \
- /usr/include/c++/15.2.1/bits/iterator_concepts.h \
- /usr/include/c++/15.2.1/bits/ptr_traits.h \
- /usr/include/c++/15.2.1/bits/ranges_cmp.h \
- /usr/include/c++/15.2.1/bits/stl_iterator_base_funcs.h \
- /usr/include/c++/15.2.1/bits/concept_check.h \
- /usr/include/c++/15.2.1/debug/assertions.h \
- /usr/include/c++/15.2.1/bits/stl_iterator.h /usr/include/c++/15.2.1/new \
- /usr/include/c++/15.2.1/bits/exception.h \
- /usr/include/c++/15.2.1/bits/stl_construct.h \
- /usr/include/c++/15.2.1/debug/debug.h \
- /usr/include/c++/15.2.1/bits/predefined_ops.h \
- /usr/include/c++/15.2.1/bit /usr/include/c++/15.2.1/bits/allocator.h \
- /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++allocator.h \
- /usr/include/c++/15.2.1/bits/new_allocator.h \
- /usr/include/c++/15.2.1/bits/memoryfwd.h \
- /usr/include/c++/15.2.1/bits/stl_uninitialized.h \
- /usr/include/c++/15.2.1/ext/alloc_traits.h \
- /usr/include/c++/15.2.1/bits/alloc_traits.h \
- /usr/include/c++/15.2.1/bits/stl_vector.h \
- /usr/include/c++/15.2.1/initializer_list \
- /usr/include/c++/15.2.1/bits/ranges_base.h \
- /usr/include/c++/15.2.1/bits/max_size_type.h \
- /usr/include/c++/15.2.1/numbers \
- /usr/include/c++/15.2.1/bits/stl_bvector.h \
- /usr/include/c++/15.2.1/bits/functional_hash.h \
- /usr/include/c++/15.2.1/bits/hash_bytes.h \
- /usr/include/c++/15.2.1/bits/refwrap.h \
- /usr/include/c++/15.2.1/bits/invoke.h \
- /usr/include/c++/15.2.1/bits/stl_function.h \
- /usr/include/c++/15.2.1/backward/binders.h \
- /usr/include/c++/15.2.1/bits/range_access.h \
- /usr/include/c++/15.2.1/bits/vector.tcc \
- /usr/include/c++/15.2.1/bits/memory_resource.h \
- /usr/include/c++/15.2.1/cstddef \
- /usr/include/c++/15.2.1/bits/uses_allocator.h \
- /usr/include/c++/15.2.1/bits/uses_allocator_args.h \
- /usr/include/c++/15.2.1/tuple /usr/include/c++/15.2.1/bits/ranges_util.h \
- /usr/include/c++/15.2.1/random /usr/include/c++/15.2.1/cmath \
- /usr/include/math.h /usr/include/bits/math-vector.h \
- /usr/include/bits/libm-simd-decl-stubs.h \
+ /usr/include/c++/15.2.1/ext/type_traits.h /usr/include/math.h \
+ /usr/include/bits/math-vector.h /usr/include/bits/libm-simd-decl-stubs.h \
  /usr/include/bits/flt-eval-method.h /usr/include/bits/fp-logb.h \
  /usr/include/bits/fp-fast.h /usr/include/bits/mathcalls-macros.h \
  /usr/include/bits/mathcalls-helper-functions.h \
@@ -163,7 +115,28 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: \
  /usr/include/bits/atomic_wide_counter.h /usr/include/bits/struct_mutex.h \
  /usr/include/bits/struct_rwlock.h /usr/include/alloca.h \
  /usr/include/bits/stdlib-float.h /usr/include/c++/15.2.1/bits/specfun.h \
- /usr/include/c++/15.2.1/limits /usr/include/c++/15.2.1/tr1/gamma.tcc \
+ /usr/include/c++/15.2.1/bits/stl_algobase.h \
+ /usr/include/c++/15.2.1/bits/functexcept.h \
+ /usr/include/c++/15.2.1/bits/exception_defines.h \
+ /usr/include/c++/15.2.1/ext/numeric_traits.h \
+ /usr/include/c++/15.2.1/bits/stl_pair.h \
+ /usr/include/c++/15.2.1/bits/move.h \
+ /usr/include/c++/15.2.1/bits/utility.h /usr/include/c++/15.2.1/compare \
+ /usr/include/c++/15.2.1/concepts \
+ /usr/include/c++/15.2.1/bits/stl_iterator_base_types.h \
+ /usr/include/c++/15.2.1/bits/iterator_concepts.h \
+ /usr/include/c++/15.2.1/bits/ptr_traits.h \
+ /usr/include/c++/15.2.1/bits/ranges_cmp.h \
+ /usr/include/c++/15.2.1/bits/stl_iterator_base_funcs.h \
+ /usr/include/c++/15.2.1/bits/concept_check.h \
+ /usr/include/c++/15.2.1/debug/assertions.h \
+ /usr/include/c++/15.2.1/bits/stl_iterator.h /usr/include/c++/15.2.1/new \
+ /usr/include/c++/15.2.1/bits/exception.h \
+ /usr/include/c++/15.2.1/bits/stl_construct.h \
+ /usr/include/c++/15.2.1/debug/debug.h \
+ /usr/include/c++/15.2.1/bits/predefined_ops.h \
+ /usr/include/c++/15.2.1/bit /usr/include/c++/15.2.1/limits \
+ /usr/include/c++/15.2.1/tr1/gamma.tcc \
  /usr/include/c++/15.2.1/tr1/special_function_util.h \
  /usr/include/c++/15.2.1/tr1/bessel_function.tcc \
  /usr/include/c++/15.2.1/tr1/beta_function.tcc \
@@ -177,8 +150,12 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: \
  /usr/include/c++/15.2.1/tr1/riemann_zeta.tcc \
  /usr/include/c++/15.2.1/cstdint /usr/include/c++/15.2.1/cstdlib \
  /usr/include/c++/15.2.1/string /usr/include/c++/15.2.1/bits/stringfwd.h \
+ /usr/include/c++/15.2.1/bits/memoryfwd.h \
  /usr/include/c++/15.2.1/bits/char_traits.h \
  /usr/include/c++/15.2.1/bits/postypes.h /usr/include/c++/15.2.1/cwchar \
+ /usr/include/c++/15.2.1/bits/allocator.h \
+ /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++allocator.h \
+ /usr/include/c++/15.2.1/bits/new_allocator.h \
  /usr/include/c++/15.2.1/bits/localefwd.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++locale.h \
  /usr/include/c++/15.2.1/clocale /usr/include/locale.h \
@@ -186,8 +163,21 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: \
  /usr/include/c++/15.2.1/cctype /usr/include/ctype.h \
  /usr/include/c++/15.2.1/bits/ostream_insert.h \
  /usr/include/c++/15.2.1/bits/cxxabi_forced.h \
+ /usr/include/c++/15.2.1/bits/stl_function.h \
+ /usr/include/c++/15.2.1/backward/binders.h \
+ /usr/include/c++/15.2.1/bits/refwrap.h \
+ /usr/include/c++/15.2.1/bits/invoke.h \
+ /usr/include/c++/15.2.1/bits/range_access.h \
+ /usr/include/c++/15.2.1/initializer_list \
  /usr/include/c++/15.2.1/bits/basic_string.h \
+ /usr/include/c++/15.2.1/ext/alloc_traits.h \
+ /usr/include/c++/15.2.1/bits/alloc_traits.h \
  /usr/include/c++/15.2.1/string_view \
+ /usr/include/c++/15.2.1/bits/functional_hash.h \
+ /usr/include/c++/15.2.1/bits/hash_bytes.h \
+ /usr/include/c++/15.2.1/bits/ranges_base.h \
+ /usr/include/c++/15.2.1/bits/max_size_type.h \
+ /usr/include/c++/15.2.1/numbers \
  /usr/include/c++/15.2.1/bits/string_view.tcc \
  /usr/include/c++/15.2.1/ext/string_conversions.h \
  /usr/include/c++/15.2.1/cstdio /usr/include/stdio.h \
@@ -201,7 +191,16 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: \
  /usr/include/bits/types/error_t.h \
  /usr/include/c++/15.2.1/bits/charconv.h \
  /usr/include/c++/15.2.1/bits/basic_string.tcc \
- /usr/include/c++/15.2.1/bits/random.h \
+ /usr/include/c++/15.2.1/bits/memory_resource.h \
+ /usr/include/c++/15.2.1/cstddef \
+ /usr/include/c++/15.2.1/bits/uses_allocator.h \
+ /usr/include/c++/15.2.1/bits/uses_allocator_args.h \
+ /usr/include/c++/15.2.1/tuple /usr/include/c++/15.2.1/bits/ranges_util.h \
+ /usr/include/c++/15.2.1/bits/random.h /usr/include/c++/15.2.1/vector \
+ /usr/include/c++/15.2.1/bits/stl_uninitialized.h \
+ /usr/include/c++/15.2.1/bits/stl_vector.h \
+ /usr/include/c++/15.2.1/bits/stl_bvector.h \
+ /usr/include/c++/15.2.1/bits/vector.tcc \
  /usr/include/c++/15.2.1/bits/uniform_int_dist.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/opt_random.h \
  /usr/include/c++/15.2.1/bits/random.tcc /usr/include/c++/15.2.1/numeric \
@@ -216,10 +215,9 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: \
  /usr/include/c++/15.2.1/bits/ranges_algo.h \
  /usr/include/c++/15.2.1/bits/ranges_algobase.h \
  /usr/include/c++/15.2.1/pstl/glue_algorithm_defs.h \
- /home/ceen/projects/ceren/include/RigidPixelWorldView.hpp \
- /home/ceen/projects/ceren/include/RigidPixelTypes.hpp \
  /home/ceen/projects/ceren/include/regionScratch.hpp \
- /home/ceen/projects/ceren/include/RegionTracker.hpp \
+ /home/ceen/projects/ceren/include/RigidPixelTypes.hpp \
+ /home/ceen/projects/ceren/include/RigidPixelSystem.hpp \
  /usr/include/c++/15.2.1/unordered_map \
  /usr/include/c++/15.2.1/bits/unordered_map.h \
  /usr/include/c++/15.2.1/bits/hashtable.h \
@@ -228,8 +226,9 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: \
  /usr/include/c++/15.2.1/bits/enable_special_members.h \
  /usr/include/c++/15.2.1/bits/node_handle.h \
  /usr/include/c++/15.2.1/bits/erase_if.h \
- /home/ceen/projects/ceren/include/RegionType.hpp \
  /home/ceen/projects/ceren/include/RegionExtractor.hpp \
+ /home/ceen/projects/ceren/include/RegionTracker.hpp \
+ /home/ceen/projects/ceren/include/RegionType.hpp \
  /home/ceen/projects/ceren/include/RegionStability.hpp \
- /home/ceen/projects/ceren/include/RigidPixelSystem.hpp \
+ /home/ceen/projects/ceren/include/RigidPixelWorldView.hpp \
  /home/ceen/projects/ceren/include/RegionMesher.hpp

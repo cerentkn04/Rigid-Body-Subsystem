@@ -7,7 +7,7 @@
 #include <RegionStability.hpp>
 #include <RigidPixelWorldView.hpp>
 #include "RegionMesher.hpp" 
-
+#include "stdio.h"
 namespace rigid {
 
 class RigidPixelSystem {
@@ -73,8 +73,11 @@ private:
     const auto& active_regions = tracker.get_active_regions();
     const auto& label_grid = extractor.label_grid();
     const auto& index_to_id = tracker.get_index_mapping();
+
+    //printf("Min region index: %u\n", index_to_id[0]);
 for (RegionIndex idx = 0; idx < index_to_id.size(); ++idx) {
     RegionID id = index_to_id[idx];
+
     const RegionBuildRecord& record = build_records[idx];
     const RegionRecord& region = active_regions.at(id);
 
@@ -87,7 +90,7 @@ for (RegionIndex idx = 0; idx < index_to_id.size(); ++idx) {
 
     if (is_missing || version_mismatch) {
         RegionGeometry geo =
-            GeometryExtractor::Build(idx, record.bounds, label_grid, view.width);
+            GeometryExtractor::Build(idx, record.bounds, label_grid, view.width,view.height);
 
         geo.version = region.version;
         geometry_cache[id] = std::move(geo);
@@ -95,36 +98,6 @@ for (RegionIndex idx = 0; idx < index_to_id.size(); ++idx) {
 }
 
 
-/*
-    // Remove dead regions
-    for (auto it = geometry_cache.begin(); it != geometry_cache.end();) {
-        if (active_regions.find(it->first) == active_regions.end())
-            it = geometry_cache.erase(it);
-        else
-            ++it;
-    }
-
-    // Build dirty or missing
-    for (RegionIndex idx = 0; idx < index_to_id.size(); ++idx) {
-        RegionID id = index_to_id[idx];
-printf("World rev: %llu\n", sim.world_revision_counter);        const RegionBuildRecord& record = build_records[idx];
-
-        bool is_missing = geometry_cache.find(id) == geometry_cache.end();
-
-        bool is_dirty = true;
-        auto stab_it = stability.id_to_index.find(id);
-        if (stab_it != stability.id_to_index.end())
-            is_dirty = stability.dirty_flags[stab_it->second] == 1;
-
-        if (is_dirty || is_missing) {
-            RegionGeometry geo =
-                GeometryExtractor::Build(idx, record.bounds, label_grid, view.width);
-
-            geo.version = is_missing ? 1 : geometry_cache[id].version + 1;
-            geometry_cache[id] = std::move(geo);
-        }
-    }
-  */
 }
  void cleanup_dead_geometry() {
     const auto& active = tracker.get_active_regions();

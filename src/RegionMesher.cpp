@@ -43,7 +43,7 @@ static void SimplifyContour(std::vector<Vertex>& points) {
         const Vertex& curr = points[i];
         const Vertex& next = points[(i + 1) % points.size()];
 
-        // Calculate 2D Cross Product of vectors (prev->curr) and (curr->next)
+        // Calculas only happens when drawing at the bottomte 2D Cross Product of vectors (prev->curr) and (curr->next)
         float dx1 = curr.x - prev.x;
         float dy1 = curr.y - prev.y;
         float dx2 = next.x - curr.x;
@@ -90,7 +90,8 @@ RegionGeometry GeometryExtractor::Build(
     uint32_t regionID,
     const CellAABB& bounds,
     const std::vector<uint32_t>& labelGrid,
-    int gridWidth)
+    int gridWidth,
+    int gridHeight)
 {
     RegionGeometry geo;
     geo.region_id = regionID;
@@ -100,9 +101,8 @@ RegionGeometry GeometryExtractor::Build(
     edges.reserve(256); // optional small reserve
 
     auto getLabel = [&](int ix, int iy) {
-        if (iy < 0 || ix < 0 || ix >= gridWidth ||
-            (iy * gridWidth + ix) >= (int)labelGrid.size())
-            return 0u;
+        if (iy < 0 || ix < 0 || ix >= gridWidth || iy >= gridHeight)
+             return std::numeric_limits<uint32_t>::max();
         return labelGrid[iy * gridWidth + ix];
     };
 
