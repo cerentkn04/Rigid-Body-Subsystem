@@ -4,7 +4,9 @@
 # compile C with /usr/bin/cc
 C_DEFINES = 
 
-C_INCLUDES = -I/home/ceen/projects/ceren/vendored/box2d/src/../include -I/home/ceen/projects/ceren/build/vendored/box2d/src -I/home/ceen/projects/ceren/vendored/box2d/src
+C_INCLUDES = -I/Users/cerentekin/Rigid-Body-Subsystem/vendored/box2d/src/../include -I/Users/cerentekin/Rigid-Body-Subsystem/build/vendored/box2d/src -I/Users/cerentekin/Rigid-Body-Subsystem/vendored/box2d/src
 
-C_FLAGS = -std=gnu17 -fvisibility=hidden -ffp-contract=off -Wmissing-prototypes -Wall -Wextra -pedantic -Wno-unused-value
+C_FLAGSarm64 = -std=gnu17 -arch arm64 -fvisibility=hidden -ffp-contract=off -Wmissing-prototypes -Wall -Wextra -pedantic
+
+C_FLAGS = -std=gnu17 -arch arm64 -fvisibility=hidden -ffp-contract=off -Wmissing-prototypes -Wall -Wextra -pedantic
 

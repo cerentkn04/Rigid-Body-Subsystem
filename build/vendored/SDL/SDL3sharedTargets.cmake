@@ -52,7 +52,7 @@ add_library(SDL3::SDL3-shared SHARED IMPORTED)
 set_target_properties(SDL3::SDL3-shared PROPERTIES
   COMPATIBLE_INTERFACE_BOOL "SDL3_SHARED"
   COMPATIBLE_INTERFACE_STRING "SDL_VERSION"
-  INTERFACE_LINK_DEPENDS "/home/ceen/projects/ceren/vendored/SDL/src/dynapi/SDL_dynapi.sym"
+  INTERFACE_LINK_DEPENDS "/Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/src/dynapi/SDL_dynapi.sym"
   INTERFACE_LINK_LIBRARIES "SDL3::Headers"
   INTERFACE_SDL3_SHARED "TRUE"
   INTERFACE_SDL_VERSION "SDL3"
@@ -61,8 +61,8 @@ set_target_properties(SDL3::SDL3-shared PROPERTIES
 # Import target "SDL3::SDL3-shared" for configuration ""
 set_property(TARGET SDL3::SDL3-shared APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
 set_target_properties(SDL3::SDL3-shared PROPERTIES
-  IMPORTED_LOCATION_NOCONFIG "/home/ceen/projects/ceren/build/libSDL3.so.0.2.24"
-  IMPORTED_SONAME_NOCONFIG "libSDL3.so.0"
+  IMPORTED_LOCATION_NOCONFIG "/Users/cerentekin/Rigid-Body-Subsystem/build/libSDL3.0.dylib"
+  IMPORTED_SONAME_NOCONFIG "@rpath/libSDL3.0.dylib"
   )
 
 # Make sure the targets which have been exported in some other

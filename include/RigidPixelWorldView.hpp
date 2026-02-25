@@ -4,7 +4,8 @@
 namespace world {
 
 using WorldRevision = uint64_t;
-
+using GroupID = uint32_t; // Or whatever type your engine uses for Entities/Groups
+static constexpr GroupID InvalidGroupID = 0;        
 enum class CellSolidity : uint8_t {
     Empty = 0,
     Solid = 1
@@ -42,6 +43,7 @@ struct WorldView final {
         - Granularity is implementation-defined (cell, chunk, stripe, etc).
     */
     WorldRevision (*region_revision)(int x, int y);
+    GroupID (*group_id_at)(int x, int y);
 };
 
 } 

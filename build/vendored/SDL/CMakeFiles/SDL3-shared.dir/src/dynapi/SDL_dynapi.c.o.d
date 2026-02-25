@@ -1,108 +1,188 @@
 vendored/SDL/CMakeFiles/SDL3-shared.dir/src/dynapi/SDL_dynapi.c.o: \
- /home/ceen/projects/ceren/vendored/SDL/src/dynapi/SDL_dynapi.c \
- /usr/include/stdc-predef.h \
- /home/ceen/projects/ceren/build/vendored/SDL/include-config-/build_config/SDL_build_config.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_platform_defines.h \
- /home/ceen/projects/ceren/vendored/SDL/src/dynapi/SDL_dynapi.h \
- /home/ceen/projects/ceren/vendored/SDL/src/dynapi/SDL_dynapi_unsupported.h \
- /usr/include/stdio.h /usr/include/bits/libc-header-start.h \
- /usr/include/features.h /usr/include/features-time64.h \
- /usr/include/bits/wordsize.h /usr/include/bits/timesize.h \
- /usr/include/sys/cdefs.h /usr/include/bits/long-double.h \
- /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
- /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
- /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
- /usr/include/bits/types.h /usr/include/bits/typesizes.h \
- /usr/include/bits/time64.h /usr/include/bits/types/__fpos_t.h \
- /usr/include/bits/types/__mbstate_t.h \
- /usr/include/bits/types/__fpos64_t.h /usr/include/bits/types/__FILE.h \
- /usr/include/bits/types/FILE.h /usr/include/bits/types/struct_FILE.h \
- /usr/include/bits/types/cookie_io_functions_t.h \
- /usr/include/bits/stdio_lim.h /usr/include/bits/floatn.h \
- /usr/include/bits/floatn-common.h /usr/include/stdlib.h \
- /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
- /usr/include/sys/types.h /usr/include/bits/types/clock_t.h \
- /usr/include/bits/types/clockid_t.h /usr/include/bits/types/time_t.h \
- /usr/include/bits/types/timer_t.h /usr/include/bits/stdint-intn.h \
- /usr/include/endian.h /usr/include/bits/endian.h \
- /usr/include/bits/endianness.h /usr/include/bits/byteswap.h \
- /usr/include/bits/uintn-identity.h /usr/include/sys/select.h \
- /usr/include/bits/select.h /usr/include/bits/types/sigset_t.h \
- /usr/include/bits/types/__sigset_t.h \
- /usr/include/bits/types/struct_timeval.h \
- /usr/include/bits/types/struct_timespec.h \
- /usr/include/bits/pthreadtypes.h /usr/include/bits/thread-shared-types.h \
- /usr/include/bits/pthreadtypes-arch.h \
- /usr/include/bits/atomic_wide_counter.h /usr/include/bits/struct_mutex.h \
- /usr/include/bits/struct_rwlock.h /usr/include/alloca.h \
- /usr/include/bits/stdlib-float.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_stdinc.h \
- /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h \
- /usr/include/stdint.h /usr/include/bits/wchar.h \
- /usr/include/bits/stdint-uintn.h /usr/include/bits/stdint-least.h \
- /usr/include/string.h /usr/include/bits/types/locale_t.h \
- /usr/include/bits/types/__locale_t.h /usr/include/strings.h \
- /usr/include/wchar.h /usr/include/bits/types/wint_t.h \
- /usr/include/bits/types/mbstate_t.h /usr/include/inttypes.h \
- /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdbool.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_begin_code.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_close_code.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_assert.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_asyncio.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_atomic.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_audio.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_endian.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_error.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_mutex.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_thread.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_properties.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_iostream.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_bits.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_blendmode.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_camera.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_pixels.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_surface.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_rect.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_clipboard.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_cpuinfo.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_dialog.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_video.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_events.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_gamepad.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_guid.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_joystick.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_power.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_sensor.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_keyboard.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_keycode.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_scancode.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_mouse.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_pen.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_touch.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_filesystem.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_gpu.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_haptic.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_hidapi.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_hints.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_init.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_loadso.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_locale.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_log.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_messagebox.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_metal.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_misc.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_platform.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_process.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_render.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_storage.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_system.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_time.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_timer.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_tray.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_version.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_oldnames.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_main.h \
- /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_vulkan.h \
- /home/ceen/projects/ceren/vendored/SDL/src/dynapi/SDL_dynapi_procs.h \
- /usr/include/dlfcn.h /usr/include/bits/dlfcn.h
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/src/dynapi/SDL_dynapi.c \
+  /Users/cerentekin/Rigid-Body-Subsystem/build/vendored/SDL/include-config-/build_config/SDL_build_config.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_platform_defines.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/AvailabilityMacros.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/AvailabilityVersions.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/TargetConditionals.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/Availability.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/AvailabilityInternal.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/AvailabilityInternalLegacy.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/src/dynapi/SDL_dynapi.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/src/dynapi/SDL_dynapi_unsupported.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdio.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_stdio.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_bounds.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_symbol_aliasing.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_posix_availability.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/17/include/ptrcheck.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/machine/_types.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/arm/_types.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_pthread/_pthread_types.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_va_list.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/machine/types.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/arm/types.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_int8_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_int16_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_int32_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_int64_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_u_int8_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_u_int16_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_u_int32_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_u_int64_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_intptr_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_uintptr_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_size_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_null.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/stdio.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_printf.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_seek_set.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_ctermid.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_off_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_ssize_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_stdio.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_common.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdlib.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_stdlib.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/wait.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_pid_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_id_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/signal.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/appleapiopts.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/machine/signal.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/arm/signal.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/machine/_mcontext.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/arm/_mcontext.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/mach/machine/_structs.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/mach/arm/_structs.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_pthread/_pthread_attr_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_sigaltstack.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_ucontext.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_sigset_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_uid_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/resource.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdint.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_uint8_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_uint16_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_uint32_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_uint64_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_intmax_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_uintmax_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_timeval.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/machine/endian.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/arm/endian.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_endian.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/machine/_endian.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/arm/_endian.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/__endian.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libkern/_OSByteOrder.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/libkern/arm/_OSByteOrder.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/alloca.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_ct_rune_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_rune_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_wchar_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/malloc/_malloc.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/malloc/_malloc_type.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/malloc/_ptrcheck.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_abort.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_dev_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_mode_t.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_stdinc.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_header_macro.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___gnuc_va_list.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_list.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_arg.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___va_copy.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_copy.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/string.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_string.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_rsize_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_errno_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_strings.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_strings.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/secure/_string.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/wchar.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_wchar.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_mbstate_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/time.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_time.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_clock_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_time_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_timespec.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/__wctype.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/___wctype.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_wint_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_wctype_t.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/ctype.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_ctype.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/runetype.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/17/include/inttypes.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/inttypes.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_inttypes.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdbool.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_begin_code.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_close_code.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_assert.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_asyncio.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_atomic.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_audio.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_endian.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_error.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_mutex.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_thread.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_properties.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_iostream.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_bits.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_blendmode.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_camera.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_pixels.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_surface.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_rect.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_clipboard.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_cpuinfo.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_dialog.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_video.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_events.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_gamepad.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_guid.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_joystick.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_power.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_sensor.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_keyboard.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_keycode.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_scancode.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_mouse.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_pen.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_touch.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_filesystem.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_gpu.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_haptic.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_hidapi.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_hints.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_init.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_loadso.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_locale.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_log.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_messagebox.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_metal.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_misc.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_platform.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_process.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_render.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_storage.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_system.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_time.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_timer.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_tray.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_version.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_oldnames.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_main.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include/SDL3/SDL_vulkan.h \
+  /Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/src/dynapi/SDL_dynapi_procs.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/dlfcn.h

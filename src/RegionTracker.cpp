@@ -43,99 +43,118 @@ void RegionTracker::process_frame(
     const std::vector<RegionBuildRecord>& current_records,
     int width, int height) 
 {
-    const size_t cell_count = static_cast<size_t>(width * height);
-    const size_t num_current = current_records.size();
+const size_t num_current = current_records.size();
     if (num_current == 0) {
-      auto previous_regions = m_active_regions;
         m_active_regions.clear();
         m_index_to_id_map.clear();
+        m_impl->prev_label_grid.clear();
+        m_impl->prev_index_to_id.clear();
         return;
     }
 
     m_events.clear();
     
-    // We will use a flat array to count overlaps instead of sorting
-    // This is MUCH faster for large grids
-    static std::vector<uint32_t> overlap_counts;
-    // Structure: [current_index][parent_id] -> count
-    // But since parent_id can be large, we'll use a smarter approach:
-    // Only track the BEST parent for each current region per frame
     struct BestParent {
         RegionID id = InvalidRegionID;
-        uint32_t count = 0;
-        uint32_t total_overlaps = 0;
+        uint32_t overlap_count = 0;
     };
-    static std::vector<BestParent> best_parents;
-    best_parents.assign(num_current, {InvalidRegionID, 0, 0});
+    std::vector<BestParent> best_parents(num_current);
 
-    // 1. DISCOVERY (Ultra-fast single pass)
-    //
-    if (!m_impl->prev_label_grid.empty() && m_impl->prev_label_grid.size() == cell_count) {
+    // 1. DISCOVERY: Find which previous ID each current region overlaps with most
+    if (!m_impl->prev_label_grid.empty()) {
         const RegionIndex* curr_grid = current_label_grid.data();
         const RegionIndex* prev_grid = m_impl->prev_label_grid.data();
         const RegionID* prev_id_map = m_impl->prev_index_to_id.data();
-        const size_t prev_id_size = m_impl->prev_index_to_id.size();
 
-        // Instead of looping 480,000 times, we only loop over the actual rocks
         for (RegionIndex i = 0; i < (RegionIndex)num_current; ++i) {
             const auto& rect = current_records[i];
-            auto& best = best_parents[i];
+            
+            // Map to track all parents overlapping this child
+            std::unordered_map<RegionID, uint32_t> local_overlaps;
 
-            // Only scan the rectangle where this specific rock exists
             for (int y = rect.bounds.min_y; y <= rect.bounds.max_y; ++y) {
-                const int row_offset = y * width;
                 for (int x = rect.bounds.min_x; x <= rect.bounds.max_x; ++x) {
-                    const int idx = row_offset + x;
-
-                    // If this pixel belongs to the current rock we are analyzing
+                    const int idx = y * width + x;
                     if (curr_grid[idx] == i) {
                         RegionIndex p_idx = prev_grid[idx];
-                        if (p_idx != InvalidRegionIndex && p_idx < prev_id_size) {
+                        if (p_idx != InvalidRegionIndex && p_idx < m_impl->prev_index_to_id.size()) {
                             RegionID p_id = prev_id_map[p_idx];
-                            best.total_overlaps++;
-                            
-                            if (best.id == InvalidRegionID || best.id == p_id) {
-                                best.id = p_id;
-                                best.count++;
-                            }
+                            local_overlaps[p_id]++;
                         }
                     }
                 }
             }
+
+            // Pick the parent with the most pixel overlap
+            RegionID best_id = InvalidRegionID;
+            uint32_t max_overlap = 0;
+            for (auto const& [id, count] : local_overlaps) {
+                if (count > max_overlap) {
+                    max_overlap = count;
+                    best_id = id;
+                }
+            }
+            best_parents[i] = { best_id, max_overlap };
         }
     }
-    
 
-        // 2. & 3. CLASSIFICATION & ID ASSIGNMENT
-    static std::vector<uint32_t> claim_counts;
-    if (claim_counts.size() < m_next_id_sequence) claim_counts.resize(m_next_id_sequence + 100, 0);
-
-    m_impl->current_index_to_id.assign(num_current, InvalidRegionID);
-    
-    // First pass: identify continuations
-    for (size_t i = 0; i < num_current; ++i) {
+    // 2. SPLIT DETECTION: Count how many children want to claim each parent ID
+    std::unordered_map<RegionID, std::vector<RegionIndex>> parent_claims;
+    for (RegionIndex i = 0; i < (RegionIndex)num_current; ++i) {
         if (best_parents[i].id != InvalidRegionID) {
-            claim_counts[best_parents[i].id]++;
+            parent_claims[best_parents[i].id].push_back(i);
         }
     }
+// 3. ID ASSIGNMENT: Handle Splits (Deterministic Clean-Slate Logic)
+m_impl->current_index_to_id.assign(num_current, InvalidRegionID);
 
-    std::unordered_set<RegionID> assigned_ids;
+for (auto& [parent_id, children] : parent_claims) {
+    
+    if (children.size() == 1) {
+        // CONTINUATION: Only one child, so it keeps the identity
+        m_impl->current_index_to_id[children[0]] = parent_id;
+    } 
+    else {
+        // SPLIT DETECTED: Parent is destroyed, all children are brand new
+        printf("[Tracker] SPLIT! Parent ID %u destroyed. Generating %zu new fragments.\n", 
+               parent_id, children.size());
+
+        for (size_t j = 0; j < children.size(); ++j) {
+            RegionID new_id = generate_id();
+            m_impl->current_index_to_id[children[j]] = new_id;
+
+            printf("  -> Fragment %zu assigned NEW ID: %u\n", j + 1, new_id);
+            
+            // Log the event as a Split (which implies parent destruction)
+            RegionLifecycleEvent ev;
+            ev.type = LifecycleType::Split;
+            ev.involved_ids = { parent_id, new_id }; 
+            m_events.push_back(ev);
+        }
+    }
+}
+
+// Assign IDs to entirely new regions that had no parent (same as before)
+for (size_t i = 0; i < num_current; ++i) {
+    if (m_impl->current_index_to_id[i] == InvalidRegionID) {
+        m_impl->current_index_to_id[i] = generate_id();
+    }
+}
+  
+    // The "winner" keeps the ID
+  
+
+
+
+    // Assign IDs to entirely new regions that had no parent
     for (size_t i = 0; i < num_current; ++i) {
-        RegionID p = best_parents[i].id;
-        // Continuation: One child claims this parent
-        if (p != InvalidRegionID && claim_counts[p] == 1) {
-            m_impl->current_index_to_id[i] = p;
-            assigned_ids.insert(p);
-        } else {
-            // Split or New
+        if (m_impl->current_index_to_id[i] == InvalidRegionID) {
             m_impl->current_index_to_id[i] = generate_id();
         }
-    }
+    } 
 
-    // Reset claim counts efficiently
-    for (size_t i = 0; i < num_current; ++i) {
-        if (best_parents[i].id != InvalidRegionID) claim_counts[best_parents[i].id] = 0;
-    }
+        // 2. & 3. CLASSIFICATION & ID ASSIGNMENT
+
 
     // 4. STATE UPDATE
     auto previous_regions = m_active_regions;

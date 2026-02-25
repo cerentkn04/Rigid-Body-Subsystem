@@ -20,6 +20,7 @@ public:
     std::vector<RegionBuildRecord> build_records;
     uint64_t last_processed_rev = 0;
 
+// Example: If you have a group_grid array
     void update(const world::WorldView& view) {
         uint64_t current_world_rev = view.world_revision();
 

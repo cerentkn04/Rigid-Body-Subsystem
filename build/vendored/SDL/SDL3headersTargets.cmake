@@ -50,7 +50,7 @@ unset(_cmake_expected_targets)
 add_library(SDL3::Headers INTERFACE IMPORTED)
 
 set_target_properties(SDL3::Headers PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "/home/ceen/projects/ceren/build/vendored/SDL/include-revision;/home/ceen/projects/ceren/vendored/SDL/include"
+  INTERFACE_INCLUDE_DIRECTORIES "/Users/cerentekin/Rigid-Body-Subsystem/build/vendored/SDL/include-revision;/Users/cerentekin/Rigid-Body-Subsystem/vendored/SDL/include"
 )
 
 # This file does not depend on other imported targets which have

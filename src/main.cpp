@@ -12,7 +12,7 @@ constexpr int CELL_SIZE = 4;
 constexpr int GRID_WIDTH = WINDOW_WIDTH / CELL_SIZE;
 constexpr int GRID_HEIGHT = WINDOW_HEIGHT / CELL_SIZE;
 
-enum class CellType : uint8_t { Empty = 0, Sand, Water, Wall };
+enum class CellType : uint8_t { Empty = 0, Sand, Water, Wall,Rock };
 struct Cell { CellType type = CellType::Empty; bool updated = false; uint8_t colorVariation = 0; };
 
 class SandSimulation {
@@ -78,6 +78,10 @@ public:
                 switch (at(x, y).type) {
                     case CellType::Sand: updateSand(x, y); break;
                     case CellType::Water: updateWater(x, y); break;
+                    case CellType::Wall: break;
+                    case CellType::Rock:  break;    
+                    case CellType::Empty: break;
+
                 }
             }
         }
@@ -94,7 +98,7 @@ public:
                 if (old == type) continue;
                 at(nx, ny).type = type;
                 at(nx, ny).colorVariation = dist(rng);
-                if (old == CellType::Wall || type == CellType::Wall) {
+                if (old == CellType::Rock ||old == CellType::Wall || type == CellType::Rock|| type == CellType::Wall) {
                     topology_changed = true;
                     region_revisions[ny * GRID_WIDTH + nx] = world_revision_counter;
                 }
@@ -108,11 +112,20 @@ public:
 
 static SandSimulation* g_pixel_sim_ptr = nullptr;
 world::CellSolidity solidity_callback(int x, int y) {
-    return (g_pixel_sim_ptr && g_pixel_sim_ptr->inBounds(x, y) && g_pixel_sim_ptr->at(x, y).type == CellType::Wall) ? world::CellSolidity::Solid : world::CellSolidity::Empty;
+    return (g_pixel_sim_ptr && g_pixel_sim_ptr->inBounds(x, y) && g_pixel_sim_ptr->at(x, y).type == CellType::Wall  ) ? world::CellSolidity::Solid : g_pixel_sim_ptr && g_pixel_sim_ptr->inBounds(x, y) && g_pixel_sim_ptr->at(x, y).type == CellType::Rock ? world::CellSolidity::Solid :  world::CellSolidity::Empty;
 }
 world::WorldRevision revision_callback() { return g_pixel_sim_ptr ? g_pixel_sim_ptr->world_revision_counter : 0; }
 world::WorldRevision region_rev_callback(int x, int y) {
     return (g_pixel_sim_ptr && g_pixel_sim_ptr->inBounds(x, y)) ? g_pixel_sim_ptr->region_revisions[y * GRID_WIDTH + x] : 0;
+}
+world::GroupID group_id_callback(int x, int y) {
+    if (!g_pixel_sim_ptr || !g_pixel_sim_ptr->inBounds(x, y)) return world::InvalidGroupID;
+    
+    CellType t = g_pixel_sim_ptr->at(x, y).type;
+    if (t == CellType::Wall) return 1; // Group 1 for Walls
+    if (t == CellType::Rock) return 2; // Group 2 for Rocks
+    
+    return world::InvalidGroupID;
 }
 
 SDL_Color get_id_color(rigid::RegionID id) {
@@ -138,7 +151,7 @@ int main(int argc, char* argv[]) {
     view.solidity_at = solidity_callback;
     view.world_revision = revision_callback;
     view.region_revision = region_rev_callback;
-
+    view.group_id_at = group_id_callback;
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -147,7 +160,7 @@ int main(int argc, char* argv[]) {
 
     bool running = true, paused = false, mouseDown = false;
     int selectedMaterial = 0, brushSize = 3;
-    const char* materials[] = {"Sand", "Water", "Wall", "Eraser"};
+    const char* materials[] = {"Sand", "Water", "Wall", "Rock","Eraser"};
 
     SDL_Texture* gridTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, GRID_WIDTH, GRID_HEIGHT);
     SDL_SetTextureScaleMode(gridTexture, SDL_SCALEMODE_NEAREST);
@@ -170,6 +183,7 @@ int main(int argc, char* argv[]) {
                     case SDLK_2: selectedMaterial = 1; break;
                     case SDLK_3: selectedMaterial = 2; break;
                     case SDLK_4: selectedMaterial = 3; break;
+                    case SDLK_5: selectedMaterial = 4; break;
                     case SDLK_SPACE: paused = !paused; break;
                     case SDLK_C: sim.clear();break;
                 }
@@ -181,7 +195,7 @@ int main(int argc, char* argv[]) {
             int winW, winH; SDL_GetWindowSize(window, &winW, &winH);
             int gx = static_cast<int>((mx / winW) * GRID_WIDTH);
             int gy = static_cast<int>((my / winH) * GRID_HEIGHT);
-            CellType type = (selectedMaterial == 0) ? CellType::Sand : (selectedMaterial == 1) ? CellType::Water : (selectedMaterial == 2) ? CellType::Wall : CellType::Empty;
+            CellType type = (selectedMaterial == 0) ? CellType::Sand : (selectedMaterial == 1) ? CellType::Water : (selectedMaterial == 2) ? CellType::Wall : (selectedMaterial == 3) ? CellType::Rock :CellType::Empty;
             sim.placeCell(gx, gy, type, brushSize);
         }
 
@@ -215,7 +229,12 @@ int main(int argc, char* argv[]) {
             if (cell.type == CellType::Wall) {
                 const rigid::RegionIndex rIdx = label_ptr[i];
                 pixel_ptr[i] = (rIdx < num_mappings) ? cached_colors[rIdx] : 0x646464FF;
-            } else {
+            } else if(cell.type == CellType::Rock){
+                const rigid::RegionIndex rIdx = label_ptr[i];
+                pixel_ptr[i] = (rIdx < num_mappings) ? cached_colors[rIdx] : 0x646450FF;
+
+            }
+            else {
                 const uint8_t v = cell.colorVariation;
                 if (cell.type == CellType::Sand) pixel_ptr[i] = ((220-v) << 24) | ((180-v) << 16) | ((80-v) << 8) | 0xFF;
                 else if (cell.type == CellType::Water) pixel_ptr[i] = ((30+v) << 24) | ((100+v) << 16) | ((200+v) << 8) | 0xC8;
@@ -261,33 +280,7 @@ float y2 = (p2.y * scaleY) + visualOffsetY;
 }
  
 
-    /*// --- RENDER STEP 7 GEOMETRY ---
-SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); 
-
-for (auto const& [id, geo] : rigidSystem.geometry_cache) {
-    for (const auto& contour : geo.contours) {
-        const auto& points = contour.points;
-        if (points.size() < 2) continue;
-
-        for (size_t i = 0; i < points.size(); ++i) {
-            const auto& p1 = points[i];
-            const auto& p2 = points[(i + 1) % points.size()];
-
-            // EXTREMELY IMPORTANT: 
-            // p1.x is a value like 10.5 (cell index).
-            // We need to multiply by CELL_SIZE (4) to get 42.0 (pixel coordinate).
-            float x1 = p1.x * CELL_SIZE;
-            float y1 = p1.y * CELL_SIZE;
-            float x2 = p2.x * CELL_SIZE;
-            float y2 = p2.y * CELL_SIZE;
-
-            SDL_RenderLine(renderer, x1, y1, x2, y2);
-        }
-    }
-}
-
-*/
-         // --- IMGUI (Original Controls) ---
+            // --- IMGUI (Original Controls) ---
         ImGui_ImplSDLRenderer3_NewFrame(); ImGui_ImplSDL3_NewFrame(); ImGui::NewFrame();
         ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
         ImGui::Begin("Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize);

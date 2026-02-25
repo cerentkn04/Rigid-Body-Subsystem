@@ -11,7 +11,6 @@ namespace rigid {
 // ------------------------------------------------------------
 // Implementation
 // ------------------------------------------------------------
-//
 struct DSU {
     std::vector<RegionIndex> parent;
     void reset(size_t n) {
@@ -40,26 +39,6 @@ struct DSU {
     }
 };
 
-/*struct DSU {
-    std::vector<RegionIndex> parent;
-    void reset(size_t n) {
-        if (parent.size() < n) parent.resize(n);
-        for (size_t i = 0; i < n; ++i) parent[i] = (RegionIndex)i;
-    }
-    RegionIndex find(RegionIndex i) {
-        while (parent[i] != i) {
-            parent[i] = parent[parent[i]]; // Path compression
-            i = parent[i];
-        }
-        return i;
-    }
-    void unite(RegionIndex i, RegionIndex j) {
-        RegionIndex root_i = find(i);
-        RegionIndex root_j = find(j);
-        if (root_i != root_j) parent[root_i] = root_j;
-    }
-}; */
-
 
 struct RegionExtractor::Impl {
     std::vector<RegionIndex> label_grid;
@@ -81,19 +60,36 @@ struct RegionExtractor::Impl {
         // --- PASS 1: LINEAR SCAN (Cache Friendly) ---
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
+                auto current_group = world.group_id_at(x, y);
                 if (world.solidity_at(x, y) != world::CellSolidity::Solid) continue;
-
+    
                 const int idx = y * width + x;
-                
                 // Check 4 neighbors (West, North-West, North, North-East)
                 // These are already processed in a top-down scan
-                RegionIndex L = (x > 0) ? label_grid[idx - 1] : InvalidRegionIndex;
-                RegionIndex NW = (x > 0 && y > 0) ? label_grid[idx - width - 1] : InvalidRegionIndex;
-                RegionIndex N = (y > 0) ? label_grid[idx - width] : InvalidRegionIndex;
-                RegionIndex NE = (x < width - 1 && y > 0) ? label_grid[idx - width + 1] : InvalidRegionIndex;
+                //
+if (x > 0 && world.solidity_at(x-1, y) == world::CellSolidity::Solid) {
+    if (world.group_id_at(x-1, y) != current_group) {
+    printf("[Extractor] Prevented merge at (%d,%d): Group %u vs %u\n", x, y, current_group, world.group_id_at(x-1, y));
+}
+}
+                          RegionIndex L  = (x > 0 && world.group_id_at(x - 1, y) == current_group) 
+                         ? label_grid[idx - 1] : InvalidRegionIndex;
+                         
+        RegionIndex NW = (x > 0 && y > 0 && world.group_id_at(x - 1, y - 1) == current_group) 
+                         ? label_grid[idx - width - 1] : InvalidRegionIndex;
+                         
+        RegionIndex N  = (y > 0 && world.group_id_at(x, y - 1) == current_group) 
+                         ? label_grid[idx - width] : InvalidRegionIndex;
+                         
+        RegionIndex NE = (x < width - 1 && y > 0 && world.group_id_at(x + 1, y - 1) == current_group) 
+                         ? label_grid[idx - width + 1] : InvalidRegionIndex;
 
-                RegionIndex neighbors[] = { L, NW, N, NE };
-                RegionIndex target = InvalidRegionIndex;
+        RegionIndex neighbors[] = { L, NW, N, NE };
+        RegionIndex target = InvalidRegionIndex;
+                
+
+
+ 
 
                 // Find the smallest valid label among neighbors
                 for (auto n : neighbors) {
@@ -116,7 +112,6 @@ struct RegionExtractor::Impl {
 
         // --- PASS 2: FLATTEN & RECORD ---
         // Map DSU roots to dense out_records indices
-        //
         //
 static std::vector<RegionIndex> root_to_final_idx;
     if (root_to_final_idx.size() < next_label) root_to_final_idx.resize(next_label);
@@ -153,38 +148,7 @@ static std::vector<RegionIndex> root_to_final_idx;
     }
 
 
-        /*
-        std::vector<RegionIndex> root_to_final_idx(next_label, InvalidRegionIndex);
-
-        for (int y = 0; y < height; ++y) {
-            for (int x = 0; x < width; ++x) {
-                const int idx = y * width + x;
-                if (label_grid[idx] == InvalidRegionIndex) continue;
-
-                RegionIndex root = dsu.find(label_grid[idx]);
-                
-                if (root_to_final_idx[root] == InvalidRegionIndex) {
-                    root_to_final_idx[root] = (RegionIndex)out_records.size();
-                    RegionBuildRecord rec{};
-                    rec.min_x = rec.max_x = x;
-                    rec.min_y = rec.max_y = y;
-                    rec.pixel_count = 0;
-                    out_records.push_back(rec);
-                }
-
-                RegionIndex final_idx = root_to_final_idx[root];
-                label_grid[idx] = final_idx; // Update grid with final clean ID
-
-                auto& rec = out_records[final_idx];
-                rec.pixel_count++;
-                rec.min_x = std::min(rec.min_x, x);
-                rec.max_x = std::max(rec.max_x, x);
-                rec.min_y = std::min(rec.min_y, y);
-                rec.max_y = std::max(rec.max_y, y);
             }
-        }
-        */
-    }
 };
 
 
