@@ -12,6 +12,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/ceen/projects/ceren/src/RegionExtractor.cpp" "CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o" "gcc" "CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o.d"
   "/home/ceen/projects/ceren/src/RegionMesher.cpp" "CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o" "gcc" "CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o.d"
   "/home/ceen/projects/ceren/src/RegionTracker.cpp" "CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o" "gcc" "CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o.d"
+  "/home/ceen/projects/ceren/src/RigidBodyManager.cpp" "CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o" "gcc" "CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o.d"
   "/home/ceen/projects/ceren/src/RigidPixelSystem.cpp" "CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o" "gcc" "CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o.d"
   "/home/ceen/projects/ceren/src/StabilitySystem.cpp" "CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o" "gcc" "CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o.d"
   "/home/ceen/projects/ceren/src/main.cpp" "CMakeFiles/Ceren.dir/src/main.cpp.o" "gcc" "CMakeFiles/Ceren.dir/src/main.cpp.o.d"

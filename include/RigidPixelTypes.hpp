@@ -46,6 +46,7 @@ namespace rigid {
 // Opaque identifiers
 // -----------------------------------------------------------------------------
 
+  
 using RigidBodyID = uint32_t;
 using GenerationID = uint32_t;
 

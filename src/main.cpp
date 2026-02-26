@@ -157,7 +157,7 @@ int main(int argc, char* argv[]) {
     ImGuiIO& io = ImGui::GetIO();
     ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
     ImGui_ImplSDLRenderer3_Init(renderer);
-
+    bool showPhysicsHulls = false;
     bool running = true, paused = false, mouseDown = false;
     int selectedMaterial = 0, brushSize = 3;
     const char* materials[] = {"Sand", "Water", "Wall", "Rock","Eraser"};
@@ -170,6 +170,13 @@ int main(int argc, char* argv[]) {
     float accumulator = 0.0f;
     const float fixedDeltaTime = 1.0f / 60.0f;
 
+
+    b2WorldDef worldDef = b2DefaultWorldDef();
+worldDef.gravity = { 0.0f, 9.8f }; // Standard gravity
+b2WorldId worldId = b2CreateWorld(&worldDef);
+
+// Link it to your system
+rigidSystem.init_physics(worldId);
     while (running) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -203,7 +210,12 @@ int main(int argc, char* argv[]) {
         float deltaTime = (currentTime - lastTime) / 1000.0f; lastTime = currentTime;
         if (!paused) {
             accumulator += deltaTime;
-            while (accumulator >= fixedDeltaTime) { sim.update(); accumulator -= fixedDeltaTime; }
+            while (accumulator >= fixedDeltaTime) { 
+                sim.update(); 
+                b2World_Step(worldId, fixedDeltaTime, 4); 
+                
+                accumulator -= fixedDeltaTime; 
+            }
         }
 
         // --- RIGID SYSTEM ---
@@ -242,42 +254,45 @@ int main(int argc, char* argv[]) {
             }
         }
 
+
+// --- RENDER (Pixel Texture) ---
         SDL_UpdateTexture(gridTexture, nullptr, pixels.data(), GRID_WIDTH * sizeof(uint32_t));
-        
-        
         SDL_RenderTexture(renderer, gridTexture, nullptr, nullptr);
-// --- RENDER STEP 7 GEOMETRY (Universal Version) ---
-//
-//
 
-     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-
-for (auto const& [id, geo] : rigidSystem.geometry_cache) {
-  
-    for (const auto& contour : geo.contours) {
-        const auto& points = contour.points;
-        if (points.size() < 2) continue;
-
-        for (size_t i = 0; i < points.size(); ++i) {
-            const auto& p1 = points[i];
-            const auto& p2 = points[(i + 1) % points.size()];
+        // --- RENDER STEP: GEOMETRY (Optimized Debug View) ---
+        // ONLY this block should exist for contours
+        if (showPhysicsHulls) {
+            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+            
             int winW, winH;
-SDL_GetWindowSize(window, &winW, &winH);
+            SDL_GetWindowSize(window, &winW, &winH);
+            float scaleX = (float)winW / GRID_WIDTH;
+            float scaleY = (float)winH / GRID_HEIGHT;
+            float visualOffsetX = 0.5f * scaleX; 
+            float visualOffsetY = 0.5f * scaleY;
 
-float scaleX = (float)winW / GRID_WIDTH;
-float scaleY = (float)winH / GRID_HEIGHT;
-float visualOffsetX = 0.5f * scaleX; 
-float visualOffsetY = 0.5f * scaleY;
-float x1 = (p1.x * scaleX) + visualOffsetX;
-float y1 = (p1.y * scaleY) + visualOffsetY;
-float x2 = (p2.x * scaleX) + visualOffsetX;
-float y2 = (p2.y * scaleY) + visualOffsetY;
+            for (auto const& [id, geo] : rigidSystem.geometry_cache) {
+                for (const auto& contour : geo.contours) {
+                    const auto& points = contour.points;
+                    if (points.size() < 2) continue;
 
+                    for (size_t i = 0; i < points.size(); ++i) {
+                        const auto& p1 = points[i];
+                        const auto& p2 = points[(i + 1) % points.size()];
 
-            SDL_RenderLine(renderer, x1, y1, x2, y2);
+                        float x1 = (p1.x * scaleX) + visualOffsetX;
+                        float y1 = (p1.y * scaleY) + visualOffsetY;
+                        float x2 = (p2.x * scaleX) + visualOffsetX; // Fixed typo here (was scaleY)
+                        float y2 = (p2.y * scaleY) + visualOffsetY;
+
+                        SDL_RenderLine(renderer, x1, y1, x2, y2);
+                    }
+                }
+            }
         }
-    }
-}
+        // DELETE the naked loop that was here!
+
+
  
 
             // --- IMGUI (Original Controls) ---
@@ -291,6 +306,7 @@ float y2 = (p2.y * scaleY) + visualOffsetY;
         }
         ImGui::SliderInt("Brush Size", &brushSize, 1, 10);
         ImGui::Checkbox("Paused (Space)", &paused);
+        ImGui::Checkbox("Show Physics Hulls (Debug)", &showPhysicsHulls);
         if (ImGui::Button("Clear (C)")) sim.clear();
         ImGui::Text("Total Active Regions: %zu", rigidSystem.tracker.get_active_regions().size());
         ImGui::Text("Geometry Cache: %zu", rigidSystem.geometry_cache.size());

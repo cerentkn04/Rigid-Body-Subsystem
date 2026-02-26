@@ -322,6 +322,30 @@ src/RegionTracker.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RegionTracker.cpp.s
 .PHONY : src/RegionTracker.cpp.s
 
+src/RigidBodyManager.o: src/RigidBodyManager.cpp.o
+.PHONY : src/RigidBodyManager.o
+
+# target to build an object file
+src/RigidBodyManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o
+.PHONY : src/RigidBodyManager.cpp.o
+
+src/RigidBodyManager.i: src/RigidBodyManager.cpp.i
+.PHONY : src/RigidBodyManager.i
+
+# target to preprocess a source file
+src/RigidBodyManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.i
+.PHONY : src/RigidBodyManager.cpp.i
+
+src/RigidBodyManager.s: src/RigidBodyManager.cpp.s
+.PHONY : src/RigidBodyManager.s
+
+# target to generate assembly for a file
+src/RigidBodyManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.s
+.PHONY : src/RigidBodyManager.cpp.s
+
 src/RigidPixelSystem.o: src/RigidPixelSystem.cpp.o
 .PHONY : src/RigidPixelSystem.o
 
@@ -591,6 +615,9 @@ help:
 	@echo "... src/RegionTracker.o"
 	@echo "... src/RegionTracker.i"
 	@echo "... src/RegionTracker.s"
+	@echo "... src/RigidBodyManager.o"
+	@echo "... src/RigidBodyManager.i"
+	@echo "... src/RigidBodyManager.s"
 	@echo "... src/RigidPixelSystem.o"
 	@echo "... src/RigidPixelSystem.i"
 	@echo "... src/RigidPixelSystem.s"

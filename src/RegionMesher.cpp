@@ -5,7 +5,42 @@
 namespace rigid {
 
 namespace {
+static float PerpendicularDistance(const Vertex& p, const Vertex& a, const Vertex& b) {
+    float dx = b.x - a.x;
+    float dy = b.y - a.y;
+    float mag = std::sqrt(dx * dx + dy * dy);
+    if (mag < 1e-5f) return std::sqrt(std::pow(p.x - a.x, 2) + std::pow(p.y - a.y, 2));
+    return std::abs(dx * (a.y - p.y) - (a.x - p.x) * dy) / mag;
+}
 
+static void DouglasPeucker(const std::vector<Vertex>& points, float epsilon, std::vector<Vertex>& out) {
+    if (points.size() < 3) {
+        out = points;
+        return;
+    }
+
+    size_t index = 0;
+    float maxDist = 0;
+    for (size_t i = 1; i < points.size() - 1; ++i) {
+        float dist = PerpendicularDistance(points[i], points.front(), points.back());
+        if (dist > maxDist) {
+            index = i;
+            maxDist = dist;
+        }
+    }
+
+    if (maxDist > epsilon) {
+        std::vector<Vertex> res1, res2;
+        std::vector<Vertex> firstPart(points.begin(), points.begin() + index + 1);
+        std::vector<Vertex> secondPart(points.begin() + index, points.end());
+        DouglasPeucker(firstPart, epsilon, res1);
+        DouglasPeucker(secondPart, epsilon, res2);
+        out.assign(res1.begin(), res1.end() - 1);
+        out.insert(out.end(), res2.begin(), res2.end());
+    } else {
+        out = { points.front(), points.back() };
+    }
+}
 namespace bayazit {
     using namespace rigid;
 
@@ -337,8 +372,9 @@ if (outerIt != geo.contours.end()) {
     // Bridging holes into the main polygon
     for (auto& hole : geo.contours) {
         if (!hole.is_hole) continue;
-        // ... (Your bridging logic is correct here) ...
     }
+    std::vector<Vertex> optimizedPoly;
+    DouglasPeucker(mainPoly, 0.25f, optimizedPoly);
 
     // Call the corrected Decompose
     bayazit::Decompose(mainPoly, convexPolygons);

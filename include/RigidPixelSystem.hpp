@@ -8,6 +8,8 @@
 #include <RigidPixelWorldView.hpp>
 #include "RegionMesher.hpp" 
 #include "stdio.h"
+#include <RigidBodyManager.hpp>
+#include <memory>
 namespace rigid {
 
 class RigidPixelSystem {
@@ -18,8 +20,12 @@ public:
     
     std::unordered_map<uint32_t, RegionGeometry> geometry_cache;
     std::vector<RegionBuildRecord> build_records;
+    std::unique_ptr<RigidBodyManager> body_manager;
     uint64_t last_processed_rev = 0;
 
+void init_physics(b2WorldId world_id) {
+        body_manager = std::make_unique<RigidBodyManager>(world_id);
+    }
 // Example: If you have a group_grid array
     void update(const world::WorldView& view) {
         uint64_t current_world_rev = view.world_revision();
@@ -57,6 +63,13 @@ public:
             // REFRESH GEOMETRY HERE
            cleanup_dead_geometry(); 
             refresh_geometry_cache(view);
+          if (body_manager) {
+            body_manager->synchronize(
+                stability, 
+                geometry_cache, 
+                tracker.get_active_regions()
+            );
+        }
 
             // Update stability snapshots for the next frame
             const auto& finalized_regions = tracker.get_active_regions();
