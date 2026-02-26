@@ -12,11 +12,15 @@ struct Contour {
     std::vector<Vertex> points;
     bool is_hole;
 };
-
+struct ConvexPiece {
+    std::vector<Vertex> points;
+};
 struct RegionGeometry {
     uint32_t region_id;
     uint64_t version;
     std::vector<Contour> contours;
+    std::vector<ConvexPiece> convex_pieces;// Flat vector
+
     bool empty() const { return contours.empty(); }
 };
 

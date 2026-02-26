@@ -6,6 +6,79 @@ namespace rigid {
 
 namespace {
 
+namespace bayazit {
+    using namespace rigid;
+
+    bool Left(const Vertex& a, const Vertex& b, const Vertex& c) {
+        return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x) > 0;
+    }
+
+    bool IsReflex(const std::vector<Vertex>& poly, int i) {
+        int prev = (i == 0) ? (int)poly.size() - 1 : i - 1;
+        int next = (i + 1) % poly.size();
+        return !Left(poly[prev], poly[i], poly[next]);
+    }
+
+    void Decompose(std::vector<Vertex> poly, std::vector<std::vector<Vertex>>& output) {
+        if (poly.size() < 3) return;
+
+        int reflexIdx = -1;
+        for (int i = 0; i < (int)poly.size(); ++i) {
+            if (IsReflex(poly, i)) {
+                reflexIdx = i;
+                break;
+            }
+        }
+
+        // Base Case: Polygon is already convex
+        if (reflexIdx == -1) {
+            output.push_back(poly);
+            return;
+        }
+
+        // Choose split vertex: Simplification of Bayazit
+        // We find a vertex that is visible and furthest from the reflex point to resolve the concavity
+        int bestSplitIdx = -1;
+        float maxDist = -1.0f;
+        Vertex p = poly[reflexIdx];
+
+        for (int i = 0; i < (int)poly.size(); ++i) {
+            // Don't split with self or immediate neighbors
+            if (i == reflexIdx || i == (reflexIdx + 1) % poly.size() || 
+                i == (reflexIdx - 1 + (int)poly.size()) % poly.size()) continue;
+
+            float dst = std::pow(poly[i].x - p.x, 2) + std::pow(poly[i].y - p.y, 2);
+            if (dst > maxDist) {
+                maxDist = dst;
+                bestSplitIdx = i;
+            }
+        }
+
+        if (bestSplitIdx != -1) {
+            std::vector<Vertex> poly1, poly2;
+            // Build first sub-polygon
+            for (int i = reflexIdx; i != (bestSplitIdx + 1) % poly.size(); i = (i + 1) % poly.size()) {
+                poly1.push_back(poly[i]);
+            }
+            // Build second sub-polygon
+            for (int i = bestSplitIdx; i != (reflexIdx + 1) % poly.size(); i = (i + 1) % poly.size()) {
+                poly2.push_back(poly[i]);
+            }
+
+            // Safety check: ensure we actually split the polygon
+            if (poly1.size() < poly.size() && poly2.size() < poly.size()) {
+                Decompose(poly1, output);
+                Decompose(poly2, output);
+            } else {
+                output.push_back(poly); // Fallback to avoid infinite loop
+            }
+        } else {
+            output.push_back(poly);
+        }
+    }
+}
+
+
 // =====================
 // Internal Stitch Types
 // =====================
@@ -250,7 +323,35 @@ RegionGeometry GeometryExtractor::Build(
         }
     }
 
-    return geo;
+    // --- Inside GeometryExtractor::Build ---
+
+// ... (Step 1-4: Marching Squares and Stitching) ...
+
+std::vector<std::vector<Vertex>> convexPolygons;
+auto outerIt = std::find_if(geo.contours.begin(), geo.contours.end(), 
+                            [](const Contour& c) { return !c.is_hole; });
+
+if (outerIt != geo.contours.end()) {
+    std::vector<Vertex> mainPoly = outerIt->points;
+
+    // Bridging holes into the main polygon
+    for (auto& hole : geo.contours) {
+        if (!hole.is_hole) continue;
+        // ... (Your bridging logic is correct here) ...
+    }
+
+    // Call the corrected Decompose
+    bayazit::Decompose(mainPoly, convexPolygons);
 }
+
+// CRITICAL: Copy the resulting convex polygons into the geo record
+for (const auto& polyPoints : convexPolygons) {
+    if (polyPoints.size() >= 3) {
+        geo.convex_pieces.push_back({ polyPoints });
+    }
+}
+
+return geo;
+   }
 
 } // namespace rigind

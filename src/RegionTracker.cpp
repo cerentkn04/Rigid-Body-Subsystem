@@ -1,7 +1,7 @@
 #include "RegionTracker.hpp"
 #include "regionScratch.hpp" 
-#include <algorithm>
 #include <vector>
+#include <cstdio>
 #include <cassert>
 #include <unordered_set>
 namespace rigid {

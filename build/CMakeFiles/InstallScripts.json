@@ -1,10 +1,10 @@
 {
 	"InstallScripts" : 
 	[
-		"/Users/cerentekin/Rigid-Body-Subsystem/build/cmake_install.cmake",
-		"/Users/cerentekin/Rigid-Body-Subsystem/build/vendored/SDL/cmake_install.cmake",
-		"/Users/cerentekin/Rigid-Body-Subsystem/build/vendored/box2d/cmake_install.cmake",
-		"/Users/cerentekin/Rigid-Body-Subsystem/build/vendored/box2d/src/cmake_install.cmake"
+		"/home/ceen/projects/ceren/build/cmake_install.cmake",
+		"/home/ceen/projects/ceren/build/vendored/SDL/cmake_install.cmake",
+		"/home/ceen/projects/ceren/build/vendored/box2d/cmake_install.cmake",
+		"/home/ceen/projects/ceren/build/vendored/box2d/src/cmake_install.cmake"
 	],
 	"Parallel" : false
 }

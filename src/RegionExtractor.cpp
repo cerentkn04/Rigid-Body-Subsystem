@@ -2,7 +2,7 @@
 #include "regionScratch.hpp"
 #include <RegionType.hpp>
 #include "RigidPixelWorldView.hpp"
-
+#include <cstdio>
 #include <algorithm>
 #include <cassert>
 
