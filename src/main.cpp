@@ -300,11 +300,13 @@ rigidSystem.init_physics(worldId);
         ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
         ImGui::Begin("Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
         ImGui::Text("Material (1-4):");
-        for (int i = 0; i < 4; ++i) {
+     
+        for (int i = 0; i < 5; ++i) {
             if (i > 0) ImGui::SameLine();
             if (ImGui::RadioButton(materials[i], selectedMaterial == i)) selectedMaterial = i;
         }
         ImGui::SliderInt("Brush Size", &brushSize, 1, 10);
+        if (ImGui::Button("Select Eraser")) selectedMaterial = 4;
         ImGui::Checkbox("Paused (Space)", &paused);
         ImGui::Checkbox("Show Physics Hulls (Debug)", &showPhysicsHulls);
         if (ImGui::Button("Clear (C)")) sim.clear();

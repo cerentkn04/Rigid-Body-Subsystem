@@ -6,16 +6,10 @@ namespace rigid {
 RigidBodyManager::RigidBodyManager(b2WorldId worldId) : m_world_id(worldId) {}
 
 RigidBodyManager::~RigidBodyManager() {
-    for (uint32_t i = 0; i < m_bodies.size(); ++i) {
-        destroy_body(i);
-    }
-}
-
-void RigidBodyManager::ensure_capacity(size_t size) {
-    if (m_bodies.size() < size) {
-        m_bodies.resize(size, b2_nullBodyId);
-        m_body_versions.resize(size, 0);
-        m_active_ids.resize(size, InvalidRegionID);
+    for (auto& [id, entry] : m_body_map) {
+        if (b2Body_IsValid(entry.bodyId)) {
+            b2DestroyBody(entry.bodyId);
+        }
     }
 }
 
@@ -24,108 +18,121 @@ void RigidBodyManager::synchronize(
     const std::unordered_map<RegionID, RegionGeometry>& geometry_cache,
     const std::unordered_map<RegionID, RegionRecord>& active_regions) 
 {
-    const size_t count = stability.active_snapshots.size();
-    ensure_capacity(count);
-
-    if (m_bodies.size() > count) {
-        for (size_t i = count; i < m_bodies.size(); ++i) {
-            destroy_body(static_cast<uint32_t>(i));
-        }
-        m_bodies.resize(count);
-        m_body_versions.resize(count);
-        m_active_ids.resize(count);
+    // 1. Cleanup vanished regions
+    for (auto it = m_body_map.begin(); it != m_body_map.end(); ) {
+        if (active_regions.find(it->first) == active_regions.end()) {
+            if (b2Body_IsValid(it->second.bodyId)) b2DestroyBody(it->second.bodyId);
+            it = m_body_map.erase(it);
+        } else { ++it; }
     }
 
-    for (uint32_t i = 0; i < count; ++i) {
-        const auto& snapshot = stability.active_snapshots[i];
+    // 2. Sync State and Geometry
+    for (const auto& snapshot : stability.active_snapshots) {
         const RegionID id = snapshot.id;
-
-        auto rec_it = active_regions.find(id);
         auto geo_it = geometry_cache.find(id);
+        auto rec_it = active_regions.find(id);
         
-        if (rec_it == active_regions.end() || geo_it == geometry_cache.end()) continue;
+        if (geo_it == geometry_cache.end() || rec_it == active_regions.end()) continue;
 
-        const RegionRecord& record = rec_it->second;
-        const RegionGeometry& geo = geo_it->second;
+        const auto& geo = geo_it->second;
+        const auto& record = rec_it->second;
 
-        bool is_dynamic = true; 
+        // Determine target physics type from stability snapshot
+        b2BodyType targetType = snapshot.is_stable ? b2_staticBody : b2_dynamicBody;
 
-        if (!b2Body_IsValid(m_bodies[i]) || m_active_ids[i] != id) {
-            destroy_body(i); 
-            create_body(i, id, geo, is_dynamic);
-            m_active_ids[i] = id;
+        auto body_it = m_body_map.find(id);
+        if (body_it == m_body_map.end()) {
+            create_body_for_id(id, geo, record.version, targetType);
         } else {
-            if (m_body_versions[i] != record.version) {
-                update_fixtures(m_bodies[i], geo);
-                m_body_versions[i] = record.version;
+          BodyEntry& entry = body_it->second;
+            
+            // 1. Debounce Geometry Rebuilds
+            // Only rebuild if the version is old AND the simulation isn't "dirty"
+            // Or use a simple frame counter check here.
+            if (entry.version != record.version) {
+                // IMPORTANT: If this is a very small region, skip the physics!
+                // Box2D struggles with thousands of 1-pixel bodies.
+                if (geo.convex_pieces.empty()) continue;
+
+                update_fixtures(entry.bodyId, geo);
+                entry.version = record.version;
             }
 
-            b2BodyType target = is_dynamic ? b2_dynamicBody : b2_staticBody;
-            if (b2Body_GetType(m_bodies[i]) != target) {
-                b2Body_SetType(m_bodies[i], target);
+            // 2. Handle Body Type Transitions
+            if (b2Body_GetType(entry.bodyId) != targetType) {
+                b2Body_SetType(entry.bodyId, targetType);
             }
         }
     }
 }
 
-void RigidBodyManager::create_body(uint32_t index, RegionID id, const RegionGeometry& geo, bool is_dynamic) {
-    b2BodyDef def = b2DefaultBodyDef();
-    def.type = is_dynamic ? b2_dynamicBody : b2_staticBody;
-    def.userData = (void*)(uintptr_t)id;
+void RigidBodyManager::update_region_transforms(std::unordered_map<RegionID, RegionRecord>& active_regions) {
+    for (auto& [id, entry] : m_body_map) {
+        if (!b2Body_IsValid(entry.bodyId)) continue;
 
-    m_bodies[index] = b2CreateBody(m_world_id, &def);
-    update_fixtures(m_bodies[index], geo);
-    m_body_versions[index] = geo.version;
+        auto it = active_regions.find(id);
+        if (it != active_regions.end()) {
+            b2Vec2 pos = b2Body_GetPosition(entry.bodyId);
+            it->second.center_f.x = pos.x;
+            it->second.center_f.y = pos.y;
+        }
+    }
+}
+
+void RigidBodyManager::create_body_for_id(RegionID id, const RegionGeometry& geo, uint64_t version, b2BodyType type) {
+    if (std::isnan(geo.center.x) || std::isnan(geo.center.y) || 
+        std::abs(geo.center.x) > 1e6f || std::abs(geo.center.y) > 1e6f) {
+        return; // Skip creating this body; it's corrupt
+    }
+
+    if (geo.convex_pieces.empty()) return;
+
+    b2BodyDef def = b2DefaultBodyDef();
+    def.type = type;
+    def.userData = (void*)(uintptr_t)id;
+    
+    // Position body at centroid
+    def.position = { (float)geo.center.x, (float)geo.center.y };
+    
+    // Top-down camera constraints
+    def.fixedRotation = true; 
+    def.gravityScale = 0.0f; 
+    def.linearDamping = (type == b2_dynamicBody) ? 8.0f : 0.0f;
+
+    b2BodyId bodyId = b2CreateBody(m_world_id, &def);
+    update_fixtures(bodyId, geo);
+
+    m_body_map[id] = { bodyId, version };
 }
 
 void RigidBodyManager::update_fixtures(b2BodyId bodyId, const RegionGeometry& geo) {
-    // 1. Get and destroy shapes correctly
-    int capacity = b2Body_GetShapeCount(bodyId);
-    if (capacity > 0) {
-        std::vector<b2ShapeId> shapeIds(capacity);
-        b2Body_GetShapes(bodyId, shapeIds.data(), capacity);
-        for (int i = 0; i < capacity; ++i) {
-            // FIX: Pass 'false' for updateBodyMass to improve performance during mass-destruction
-            b2DestroyShape(shapeIds[i], false); 
-        }
+    int count = b2Body_GetShapeCount(bodyId);
+    if (count > 0) {
+        b2ShapeId shapes[16]; // Avoid heap allocation for typical shape counts
+        int actualCount = b2Body_GetShapes(bodyId, shapes, 16);
+        for (int i = 0; i < actualCount; ++i) b2DestroyShape(shapes[i], false);
     }
 
-    // 2. Setup Shape Definition
     b2ShapeDef shapeDef = b2DefaultShapeDef();
     shapeDef.density = 1.0f;
-    
-    // FIX: If 'friction' is missing from b2ShapeDef, it might be that your version 
-    // uses a 'b2DefaultShapeDef' that initializes it, but the member name is different
-    // (e.g. friction is now part of the body definition in some experimental versions, 
-    // or simply renamed). 
-    // SOLUTION: We will COMMENT IT OUT for now. b2DefaultShapeDef() sets a default of 0.6f.
-    // shapeDef.friction = 0.3f; 
-
+    b2Vec2 localVerts[B2_MAX_POLYGON_VERTICES];
     for (const auto& piece : geo.convex_pieces) {
-        if (piece.points.size() < 3) continue;
+        int vCount = (int)std::min(piece.points.size(), (size_t)B2_MAX_POLYGON_VERTICES);
+        if (vCount < 3) continue;
 
-        std::vector<b2Vec2> verts;
-        verts.reserve(piece.points.size());
-        for (const auto& v : piece.points) {
-            verts.push_back({v.x, v.y});
+        for (int i = 0; i < vCount; ++i) {
+            localVerts[i] = { 
+                piece.points[i].x - (float)geo.center.x, 
+                piece.points[i].y - (float)geo.center.y 
+            };
         }
 
-        // Box2D v3 Pipeline: Compute Hull then Make Polygon
-        b2Hull hull = b2ComputeHull(verts.data(), (int)verts.size());
+        b2Hull hull = b2ComputeHull(localVerts, vCount);
         if (hull.count >= 3) {
             b2Polygon poly = b2MakePolygon(&hull, 0.0f);
             b2CreatePolygonShape(bodyId, &shapeDef, &poly);
         }
     }
-}
-
-void RigidBodyManager::destroy_body(uint32_t index) {
-    if (b2Body_IsValid(m_bodies[index])) {
-        b2DestroyBody(m_bodies[index]);
-    }
-    m_bodies[index] = b2_nullBodyId;
-    m_body_versions[index] = 0;
-    m_active_ids[index] = InvalidRegionID;
-}
+   }
 
 } // namespace rigid

@@ -20,7 +20,7 @@ struct RegionGeometry {
     uint64_t version;
     std::vector<Contour> contours;
     std::vector<ConvexPiece> convex_pieces;// Flat vector
-
+    struct { float x, y; } center;
     bool empty() const { return contours.empty(); }
 };
 

@@ -35,6 +35,20 @@ void StabilitySystem::rebuild_bins() {
         }
     }
 }
+// Inside StabilitySystem logic
+void StabilitySystem::check_stability(uint32_t index, const world::WorldView& world) {
+    auto& snapshot = active_snapshots[index];
+    
+    // Example Logic: If the region touches the bottom of the world, it is stable.
+    if (snapshot.influence_bounds.max_y >= world.height - 1) {
+        snapshot.is_stable = true;
+    } else {
+        // Otherwise, it might be floating (dynamic physics)
+        snapshot.is_stable = false;
+    }
+}
+
+
 void StabilitySystem::sync_with_tracker(const std::unordered_map<rigid::RegionID, rigid::RegionRecord>& active_regions) {
     std::vector<RegionSnapshot> next_snapshots;
     next_snapshots.reserve(active_regions.size());

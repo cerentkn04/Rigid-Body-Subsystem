@@ -14,6 +14,7 @@ struct RegionSnapshot {
 
     // Cached bin range
     int bx0, by0, bx1, by1;
+    bool is_stable = false;
 };
 
 struct Bin {
@@ -49,7 +50,7 @@ struct StabilitySystem {
 
     void set_capacity(size_t count);
     void reset_dirty_flags(uint8_t default_state = 0);
-
+    void check_stability(uint32_t index, const world::WorldView& world);
     // Core logic
     bool validate_snapshot(uint32_t index, const world::WorldView& world) const;
     void update_snapshot(rigid::RegionID id,

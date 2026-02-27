@@ -23,6 +23,7 @@ struct RegionRecord {
     CellAABB bounds; // This is the frozen version
     uint32_t pixel_count;
      BodyVersion version;
+     struct { float x, y; } center_f;
 };
 
 } // namespace rigid
