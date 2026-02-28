@@ -17,7 +17,7 @@ void RigidBodyManager::synchronize(
     const std::unordered_map<RegionID, RegionGeometry>& geometry_cache,
     const std::unordered_map<RegionID, RegionRecord>& active_regions) 
 {
-    // 1. Cleanup vanished regions (Keep as is)
+    // 1. Cleanup vanished regions
     for (auto it = m_body_map.begin(); it != m_body_map.end(); ) {
         if (active_regions.find(it->first) == active_regions.end()) {
             if (b2Body_IsValid(it->second.bodyId)) b2DestroyBody(it->second.bodyId);
@@ -25,7 +25,7 @@ void RigidBodyManager::synchronize(
         } else { ++it; }
     }
 
-    // 2. Sync State and Geometry
+    // 2. Sync State and Logic
     for (const auto& snapshot : stability.active_snapshots) {
         const RegionID id = snapshot.id;
         auto geo_it = geometry_cache.find(id);
@@ -39,75 +39,73 @@ void RigidBodyManager::synchronize(
 
         auto body_it = m_body_map.find(id);
         if (body_it == m_body_map.end()) {
+            // New body: Initial transform is necessary
             create_body_for_id(id, geo, record.version, targetType);
             m_body_map[id].topology_hash = geo.topology_hash;
         } else {
             BodyEntry& entry = body_it->second;
-            
-            // Transform updates are CHEAP, do them every frame
+            b2BodyType currentType = b2Body_GetType(entry.bodyId);
+
+            // ISSUE 1 FIX: Logic for Transform Updates
             if (entry.version != record.version) {
-                b2Vec2 newPos = { (float)geo.center.x, (float)geo.center.y };
-                b2Body_SetTransform(entry.bodyId, newPos, b2Rot_identity);
+                // Only teleport if it's static OR if we are intentionally realigning
+                // If it's dynamic, we let the physics engine keep its momentum.
+                if (currentType == b2_staticBody) {
+                    b2Vec2 newPos = { (float)geo.center.x, (float)geo.center.y };
+                    b2Body_SetTransform(entry.bodyId, newPos, b2Rot_identity);
+                }
                 
-                // If topology changed, just mark it dirty instead of updating now
                 if (entry.topology_hash != geo.topology_hash) {
                     entry.is_dirty = true; 
                 }
                 entry.version = record.version;
             }
 
-            if (b2Body_GetType(entry.bodyId) != targetType) {
+            // If switching from Static -> Dynamic, we MUST align once
+            if (currentType != targetType) {
+                if (targetType == b2_dynamicBody) {
+                    b2Vec2 newPos = { (float)geo.center.x, (float)geo.center.y };
+                    b2Body_SetTransform(entry.bodyId, newPos, b2Rot_identity);
+                }
                 b2Body_SetType(entry.bodyId, targetType);
             }
         }
     }
 
-// 3. Process the "Dirty" Budget
-    // Adjust 'maxUpdates' based on your target CPU overhead
-    int updatesProcessed = 0;
-    const int maxUpdatesPerFrame = 2; 
+    // ISSUE 2 FIX: Single Unified Dirty Loop
+    int normalUpdates = 0;
+    int complexUpdates = 0;
+    const int MAX_NORMAL = 2;
+    const int MAX_COMPLEX = 1;
 
     for (auto& [id, entry] : m_body_map) {
-        if (entry.is_dirty) {
-            auto geo_it = geometry_cache.find(id);
-            if (geo_it != geometry_cache.end()) {
-                update_fixtures(entry.bodyId, geo_it->second);
-                entry.topology_hash = geo_it->second.topology_hash;
-                entry.is_dirty = false; // Clean!
-                
-                updatesProcessed++;
-                if (updatesProcessed >= maxUpdatesPerFrame) break;
-            }
-        }
+        if (!entry.is_dirty) continue;
+
+        auto geo_it = geometry_cache.find(id);
+        if (geo_it == geometry_cache.end()) continue;
+
+        const auto& geo = geo_it->second;
+        bool is_complex = geo.convex_pieces.size() > 50;
+
+        // Budget checking
+        if (is_complex && complexUpdates >= MAX_COMPLEX) continue;
+        if (!is_complex && normalUpdates >= MAX_NORMAL) continue;
+
+        update_fixtures(entry.bodyId, geo);
+        
+        entry.topology_hash = geo.topology_hash;
+        entry.is_dirty = false;
+
+        if (is_complex) complexUpdates++; else normalUpdates++;
+        
+        // Break if both budgets are exhausted
+        if (normalUpdates >= MAX_NORMAL && complexUpdates >= MAX_COMPLEX) break;
     }
-    int updatesThisFrame = 0;
-    const int MAX_COMPLEX_UPDATES = 1; // Only allow ONE big body update per frame
-
-    for (auto& [id, entry] : m_body_map) {
-        if (entry.is_dirty) {
-            auto geo_it = geometry_cache.find(id);
-            if (geo_it != geometry_cache.end()) {
-                
-                // OPTIONAL: If the body is "Small", update it immediately.
-                // If the body is "Huge", only do 1 per frame.
-                bool is_huge = geo_it->second.convex_pieces.size() > 50;
-                
-                if (is_huge && updatesThisFrame >= MAX_COMPLEX_UPDATES) {
-                    continue; // Skip for now, do it next frame
-                }
-
-                update_fixtures(entry.bodyId, geo_it->second);
-                entry.is_dirty = false;
-                entry.topology_hash = geo_it->second.topology_hash;
-                
-                if (is_huge) updatesThisFrame++;
-            }
-        }
-    }
-
-
-
 }
+
+
+
+
 void RigidBodyManager::update_region_transforms(std::unordered_map<RegionID, RegionRecord>& active_regions) {
     for (auto& [id, entry] : m_body_map) {
         if (!b2Body_IsValid(entry.bodyId)) continue;
@@ -147,24 +145,21 @@ void RigidBodyManager::create_body_for_id(RegionID id, const RegionGeometry& geo
     m_body_map[id] = { bodyId, version };
 }
 void RigidBodyManager::update_fixtures(b2BodyId bodyId, const RegionGeometry& geo) {
-    // 1. Get all shapes currently attached to this body
     int count = b2Body_GetShapeCount(bodyId);
     if (count > 0) {
-        // Use a larger buffer to handle the "Big Ball" scenario
         std::vector<b2ShapeId> shapes(count);
         int actualCount = b2Body_GetShapes(bodyId, shapes.data(), count);
-        
         for (int i = 0; i < actualCount; ++i) {
-            // CRITICAL: Pass 'false' to avoid recalculating mass for every single piece
-            b2DestroyShape(shapes[i], false);
+            b2DestroyShape(shapes[i], false); 
         }
     }
 
     b2ShapeDef shapeDef = b2DefaultShapeDef();
-    // High-speed optimization: Disable expensive features for these complex bodies
     shapeDef.density = 1.0f;
 
+    // Temporary buffer for vertex transformation
     b2Vec2 localVerts[B2_MAX_POLYGON_VERTICES];
+
     for (const auto& piece : geo.convex_pieces) {
         int vCount = (int)std::min(piece.points.size(), (size_t)B2_MAX_POLYGON_VERTICES);
         if (vCount < 3) continue;
@@ -176,55 +171,18 @@ void RigidBodyManager::update_fixtures(b2BodyId bodyId, const RegionGeometry& ge
             };
         }
 
+        // Restoring b2ComputeHull to fix winding/collinear points and prevent crashes
         b2Hull hull = b2ComputeHull(localVerts, vCount);
+        
+        // Only create the polygon if the hull validation passes
         if (hull.count >= 3) {
             b2Polygon poly = b2MakePolygon(&hull, 0.0f);
-            // This adds the shape to the body's internal list
             b2CreatePolygonShape(bodyId, &shapeDef, &poly);
         }
     }
 
-    // 2. RECALCULATE MASS ONCE AT THE END
-    // This is where the 20fps -> 200fps jump happens.
+    // Still using the optimized single mass update
     b2Body_ApplyMassFromShapes(bodyId);
 }
-/*void RigidBodyManager::update_fixtures(b2BodyId bodyId, const RegionGeometry& geo) {
-    int count = b2Body_GetShapeCount(bodyId);
-    if (count > 0) {
-        b2ShapeId shapes[64]; // Increased buffer
-        int actualCount = b2Body_GetShapes(bodyId, shapes, 64);
-        
-        for (int i = 0; i < actualCount; ++i) {
-            // PASS FALSE: Don't update mass 64 times in a row!
-            b2DestroyShape(shapes[i], false);
-        }
-    }
 
-    b2ShapeDef shapeDef = b2DefaultShapeDef();
-    shapeDef.density = 1.0f;
-    
-    // We'll use a local buffer to avoid heap churn
-    b2Vec2 localVerts[B2_MAX_POLYGON_VERTICES];
-
-    for (const auto& piece : geo.convex_pieces) {
-        int vCount = (int)std::min(piece.points.size(), (size_t)B2_MAX_POLYGON_VERTICES);
-        if (vCount < 3) continue;
-
-        for (int i = 0; i < vCount; ++i) {
-            localVerts[i] = { 
-                piece.points[i].x - (float)geo.center.x, 
-                piece.points[i].y - (float)geo.center.y 
-            };
-        }
-
-        b2Hull hull = b2ComputeHull(localVerts, vCount);
-        if (hull.count >= 3) {
-            b2Polygon poly = b2MakePolygon(&hull, 0.0f);
-            b2CreatePolygonShape(bodyId, &shapeDef, &poly);
-        }
-    }
-    
-    // FINAL STEP: Now that all shapes are in place, calculate mass ONCE.
-    b2Body_ApplyMassFromShapes(bodyId);
-}*/
 } // namespace rigid
