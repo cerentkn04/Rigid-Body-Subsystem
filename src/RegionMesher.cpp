@@ -140,30 +140,29 @@ struct Edge {
 // =====================
 // Helpers
 // =====================
+//
+//
 static void SimplifyContour(std::vector<Vertex>& points) {
-    if (points.size() < 3) return;
+    if (points.size() < 5) return; 
 
     std::vector<Vertex> simplified;
-    simplified.reserve(points.size());
+    simplified.push_back(points[0]);
 
-    for (size_t i = 0; i < points.size(); ++i) {
-        const Vertex& prev = (i == 0) ? points.back() : points[i - 1];
+    for (size_t i = 1; i < points.size(); ++i) {
+        const Vertex& last = simplified.back();
         const Vertex& curr = points[i];
-        const Vertex& next = points[(i + 1) % points.size()];
 
-        // Calculas only happens when drawing at the bottomte 2D Cross Product of vectors (prev->curr) and (curr->next)
-        float dx1 = curr.x - prev.x;
-        float dy1 = curr.y - prev.y;
-        float dx2 = next.x - curr.x;
-        float dy2 = next.y - curr.y;
+        // If the point is closer than 3.0 units, Nuke it.
+        // This is the "Detail" slider. Increase 9.0f to 16.0f for even less detail.
+        float distSq = std::pow(curr.x - last.x, 2) + std::pow(curr.y - last.y, 2);
+        if (distSq < 9.0f) continue; 
 
-        // If cross product is ~0, the points are collinear
-        float cross = dx1 * dy2 - dy1 * dx2;
-        if (std::abs(cross) > 1e-5f) {
-            simplified.push_back(curr);
-        }
+        simplified.push_back(curr);
     }
-    points = std::move(simplified);
+
+    if (simplified.size() >= 3) {
+        points = std::move(simplified);
+    }
 }
 static float CalculateSignedArea(const std::vector<Vertex>& points) {
     float area = 0.0f;
@@ -204,6 +203,9 @@ RegionGeometry GeometryExtractor::Build(
     RegionGeometry geo;
     geo.region_id = regionID;
     geo.version = 0;
+    uint64_t hash = 0x811C9DC5;
+    double centerX = 0, centerY = 0;
+    uint32_t count = 0;
 
     std::vector<Edge> edges;
     edges.reserve(256); // optional small reserve
@@ -228,6 +230,28 @@ RegionGeometry GeometryExtractor::Build(
 
     for (int y = bounds.min_y - 1; y <= bounds.max_y; ++y) {
         for (int x = bounds.min_x - 1; x <= bounds.max_x; ++x) {
+            if (getLabel(x, y) == regionID) {
+                // Calculate Hash based on relative coordinates
+                uint32_t localX = x - bounds.min_x;
+                uint32_t localY = y - bounds.min_y;
+                uint32_t combined = (localX << 16) | localY;
+                hash ^= combined;
+                hash *= 0x01000193;
+
+                // Accumulate center
+                centerX += x;
+     geo.topology_hash = hash;
+    if (count > 0) {
+        geo.center.x = (float)(centerX / count);
+        geo.center.y = (float)(centerY / count);
+    }           centerY += y;
+                count++;
+            }
+            geo.topology_hash = hash;
+    if (count > 0) {
+        geo.center.x = (float)(centerX / count);
+        geo.center.y = (float)(centerY / count);
+    }
 
             int mask = 0;
             if (getLabel(x, y)         == regionID) mask |= 8;
@@ -373,11 +397,18 @@ if (outerIt != geo.contours.end()) {
     for (auto& hole : geo.contours) {
         if (!hole.is_hole) continue;
     }
-    std::vector<Vertex> optimizedPoly;
-    DouglasPeucker(mainPoly, 0.25f, optimizedPoly);
 
-    // Call the corrected Decompose
-    bayazit::Decompose(mainPoly, convexPolygons);
+    std::vector<Vertex> optimizedPoly;
+// CHANGE THIS FLOAT TO ADJUST DETAIL: 
+// 0.1f = Very detailed, 1.0f = Very simplified
+DouglasPeucker(mainPoly, 10.0f, optimizedPoly); 
+if (optimizedPoly.size() >= 3) {
+        bayazit::Decompose(optimizedPoly, convexPolygons);
+    } else if (mainPoly.size() >= 3) {
+        // Fallback to the unoptimized version so Box2D doesn't crash
+        bayazit::Decompose(mainPoly, convexPolygons);
+    }
+
 }
 
 // CRITICAL: Copy the resulting convex polygons into the geo record

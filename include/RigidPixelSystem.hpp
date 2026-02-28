@@ -29,10 +29,8 @@ void init_physics(b2WorldId world_id) {
 // Example: If you have a group_grid array
     void update(const world::WorldView& view) {
         uint64_t current_world_rev = view.world_revision();
-
         // 1. Always keep stability map synced with tracker
         stability.sync_with_tracker(tracker.get_active_regions());
-        
         // 2. Dirtiness Logic
         if (current_world_rev != last_processed_rev) {
             for (uint32_t i = 0; i < stability.active_snapshots.size(); ++i) {

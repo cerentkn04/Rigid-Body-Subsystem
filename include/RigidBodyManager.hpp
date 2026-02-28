@@ -11,6 +11,8 @@ namespace rigid {
     struct BodyEntry {
         b2BodyId bodyId;
         uint64_t version;
+        uint64_t topology_hash;
+        bool is_dirty = false;
     };
 
     class RigidBodyManager {

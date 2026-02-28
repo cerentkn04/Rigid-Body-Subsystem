@@ -67,11 +67,7 @@ struct RegionExtractor::Impl {
                 // Check 4 neighbors (West, North-West, North, North-East)
                 // These are already processed in a top-down scan
                 //
-if (x > 0 && world.solidity_at(x-1, y) == world::CellSolidity::Solid) {
-    if (world.group_id_at(x-1, y) != current_group) {
-    printf("[Extractor] Prevented merge at (%d,%d): Group %u vs %u\n", x, y, current_group, world.group_id_at(x-1, y));
-}
-}
+
                           RegionIndex L  = (x > 0 && world.group_id_at(x - 1, y) == current_group) 
                          ? label_grid[idx - 1] : InvalidRegionIndex;
                          

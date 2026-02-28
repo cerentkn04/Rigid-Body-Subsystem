@@ -69,8 +69,8 @@ public:
     }
 
     void update() {
-        world_revision_counter++;
         for (auto& cell : grid) cell.updated = false;
+        world_revision_counter++;
         for (int y = GRID_HEIGHT - 1; y >= 0; --y) {
             bool leftToRight = (rng() % 2) == 0;
             for (int i = 0; i < GRID_WIDTH; ++i) {
@@ -100,6 +100,8 @@ public:
                 at(nx, ny).colorVariation = dist(rng);
                 if (old == CellType::Rock ||old == CellType::Wall || type == CellType::Rock|| type == CellType::Wall) {
                     topology_changed = true;
+                    world_revision_counter++;
+                    
                     region_revisions[ny * GRID_WIDTH + nx] = world_revision_counter;
                 }
             }
@@ -238,13 +240,9 @@ rigidSystem.init_physics(worldId);
 
         for (int i = 0; i < GRID_WIDTH * GRID_HEIGHT; ++i) {
             const Cell& cell = cell_ptr[i];
-            if (cell.type == CellType::Wall) {
-                const rigid::RegionIndex rIdx = label_ptr[i];
+            if (cell.type >= CellType::Wall) {
+              const rigid::RegionIndex rIdx = label_ptr[i];
                 pixel_ptr[i] = (rIdx < num_mappings) ? cached_colors[rIdx] : 0x646464FF;
-            } else if(cell.type == CellType::Rock){
-                const rigid::RegionIndex rIdx = label_ptr[i];
-                pixel_ptr[i] = (rIdx < num_mappings) ? cached_colors[rIdx] : 0x646450FF;
-
             }
             else {
                 const uint8_t v = cell.colorVariation;

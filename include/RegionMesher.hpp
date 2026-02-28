@@ -18,6 +18,7 @@ struct ConvexPiece {
 struct RegionGeometry {
     uint32_t region_id;
     uint64_t version;
+    uint64_t topology_hash = 0;
     std::vector<Contour> contours;
     std::vector<ConvexPiece> convex_pieces;// Flat vector
     struct { float x, y; } center;
