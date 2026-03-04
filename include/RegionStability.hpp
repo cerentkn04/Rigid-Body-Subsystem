@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include <vector>
 #include <unordered_map>
 #include <cstdint>
@@ -59,4 +59,4 @@ struct StabilitySystem {
 
     void propagate_dirty_bounds();
 };
-
+*/

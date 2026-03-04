@@ -72,10 +72,24 @@ include CMakeFiles/Ceren.dir/flags.make
 CMakeFiles/Ceren.dir/codegen:
 .PHONY : CMakeFiles/Ceren.dir/codegen
 
+CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o: CMakeFiles/Ceren.dir/flags.make
+CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o: /home/ceen/projects/ceren/src/BasicConnectivityPolicy.cpp
+CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o -MF CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o.d -o CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o -c /home/ceen/projects/ceren/src/BasicConnectivityPolicy.cpp
+
+CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ceen/projects/ceren/src/BasicConnectivityPolicy.cpp > CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.i
+
+CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ceen/projects/ceren/src/BasicConnectivityPolicy.cpp -o CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.s
+
 CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o: CMakeFiles/Ceren.dir/flags.make
 CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o: /home/ceen/projects/ceren/src/Box2dBackend.cpp
 CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o -MF CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o.d -o CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o -c /home/ceen/projects/ceren/src/Box2dBackend.cpp
 
 CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.i: cmake_force
@@ -89,7 +103,7 @@ CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.s: cmake_force
 CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o: CMakeFiles/Ceren.dir/flags.make
 CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o: /home/ceen/projects/ceren/src/RegionExtractor.cpp
 CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o -MF CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o.d -o CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o -c /home/ceen/projects/ceren/src/RegionExtractor.cpp
 
 CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.i: cmake_force
@@ -103,7 +117,7 @@ CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.s: cmake_force
 CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o: CMakeFiles/Ceren.dir/flags.make
 CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o: /home/ceen/projects/ceren/src/RegionMesher.cpp
 CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o -MF CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o.d -o CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o -c /home/ceen/projects/ceren/src/RegionMesher.cpp
 
 CMakeFiles/Ceren.dir/src/RegionMesher.cpp.i: cmake_force
@@ -117,7 +131,7 @@ CMakeFiles/Ceren.dir/src/RegionMesher.cpp.s: cmake_force
 CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o: CMakeFiles/Ceren.dir/flags.make
 CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o: /home/ceen/projects/ceren/src/RegionTracker.cpp
 CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o -MF CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o.d -o CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o -c /home/ceen/projects/ceren/src/RegionTracker.cpp
 
 CMakeFiles/Ceren.dir/src/RegionTracker.cpp.i: cmake_force
@@ -131,7 +145,7 @@ CMakeFiles/Ceren.dir/src/RegionTracker.cpp.s: cmake_force
 CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o: CMakeFiles/Ceren.dir/flags.make
 CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o: /home/ceen/projects/ceren/src/RigidBodyManager.cpp
 CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o -MF CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o.d -o CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o -c /home/ceen/projects/ceren/src/RigidBodyManager.cpp
 
 CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.i: cmake_force
@@ -145,7 +159,7 @@ CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.s: cmake_force
 CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o: CMakeFiles/Ceren.dir/flags.make
 CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o: /home/ceen/projects/ceren/src/RigidPixelSystem.cpp
 CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o -MF CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o.d -o CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o -c /home/ceen/projects/ceren/src/RigidPixelSystem.cpp
 
 CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.i: cmake_force
@@ -156,10 +170,24 @@ CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ceen/projects/ceren/src/RigidPixelSystem.cpp -o CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.s
 
+CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o: CMakeFiles/Ceren.dir/flags.make
+CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o: /home/ceen/projects/ceren/src/StabilityResolver.cpp
+CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o -MF CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o.d -o CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o -c /home/ceen/projects/ceren/src/StabilityResolver.cpp
+
+CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ceen/projects/ceren/src/StabilityResolver.cpp > CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.i
+
+CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ceen/projects/ceren/src/StabilityResolver.cpp -o CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.s
+
 CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o: CMakeFiles/Ceren.dir/flags.make
 CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o: /home/ceen/projects/ceren/src/StabilitySystem.cpp
 CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o -MF CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o.d -o CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o -c /home/ceen/projects/ceren/src/StabilitySystem.cpp
 
 CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.i: cmake_force
@@ -170,10 +198,38 @@ CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ceen/projects/ceren/src/StabilitySystem.cpp -o CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.s
 
+CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.o: CMakeFiles/Ceren.dir/flags.make
+CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.o: /home/ceen/projects/ceren/src/StructuralGraph.cpp
+CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.o -MF CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.o.d -o CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.o -c /home/ceen/projects/ceren/src/StructuralGraph.cpp
+
+CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ceen/projects/ceren/src/StructuralGraph.cpp > CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.i
+
+CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ceen/projects/ceren/src/StructuralGraph.cpp -o CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.s
+
+CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.o: CMakeFiles/Ceren.dir/flags.make
+CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.o: /home/ceen/projects/ceren/src/StructuralTracker.cpp
+CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.o -MF CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.o.d -o CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.o -c /home/ceen/projects/ceren/src/StructuralTracker.cpp
+
+CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ceen/projects/ceren/src/StructuralTracker.cpp > CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.i
+
+CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ceen/projects/ceren/src/StructuralTracker.cpp -o CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.s
+
 CMakeFiles/Ceren.dir/src/main.cpp.o: CMakeFiles/Ceren.dir/flags.make
 CMakeFiles/Ceren.dir/src/main.cpp.o: /home/ceen/projects/ceren/src/main.cpp
 CMakeFiles/Ceren.dir/src/main.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/Ceren.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/Ceren.dir/src/main.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/src/main.cpp.o -MF CMakeFiles/Ceren.dir/src/main.cpp.o.d -o CMakeFiles/Ceren.dir/src/main.cpp.o -c /home/ceen/projects/ceren/src/main.cpp
 
 CMakeFiles/Ceren.dir/src/main.cpp.i: cmake_force
@@ -187,7 +243,7 @@ CMakeFiles/Ceren.dir/src/main.cpp.s: cmake_force
 CMakeFiles/Ceren.dir/vendored/imgui/imgui.cpp.o: CMakeFiles/Ceren.dir/flags.make
 CMakeFiles/Ceren.dir/vendored/imgui/imgui.cpp.o: /home/ceen/projects/ceren/vendored/imgui/imgui.cpp
 CMakeFiles/Ceren.dir/vendored/imgui/imgui.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/Ceren.dir/vendored/imgui/imgui.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/Ceren.dir/vendored/imgui/imgui.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/vendored/imgui/imgui.cpp.o -MF CMakeFiles/Ceren.dir/vendored/imgui/imgui.cpp.o.d -o CMakeFiles/Ceren.dir/vendored/imgui/imgui.cpp.o -c /home/ceen/projects/ceren/vendored/imgui/imgui.cpp
 
 CMakeFiles/Ceren.dir/vendored/imgui/imgui.cpp.i: cmake_force
@@ -201,7 +257,7 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui.cpp.s: cmake_force
 CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.o: CMakeFiles/Ceren.dir/flags.make
 CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.o: /home/ceen/projects/ceren/vendored/imgui/imgui_draw.cpp
 CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.o -MF CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.o.d -o CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.o -c /home/ceen/projects/ceren/vendored/imgui/imgui_draw.cpp
 
 CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.i: cmake_force
@@ -215,7 +271,7 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.s: cmake_force
 CMakeFiles/Ceren.dir/vendored/imgui/imgui_demo.cpp.o: CMakeFiles/Ceren.dir/flags.make
 CMakeFiles/Ceren.dir/vendored/imgui/imgui_demo.cpp.o: /home/ceen/projects/ceren/vendored/imgui/imgui_demo.cpp
 CMakeFiles/Ceren.dir/vendored/imgui/imgui_demo.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/Ceren.dir/vendored/imgui/imgui_demo.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/Ceren.dir/vendored/imgui/imgui_demo.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/vendored/imgui/imgui_demo.cpp.o -MF CMakeFiles/Ceren.dir/vendored/imgui/imgui_demo.cpp.o.d -o CMakeFiles/Ceren.dir/vendored/imgui/imgui_demo.cpp.o -c /home/ceen/projects/ceren/vendored/imgui/imgui_demo.cpp
 
 CMakeFiles/Ceren.dir/vendored/imgui/imgui_demo.cpp.i: cmake_force
@@ -229,7 +285,7 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_demo.cpp.s: cmake_force
 CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o: CMakeFiles/Ceren.dir/flags.make
 CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o: /home/ceen/projects/ceren/vendored/imgui/imgui_tables.cpp
 CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o -MF CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o.d -o CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o -c /home/ceen/projects/ceren/vendored/imgui/imgui_tables.cpp
 
 CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.i: cmake_force
@@ -243,7 +299,7 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.s: cmake_force
 CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o: CMakeFiles/Ceren.dir/flags.make
 CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o: /home/ceen/projects/ceren/vendored/imgui/imgui_widgets.cpp
 CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o -MF CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o.d -o CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o -c /home/ceen/projects/ceren/vendored/imgui/imgui_widgets.cpp
 
 CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.i: cmake_force
@@ -257,7 +313,7 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.s: cmake_force
 CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdl3.cpp.o: CMakeFiles/Ceren.dir/flags.make
 CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdl3.cpp.o: /home/ceen/projects/ceren/vendored/imgui/backends/imgui_impl_sdl3.cpp
 CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdl3.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdl3.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdl3.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdl3.cpp.o -MF CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdl3.cpp.o.d -o CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdl3.cpp.o -c /home/ceen/projects/ceren/vendored/imgui/backends/imgui_impl_sdl3.cpp
 
 CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdl3.cpp.i: cmake_force
@@ -271,7 +327,7 @@ CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdl3.cpp.s: cmake_force
 CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp.o: CMakeFiles/Ceren.dir/flags.make
 CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp.o: /home/ceen/projects/ceren/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp
 CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp.o: CMakeFiles/Ceren.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp.o -MF CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp.o.d -o CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp.o -c /home/ceen/projects/ceren/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp
 
 CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp.i: cmake_force
@@ -284,13 +340,17 @@ CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp.s: cmak
 
 # Object files for target Ceren
 Ceren_OBJECTS = \
+"CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o" \
 "CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o" \
 "CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o" \
 "CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o" \
 "CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o" \
 "CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o" \
 "CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o" \
+"CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o" \
 "CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o" \
+"CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.o" \
+"CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.o" \
 "CMakeFiles/Ceren.dir/src/main.cpp.o" \
 "CMakeFiles/Ceren.dir/vendored/imgui/imgui.cpp.o" \
 "CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.o" \
@@ -303,13 +363,17 @@ Ceren_OBJECTS = \
 # External object files for target Ceren
 Ceren_EXTERNAL_OBJECTS =
 
+Ceren: CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o
 Ceren: CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o
 Ceren: CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o
 Ceren: CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o
 Ceren: CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o
 Ceren: CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o
 Ceren: CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o
+Ceren: CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o
 Ceren: CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o
+Ceren: CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.o
+Ceren: CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.o
 Ceren: CMakeFiles/Ceren.dir/src/main.cpp.o
 Ceren: CMakeFiles/Ceren.dir/vendored/imgui/imgui.cpp.o
 Ceren: CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.o
@@ -324,7 +388,7 @@ Ceren: libSDL3.so.0.2.24
 Ceren: vendored/box2d/src/libbox2d.a
 Ceren: /home/ceen/projects/ceren/vendored/SDL/src/dynapi/SDL_dynapi.sym
 Ceren: CMakeFiles/Ceren.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Linking CXX executable Ceren"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Linking CXX executable Ceren"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Ceren.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

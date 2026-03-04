@@ -44,6 +44,8 @@ const std::vector<RegionID>& get_index_mapping() const { return m_index_to_id_ma
     const std::vector<RegionLifecycleEvent>& get_events() const { return m_events; }
     const std::unordered_map<RegionID, RegionRecord>& get_active_regions() const { return m_active_regions; }
 
+    std::unordered_map<RegionID, RegionRecord>& get_active_regions() { return m_active_regions; }
+
 private:
     struct Impl;
     Impl* m_impl;

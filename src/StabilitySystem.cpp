@@ -1,8 +1,8 @@
-#include "RegionStability.hpp"
+/*#include "RegionStability.hpp"
 #include "RigidPixelWorldView.hpp"
 #include <algorithm>
 #include <deque>
-
+#include <cstdio>
 // Internal helper for AABB intersection logic
 static bool intersects(const rigid::CellAABB& a, const rigid::CellAABB& b) {
    
@@ -38,7 +38,14 @@ void StabilitySystem::rebuild_bins() {
 // Inside StabilitySystem logic
 void StabilitySystem::check_stability(uint32_t index, const world::WorldView& world) {
     auto& snapshot = active_snapshots[index];
-    
+    bool touches_floor = (snapshot.influence_bounds.max_y >= world.height - 1);
+    snapshot.is_stable = touches_floor;
+   
+    if (!snapshot.is_stable) {
+        // This should trigger the "Region X changed state to DYNAMIC" log in your Manager
+        printf("Stability: Region %u is FLOATING (Bounds MaxY: %d, WorldH: %d)\n", 
+                snapshot.id, snapshot.influence_bounds.max_y, world.height);
+    }
     // Example Logic: If the region touches the bottom of the world, it is stable.
     if (snapshot.influence_bounds.max_y >= world.height - 1) {
         snapshot.is_stable = true;
@@ -173,4 +180,4 @@ for (int by = by0; by <= by1; ++by) {
 
     }
 }
-
+*/

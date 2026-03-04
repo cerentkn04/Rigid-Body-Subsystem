@@ -2,13 +2,17 @@ Ceren: \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o \
+  CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o \
   CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o \
   CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o \
   CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o \
   CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o \
   CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o \
   CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o \
+  CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o \
   CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o \
+  CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.o \
+  CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.o \
   CMakeFiles/Ceren.dir/src/main.cpp.o \
   CMakeFiles/Ceren.dir/vendored/imgui/imgui.cpp.o \
   CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.o \
@@ -53,6 +57,8 @@ Ceren: \
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o:
 
+CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o:
+
 CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o:
 
 CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o:
@@ -65,7 +71,13 @@ CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o:
 
 CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o:
 
+CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o:
+
 CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o:
+
+CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.o:
+
+CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.o:
 
 CMakeFiles/Ceren.dir/src/main.cpp.o:
 

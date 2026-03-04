@@ -116,14 +116,11 @@ for (auto& [parent_id, children] : parent_claims) {
     } 
     else {
         // SPLIT DETECTED: Parent is destroyed, all children are brand new
-        printf("[Tracker] SPLIT! Parent ID %u destroyed. Generating %zu new fragments.\n", 
-               parent_id, children.size());
 
         for (size_t j = 0; j < children.size(); ++j) {
             RegionID new_id = generate_id();
             m_impl->current_index_to_id[children[j]] = new_id;
 
-            printf("  -> Fragment %zu assigned NEW ID: %u\n", j + 1, new_id);
             
             // Log the event as a Split (which implies parent destruction)
             RegionLifecycleEvent ev;

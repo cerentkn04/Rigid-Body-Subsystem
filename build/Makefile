@@ -226,6 +226,30 @@ box2d/fast:
 	$(MAKE) $(MAKESILENT) -f vendored/box2d/src/CMakeFiles/box2d.dir/build.make vendored/box2d/src/CMakeFiles/box2d.dir/build
 .PHONY : box2d/fast
 
+src/BasicConnectivityPolicy.o: src/BasicConnectivityPolicy.cpp.o
+.PHONY : src/BasicConnectivityPolicy.o
+
+# target to build an object file
+src/BasicConnectivityPolicy.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o
+.PHONY : src/BasicConnectivityPolicy.cpp.o
+
+src/BasicConnectivityPolicy.i: src/BasicConnectivityPolicy.cpp.i
+.PHONY : src/BasicConnectivityPolicy.i
+
+# target to preprocess a source file
+src/BasicConnectivityPolicy.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.i
+.PHONY : src/BasicConnectivityPolicy.cpp.i
+
+src/BasicConnectivityPolicy.s: src/BasicConnectivityPolicy.cpp.s
+.PHONY : src/BasicConnectivityPolicy.s
+
+# target to generate assembly for a file
+src/BasicConnectivityPolicy.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.s
+.PHONY : src/BasicConnectivityPolicy.cpp.s
+
 src/Box2dBackend.o: src/Box2dBackend.cpp.o
 .PHONY : src/Box2dBackend.o
 
@@ -370,6 +394,30 @@ src/RigidPixelSystem.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.s
 .PHONY : src/RigidPixelSystem.cpp.s
 
+src/StabilityResolver.o: src/StabilityResolver.cpp.o
+.PHONY : src/StabilityResolver.o
+
+# target to build an object file
+src/StabilityResolver.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o
+.PHONY : src/StabilityResolver.cpp.o
+
+src/StabilityResolver.i: src/StabilityResolver.cpp.i
+.PHONY : src/StabilityResolver.i
+
+# target to preprocess a source file
+src/StabilityResolver.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.i
+.PHONY : src/StabilityResolver.cpp.i
+
+src/StabilityResolver.s: src/StabilityResolver.cpp.s
+.PHONY : src/StabilityResolver.s
+
+# target to generate assembly for a file
+src/StabilityResolver.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.s
+.PHONY : src/StabilityResolver.cpp.s
+
 src/StabilitySystem.o: src/StabilitySystem.cpp.o
 .PHONY : src/StabilitySystem.o
 
@@ -393,6 +441,54 @@ src/StabilitySystem.s: src/StabilitySystem.cpp.s
 src/StabilitySystem.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.s
 .PHONY : src/StabilitySystem.cpp.s
+
+src/StructuralGraph.o: src/StructuralGraph.cpp.o
+.PHONY : src/StructuralGraph.o
+
+# target to build an object file
+src/StructuralGraph.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.o
+.PHONY : src/StructuralGraph.cpp.o
+
+src/StructuralGraph.i: src/StructuralGraph.cpp.i
+.PHONY : src/StructuralGraph.i
+
+# target to preprocess a source file
+src/StructuralGraph.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.i
+.PHONY : src/StructuralGraph.cpp.i
+
+src/StructuralGraph.s: src/StructuralGraph.cpp.s
+.PHONY : src/StructuralGraph.s
+
+# target to generate assembly for a file
+src/StructuralGraph.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.s
+.PHONY : src/StructuralGraph.cpp.s
+
+src/StructuralTracker.o: src/StructuralTracker.cpp.o
+.PHONY : src/StructuralTracker.o
+
+# target to build an object file
+src/StructuralTracker.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.o
+.PHONY : src/StructuralTracker.cpp.o
+
+src/StructuralTracker.i: src/StructuralTracker.cpp.i
+.PHONY : src/StructuralTracker.i
+
+# target to preprocess a source file
+src/StructuralTracker.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.i
+.PHONY : src/StructuralTracker.cpp.i
+
+src/StructuralTracker.s: src/StructuralTracker.cpp.s
+.PHONY : src/StructuralTracker.s
+
+# target to generate assembly for a file
+src/StructuralTracker.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.s
+.PHONY : src/StructuralTracker.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
@@ -603,6 +699,9 @@ help:
 	@echo "... SDL3_test"
 	@echo "... SDL_uclibc"
 	@echo "... box2d"
+	@echo "... src/BasicConnectivityPolicy.o"
+	@echo "... src/BasicConnectivityPolicy.i"
+	@echo "... src/BasicConnectivityPolicy.s"
 	@echo "... src/Box2dBackend.o"
 	@echo "... src/Box2dBackend.i"
 	@echo "... src/Box2dBackend.s"
@@ -621,9 +720,18 @@ help:
 	@echo "... src/RigidPixelSystem.o"
 	@echo "... src/RigidPixelSystem.i"
 	@echo "... src/RigidPixelSystem.s"
+	@echo "... src/StabilityResolver.o"
+	@echo "... src/StabilityResolver.i"
+	@echo "... src/StabilityResolver.s"
 	@echo "... src/StabilitySystem.o"
 	@echo "... src/StabilitySystem.i"
 	@echo "... src/StabilitySystem.s"
+	@echo "... src/StructuralGraph.o"
+	@echo "... src/StructuralGraph.i"
+	@echo "... src/StructuralGraph.s"
+	@echo "... src/StructuralTracker.o"
+	@echo "... src/StructuralTracker.i"
+	@echo "... src/StructuralTracker.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

@@ -225,23 +225,7 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: \
  /usr/include/c++/15.2.1/ext/aligned_buffer.h \
  /usr/include/c++/15.2.1/bits/enable_special_members.h \
  /usr/include/c++/15.2.1/bits/node_handle.h \
- /usr/include/c++/15.2.1/bits/erase_if.h \
- /home/ceen/projects/ceren/include/RegionExtractor.hpp \
- /home/ceen/projects/ceren/include/RegionTracker.hpp \
- /home/ceen/projects/ceren/include/RegionType.hpp \
- /home/ceen/projects/ceren/include/RegionStability.hpp \
- /home/ceen/projects/ceren/include/RigidPixelWorldView.hpp \
- /home/ceen/projects/ceren/include/RegionMesher.hpp \
- /home/ceen/projects/ceren/include/RigidBodyManager.hpp \
- /home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/box2d.h \
- /home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/base.h \
- /home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/collision.h \
- /home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/math_functions.h \
- /usr/include/c++/15.2.1/math.h \
- /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdbool.h \
- /home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/id.h \
- /home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/types.h \
- /usr/include/c++/15.2.1/memory \
+ /usr/include/c++/15.2.1/bits/erase_if.h /usr/include/c++/15.2.1/memory \
  /usr/include/c++/15.2.1/bits/stl_raw_storage_iter.h \
  /usr/include/c++/15.2.1/bits/align.h \
  /usr/include/c++/15.2.1/bits/unique_ptr.h \
@@ -309,4 +293,23 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: \
  /usr/include/c++/15.2.1/bits/std_mutex.h \
  /usr/include/c++/15.2.1/backward/auto_ptr.h \
  /usr/include/c++/15.2.1/bits/ranges_uninitialized.h \
- /usr/include/c++/15.2.1/pstl/glue_memory_defs.h
+ /usr/include/c++/15.2.1/pstl/glue_memory_defs.h \
+ /home/ceen/projects/ceren/include/RegionExtractor.hpp \
+ /home/ceen/projects/ceren/include/RegionTracker.hpp \
+ /home/ceen/projects/ceren/include/RegionType.hpp \
+ /home/ceen/projects/ceren/include/RigidPixelWorldView.hpp \
+ /home/ceen/projects/ceren/include/StructuralTracker.hpp \
+ /home/ceen/projects/ceren/include/StructuralGraph.hpp \
+ /home/ceen/projects/ceren/include/RigidBodyManager.hpp \
+ /home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/box2d.h \
+ /home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/base.h \
+ /home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/collision.h \
+ /home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/math_functions.h \
+ /usr/include/c++/15.2.1/math.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdbool.h \
+ /home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/id.h \
+ /home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/types.h \
+ /home/ceen/projects/ceren/include/RegionMesher.hpp \
+ /home/ceen/projects/ceren/include/RegionStability.hpp \
+ /home/ceen/projects/ceren/include/StabilityResolver.hpp \
+ /home/ceen/projects/ceren/include/IStabilityPolicy.hpp

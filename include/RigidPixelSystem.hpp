@@ -1,126 +1,152 @@
 #pragma once
 #include <vector>
 #include <unordered_map>
+#include <memory>
 #include <RigidPixelTypes.hpp>
 #include <RegionExtractor.hpp>
 #include <RegionTracker.hpp>
-#include <RegionStability.hpp>
 #include <RigidPixelWorldView.hpp>
-#include "RegionMesher.hpp" 
-#include "stdio.h"
+#include <StructuralTracker.hpp>
+#include <StructuralGraph.hpp>
 #include <RigidBodyManager.hpp>
-#include <memory>
+#include <IStabilityPolicy.hpp>
+
+#include "RegionMesher.hpp" 
+
 namespace rigid {
 
 class RigidPixelSystem {
 public:
+    // --- Systems ---
     RegionExtractor extractor;
     RegionTracker tracker;
-    StabilitySystem stability;
-    
+    StructuralTracker structural_engine; 
+    StructuralGraph structural_graph;      
+    StabilityPolicyFunc stability_policy = nullptr;// Added: The Fact Engine
+
+    // --- Data ---
     std::unordered_map<uint32_t, RegionGeometry> geometry_cache;
     std::vector<RegionBuildRecord> build_records;
     std::unique_ptr<RigidBodyManager> body_manager;
     uint64_t last_processed_rev = 0;
 
-void init_physics(b2WorldId world_id) {
+    // --- Lifecycle ---
+    void init_physics(b2WorldId world_id, int width, int height) {
         body_manager = std::make_unique<RigidBodyManager>(world_id);
+        structural_engine.init_bins(width, height);
+        stability_policy = &apply_basic_connectivity_policy;
+        // Default policy initialization can go here
     }
-// Example: If you have a group_grid array
+    // Replace set_policy with a simple pointer assignment
+    void set_policy(StabilityPolicyFunc new_policy) {
+        stability_policy = new_policy;
+    }
+    // --- The Pipeline ---
     void update(const world::WorldView& view) {
         uint64_t current_world_rev = view.world_revision();
-        // 1. Always keep stability map synced with tracker
-        stability.sync_with_tracker(tracker.get_active_regions());
-        // 2. Dirtiness Logic
+
+        // 1. ENGINE: Sync Tracker (ID persistence)
+        sync_engine_with_tracker();
+
+        // 2. ENGINE: Dirty Detection (Check for pixel mutations)
         if (current_world_rev != last_processed_rev) {
-            for (uint32_t i = 0; i < stability.active_snapshots.size(); ++i) {
-                if (!stability.validate_snapshot(i, view)) {
-                    stability.dirty_flags[i] = 1;
+            for (uint32_t i = 0; i < structural_engine.ids.size(); ++i) {
+                if (!validate_region_topology(i, view)) {
+                    structural_engine.dirty_flags[i] = 1;
                 }
             }
         }
-        stability.propagate_dirty_bounds();
 
-        // 3. Check if we need to run the heavy lifting
-        bool needs_extract = false;
-        for (uint8_t flag : stability.dirty_flags) {
-            if (flag == 1) { needs_extract = true; break; }
+        // 3. ENGINE: Build Structural Graph (Find who touches whom)
+        structural_graph.build(tracker.get_active_regions(), extractor.label_grid(), view.width, view.height);
+
+        // 4. POLICY: Evaluate Stability (The Decision Layer)
+         if (stability_policy) {
+            stability_policy(structural_graph, structural_engine.is_stable);
+        } 
+        // 5. PHYSICS & EXTRACTION: Heavy Lifting
+        bool needs_physics_sync = (current_world_rev > last_processed_rev);
+        for (uint8_t flag : structural_engine.dirty_flags) {
+            if (flag == 1) { needs_physics_sync = true; break; }
         }
 
-        if (current_world_rev > last_processed_rev || tracker.get_active_regions().empty()) {
-            if (current_world_rev > 0) needs_extract = true;
-        }
-
-        // 4. Core Execution
-        if (needs_extract) {
+        if (needs_physics_sync) {
             extractor.extract(view, build_records);
             tracker.process_frame(extractor.label_grid(), build_records, view.width, view.height);
-            stability.sync_with_tracker(tracker.get_active_regions());
-            last_processed_rev = current_world_rev;
-
-            // REFRESH GEOMETRY HERE
-           cleanup_dead_geometry(); 
-            refresh_geometry_cache(view);
-          if (body_manager) {
-            body_manager->synchronize(
-                stability, 
-                geometry_cache, 
-                tracker.get_active_regions()
-            );
-        }
-
-            // Update stability snapshots for the next frame
-            const auto& finalized_regions = tracker.get_active_regions();
-            for (const auto& [id, record] : finalized_regions) {
-                stability.update_snapshot(id, record.bounds, current_world_rev);
-            }
             
-            // 5. Reset flags ONLY after geometry and snapshots are handled
-            stability.reset_dirty_flags(0);
+            cleanup_dead_geometry(); 
+            refresh_geometry_cache(view);
+            if (body_manager) {
+              // We now have a vector of bools 'is_stable' from the Policy
+    body_manager->synchronize(
+        structural_graph, 
+        structural_engine.is_stable, // This is your vector<bool>
+        geometry_cache, 
+        tracker.get_active_regions()
+    );
+            }
+
+            last_processed_rev = current_world_rev;
+            std::fill(structural_engine.dirty_flags.begin(), structural_engine.dirty_flags.end(), 0);
         }
     }
 
 private:
+    void sync_engine_with_tracker() {
+        const auto& active = tracker.get_active_regions();
+        
+        structural_engine.ids.clear();
+        structural_engine.influence_bounds.clear();
+        structural_engine.revisions.clear();
+        structural_engine.dirty_flags.resize(active.size(), 0);
+        structural_engine.is_stable.resize(active.size(), true);
+
+        for (const auto& [id, record] : active) {
+            structural_engine.ids.push_back(id);
+            rigid::CellAABB b = record.bounds;
+            structural_engine.influence_bounds.push_back({b.min_x-1, b.min_y-1, b.max_x+1, b.max_y+1});
+            structural_engine.revisions.push_back(last_processed_rev);
+        }
+    }
+
+    bool validate_region_topology(uint32_t index, const world::WorldView& world) {
+        const auto& b = structural_engine.influence_bounds[index];
+        uint64_t last_rev = structural_engine.revisions[index];
+
+        for (int y = std::max(0, b.min_y); y <= std::min(world.height-1, b.max_y); ++y) {
+            for (int x = std::max(0, b.min_x); x <= std::min(world.width-1, b.max_x); ++x) {
+                if (world.region_revision(x, y) != last_rev) return false;
+            }
+        }
+        return true;
+    }
+
     void refresh_geometry_cache(const world::WorldView& view) {
-    const auto& active_regions = tracker.get_active_regions();
-    const auto& label_grid = extractor.label_grid();
-    const auto& index_to_id = tracker.get_index_mapping();
+        const auto& active_regions = tracker.get_active_regions();
+        const auto& label_grid = extractor.label_grid();
+        const auto& index_to_id = tracker.get_index_mapping();
 
-    //printf("Min region index: %u\n", index_to_id[0]);
-for (RegionIndex idx = 0; idx < index_to_id.size(); ++idx) {
-    RegionID id = index_to_id[idx];
+        for (RegionIndex idx = 0; idx < index_to_id.size(); ++idx) {
+            RegionID id = index_to_id[idx];
+            const RegionBuildRecord& record = build_records[idx];
+            const RegionRecord& region = active_regions.at(id);
 
-    const RegionBuildRecord& record = build_records[idx];
-    const RegionRecord& region = active_regions.at(id);
-
-    bool is_missing = geometry_cache.find(id) == geometry_cache.end();
-    bool version_mismatch = false;
-
-    if (!is_missing) {
-        version_mismatch = (geometry_cache[id].version != region.version);
+            bool is_missing = geometry_cache.find(id) == geometry_cache.end();
+            if (is_missing || geometry_cache[id].version != region.version) {
+                RegionGeometry geo = GeometryExtractor::Build(idx, record.bounds, label_grid, view.width, view.height);
+                geo.version = region.version;
+                geometry_cache[id] = std::move(geo);
+            }
+        }
     }
 
-    if (is_missing || version_mismatch) {
-        RegionGeometry geo =
-            GeometryExtractor::Build(idx, record.bounds, label_grid, view.width,view.height);
-
-        geo.version = region.version;
-        geometry_cache[id] = std::move(geo);
+    void cleanup_dead_geometry() {
+        const auto& active = tracker.get_active_regions();
+        for (auto it = geometry_cache.begin(); it != geometry_cache.end();) {
+            if (active.find(it->first) == active.end()) it = geometry_cache.erase(it);
+            else ++it;
+        }
     }
-}
-
-
-}
- void cleanup_dead_geometry() {
-    const auto& active = tracker.get_active_regions();
-
-    for (auto it = geometry_cache.begin(); it != geometry_cache.end();) {
-        if (active.find(it->first) == active.end())
-            it = geometry_cache.erase(it);
-        else
-            ++it;
-    }
-}          // 2. Process active regions
 };
 
 } // namespace rigid

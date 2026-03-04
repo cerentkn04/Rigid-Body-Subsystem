@@ -23,6 +23,7 @@ struct RegionRecord {
     CellAABB bounds; // This is the frozen version
     uint32_t pixel_count;
      BodyVersion version;
+     uint32_t group_id;
      struct { float x, y; } center_f;
 };
 

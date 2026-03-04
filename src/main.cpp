@@ -173,12 +173,12 @@ int main(int argc, char* argv[]) {
     const float fixedDeltaTime = 1.0f / 60.0f;
 
 
-    b2WorldDef worldDef = b2DefaultWorldDef();
-worldDef.gravity = { 0.0f, 9.8f }; // Standard gravity
-b2WorldId worldId = b2CreateWorld(&worldDef);
+  b2WorldDef worldDef = b2DefaultWorldDef();
+  worldDef.gravity = { 0.0f, 9.8f }; // Standard gravity
+  b2WorldId worldId = b2CreateWorld(&worldDef);
 
 // Link it to your system
-rigidSystem.init_physics(worldId);
+rigidSystem.init_physics(worldId, view.width, view.height);
     while (running) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -198,7 +198,6 @@ rigidSystem.init_physics(worldId);
                 }
             }
         }
-
         if (mouseDown && !io.WantCaptureMouse) {
             float mx, my; SDL_GetMouseState(&mx, &my);
             int winW, winH; SDL_GetWindowSize(window, &winW, &winH);
@@ -222,6 +221,9 @@ rigidSystem.init_physics(worldId);
 
         // --- RIGID SYSTEM ---
         rigidSystem.update(view);
+        if (rigidSystem.body_manager) {
+    rigidSystem.body_manager->update_region_transforms(rigidSystem.tracker.get_active_regions());
+}
 
         // --- RENDER (Restored Tight Loop) ---
         const auto& index_to_id = rigidSystem.tracker.get_index_mapping();
@@ -258,41 +260,50 @@ rigidSystem.init_physics(worldId);
         SDL_RenderTexture(renderer, gridTexture, nullptr, nullptr);
 
         // --- RENDER STEP: GEOMETRY (Optimized Debug View) ---
-        // ONLY this block should exist for contours
-        if (showPhysicsHulls) {
-            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-            
-            int winW, winH;
-            SDL_GetWindowSize(window, &winW, &winH);
-            float scaleX = (float)winW / GRID_WIDTH;
-            float scaleY = (float)winH / GRID_HEIGHT;
-            float visualOffsetX = 0.5f * scaleX; 
-            float visualOffsetY = 0.5f * scaleY;
+if (showPhysicsHulls) {
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    
+    int winW, winH;
+    SDL_GetWindowSize(window, &winW, &winH);
+    float scaleX = (float)winW / GRID_WIDTH;
+    float scaleY = (float)winH / GRID_HEIGHT;
+    // Keep your original visual offset for pixel alignment
+    float visualOffsetX = 0.5f * scaleX; 
+    float visualOffsetY = 0.5f * scaleY;
 
-            for (auto const& [id, geo] : rigidSystem.geometry_cache) {
-                for (const auto& contour : geo.contours) {
-                    const auto& points = contour.points;
-                    if (points.size() < 2) continue;
+    for (auto const& [id, geo] : rigidSystem.geometry_cache) {
+        auto it = rigidSystem.tracker.get_active_regions().find(id);
+        if (it == rigidSystem.tracker.get_active_regions().end()) continue;
 
-                    for (size_t i = 0; i < points.size(); ++i) {
-                        const auto& p1 = points[i];
-                        const auto& p2 = points[(i + 1) % points.size()];
+        // Check if the body is actually supposed to be moving
+        // We look at the record's current float center
+        bool isDynamic = (it->second.center_f.x != 0 || it->second.center_f.y != 0);
 
-                        float x1 = (p1.x * scaleX) + visualOffsetX;
-                        float y1 = (p1.y * scaleY) + visualOffsetY;
-                        float x2 = (p2.x * scaleX) + visualOffsetX; // Fixed typo here (was scaleY)
-                        float y2 = (p2.y * scaleY) + visualOffsetY;
+        // If it's static, the offset should be 0 so we use original coordinates
+        float curX = isDynamic ? it->second.center_f.x : (float)geo.center.x;
+        float curY = isDynamic ? it->second.center_f.y : (float)geo.center.y;
+        float origX = (float)geo.center.x;
+        float origY = (float)geo.center.y;
 
-                        SDL_RenderLine(renderer, x1, y1, x2, y2);
-                    }
-                }
+        for (const auto& contour : geo.contours) {
+            const auto& points = contour.points;
+            if (points.size() < 2) continue;
+
+            for (size_t i = 0; i < points.size(); ++i) {
+                const auto& p1 = points[i];
+                const auto& p2 = points[(i + 1) % points.size()];
+
+                // Apply physics translation: (Point - BuildOrigin) + CurrentPosition
+                float x1 = ((p1.x - origX) + curX) * scaleX + visualOffsetX;
+                float y1 = ((p1.y - origY) + curY) * scaleY + visualOffsetY;
+                float x2 = ((p2.x - origX) + curX) * scaleX + visualOffsetX;
+                float y2 = ((p2.y - origY) + curY) * scaleY + visualOffsetY;
+
+                SDL_RenderLine(renderer, x1, y1, x2, y2);
             }
         }
-        // DELETE the naked loop that was here!
-
-
- 
-
+    }
+}
             // --- IMGUI (Original Controls) ---
         ImGui_ImplSDLRenderer3_NewFrame(); ImGui_ImplSDL3_NewFrame(); ImGui::NewFrame();
         ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
@@ -311,6 +322,15 @@ rigidSystem.init_physics(worldId);
         ImGui::Text("Total Active Regions: %zu", rigidSystem.tracker.get_active_regions().size());
         ImGui::Text("Geometry Cache: %zu", rigidSystem.geometry_cache.size());
         ImGui::Separator();
+        ImGui::Text("Physics Debug:");
+if (rigidSystem.body_manager) {
+    // We can see how many physics bodies exist by looking at your geometry cache
+    // which usually matches the body map 1:1
+    ImGui::Text("Active Bodies: %zu", rigidSystem.geometry_cache.size());
+    
+    // Check if the world itself is valid
+    ImGui::Text("World ID: %llu", (unsigned long long)worldId.index1);
+}
         ImGui::Text("FPS: %.1f", io.Framerate);
         ImGui::End();
 
