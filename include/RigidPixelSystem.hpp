@@ -85,29 +85,45 @@ public:
         tracker.get_active_regions()
     );
             }
+            for (uint32_t i = 0; i < structural_engine.revisions.size(); ++i) {
+        structural_engine.revisions[i] = current_world_rev;
+    }
+    last_processed_rev = current_world_rev;
 
-            last_processed_rev = current_world_rev;
             std::fill(structural_engine.dirty_flags.begin(), structural_engine.dirty_flags.end(), 0);
         }
     }
 
 private:
-    void sync_engine_with_tracker() {
-        const auto& active = tracker.get_active_regions();
-        
-        structural_engine.ids.clear();
-        structural_engine.influence_bounds.clear();
-        structural_engine.revisions.clear();
-        structural_engine.dirty_flags.resize(active.size(), 0);
-        structural_engine.is_stable.resize(active.size(), true);
 
-        for (const auto& [id, record] : active) {
-            structural_engine.ids.push_back(id);
-            rigid::CellAABB b = record.bounds;
-            structural_engine.influence_bounds.push_back({b.min_x-1, b.min_y-1, b.max_x+1, b.max_y+1});
-            structural_engine.revisions.push_back(last_processed_rev);
-        }
+void sync_engine_with_tracker() {
+    const auto& active = tracker.get_active_regions();
+    const size_t count = active.size();
+
+    // Resize but keep existing data for the IDs we already know
+    structural_engine.ids.assign(count, 0);
+    structural_engine.influence_bounds.assign(count, {0,0,0,0});
+    structural_engine.dirty_flags.assign(count, 0);
+    structural_engine.is_stable.assign(count, true);
+
+    // Use a temporary map or persistent storage for revisions 
+    // to prevent "Time Leaking" between different objects.
+    static std::unordered_map<RegionID, uint64_t> persistent_revisions;
+
+    size_t i = 0;
+    for (const auto& [id, record] : active) {
+        structural_engine.ids[i] = id;
+        rigid::CellAABB b = record.bounds;
+        structural_engine.influence_bounds[i] = {b.min_x-1, b.min_y-1, b.max_x+1, b.max_y+1};
+        
+        // Ensure the engine's array matches our persistent memory
+        structural_engine.revisions.resize(count);
+        structural_engine.revisions[i] = persistent_revisions[id]; 
+        i++;
     }
+}
+
+
 
     bool validate_region_topology(uint32_t index, const world::WorldView& world) {
         const auto& b = structural_engine.influence_bounds[index];
