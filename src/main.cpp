@@ -212,12 +212,19 @@ rigidSystem.init_physics(worldId, view.width, view.height);
         if (!paused) {
             accumulator += deltaTime;
             while (accumulator >= fixedDeltaTime) { 
-                sim.update(); 
-                b2World_Step(worldId, fixedDeltaTime, 4); 
-                
-                accumulator -= fixedDeltaTime; 
-            }
-        }
+    sim.update();
+
+
+    b2World_Step(worldId, fixedDeltaTime, 4); 
+
+  if (rigidSystem.body_manager) {
+            rigidSystem.body_manager->update_region_transforms(
+                rigidSystem.tracker.get_active_regions());
+        } 
+
+    accumulator -= fixedDeltaTime; 
+}
+                    }
 
         // --- RIGID SYSTEM ---
         rigidSystem.update(view);
@@ -226,7 +233,7 @@ rigidSystem.init_physics(worldId, view.width, view.height);
 }
 
         // --- RENDER (Restored Tight Loop) ---
-        const auto& index_to_id = rigidSystem.tracker.get_index_mapping();
+worldDef.gravity = { 0.0f, 9.8f };        const auto& index_to_id = rigidSystem.tracker.get_index_mapping();
         const size_t num_mappings = index_to_id.size();
         static std::vector<uint32_t> color_cache;
         if (color_cache.size() < num_mappings) color_cache.resize(num_mappings);
@@ -253,6 +260,7 @@ rigidSystem.init_physics(worldId, view.width, view.height);
                 else pixel_ptr[i] = 0x14141EFA; 
             }
         }
+
 
 
 // --- RENDER (Pixel Texture) ---

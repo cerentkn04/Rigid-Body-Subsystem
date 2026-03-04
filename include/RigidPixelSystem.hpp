@@ -59,8 +59,11 @@ public:
 
         // 3. ENGINE: Build Structural Graph (Find who touches whom)
         structural_graph.build(tracker.get_active_regions(), extractor.label_grid(), view.width, view.height);
-
+        
+        size_t node_count = structural_graph.nodes.size();
+        structural_engine.is_stable.assign(node_count, true);
         // 4. POLICY: Evaluate Stability (The Decision Layer)
+
          if (stability_policy) {
             stability_policy(structural_graph, structural_engine.is_stable);
         } 
@@ -69,6 +72,8 @@ public:
         for (uint8_t flag : structural_engine.dirty_flags) {
             if (flag == 1) { needs_physics_sync = true; break; }
         }
+
+    
 
         if (needs_physics_sync) {
             extractor.extract(view, build_records);

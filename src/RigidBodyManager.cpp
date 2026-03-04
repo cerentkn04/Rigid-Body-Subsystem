@@ -1,7 +1,8 @@
 #include "RigidBodyManager.hpp"
 #include <cstdio>
 #include <algorithm>
-
+const float PTM = 0.02f; // Pixels-To-Meters (1/50)
+const float MTP = 50.0f;
 namespace rigid {
 
 RigidBodyManager::RigidBodyManager(b2WorldId worldId) : m_world_id(worldId) {}
@@ -51,15 +52,42 @@ void RigidBodyManager::synchronize(
             BodyEntry& entry = body_it->second;
             b2BodyType currentType = b2Body_GetType(entry.bodyId);
 
-            // ... (Keep your existing fixture/version/transform sync logic) ...
             
-            if (currentType != targetType) {
-                if (targetType == b2_dynamicBody) {
-                    b2Vec2 newPos = { (float)geo.center.x, (float)geo.center.y };
-                    b2Body_SetTransform(entry.bodyId, newPos, b2Rot_identity);
-                }
-                b2Body_SetType(entry.bodyId, targetType);
-            }
+            if (entry.version != record.version) {
+    entry.is_dirty = true;
+    entry.version = record.version;
+}
+
+// Inside RigidBodyManager::synchronize
+if (currentType != targetType) {
+    // ALWAYS update the type
+    b2Body_SetType(entry.bodyId, targetType);
+
+    if (targetType == b2_dynamicBody) {
+      b2Body_SetAwake(entry.bodyId, true);
+    // Use PTM here as well
+    b2Vec2 newPos = { (float)geo.center.x * PTM, (float)geo.center.y * PTM };
+    b2Body_SetTransform(entry.bodyId, newPos, b2Rot_identity);
+    b2Body_SetAwake(entry.bodyId, true);
+       // b2Vec2 newPos = { (float)geo.center.x, (float)geo.center.y };
+       // b2Body_SetTransform(entry.bodyId, newPos, b2Rot_identity);
+        b2Body_SetAwake(entry.bodyId, true);
+    } 
+    else {
+        // Transitioning to Static: Zero out velocities to prevent "ghost" movement
+        b2Body_SetLinearVelocity(entry.bodyId, {0,0});
+        b2Body_SetAngularVelocity(entry.bodyId, 0.0f);
+    }
+}
+else if (currentType == b2_staticBody && entry.version != record.version) {
+    // If it's already static but the version changed, snap its position 
+    // to the new geometric center so collisions align with pixels.
+    //
+    b2Vec2 newPos = { (float)geo.center.x * PTM, (float)geo.center.y * PTM };
+    b2Body_SetTransform(entry.bodyId, newPos, b2Rot_identity);
+}
+
+
         }
     }
 
@@ -190,7 +218,10 @@ void RigidBodyManager::synchronize(
 
 
 void RigidBodyManager::update_region_transforms(std::unordered_map<RegionID, RegionRecord>& active_regions) {
-    for (auto& [id, entry] : m_body_map) {
+for (auto& [id, record] : active_regions) {
+        record.is_dynamic = false;
+    }
+  for (auto& [id, entry] : m_body_map) {
         if (!b2Body_IsValid(entry.bodyId)) continue;
         if (b2Body_GetType(entry.bodyId) != b2_dynamicBody) continue;
         if (b2Body_IsAwake(entry.bodyId) == false) continue;
@@ -199,11 +230,10 @@ void RigidBodyManager::update_region_transforms(std::unordered_map<RegionID, Reg
         auto it = active_regions.find(id);
         if (it != active_regions.end()) {
           if (std::abs(it->second.center_f.y - pos.y) > 0.05f) {
-                printf("Region %u falling: y=%.2f\n", id, pos.y);
             }
-            b2Vec2 pos = b2Body_GetPosition(entry.bodyId);
-            it->second.center_f.x = pos.x;
-            it->second.center_f.y = pos.y;
+          it->second.center_f.x = pos.x * MTP;
+            it->second.center_f.y = pos.y * MTP;
+            it->second.is_dynamic = true;
         }
     }
 }
@@ -221,11 +251,12 @@ void RigidBodyManager::create_body_for_id(RegionID id, const RegionGeometry& geo
     def.userData = (void*)(uintptr_t)id;
 
     def.enableSleep = true; 
-    def.linearDamping = (type == b2_dynamicBody) ? 1.0f : 0.0f; 
-    def.angularDamping = 0.5f;
+    def.linearDamping = (type == b2_dynamicBody) ? 2.5f : 0.0f; 
+    def.angularDamping = 0.1f;
     
     // Position body at centroid
-    def.position = { (float)geo.center.x, (float)geo.center.y };
+    def.position = { (float)geo.center.x * PTM, (float)geo.center.y * PTM };
+    //def.position = { (float)geo.center.x, (float)geo.center.y };
     
     // Top-down camera constraints
     def.fixedRotation = true; 
@@ -233,7 +264,7 @@ void RigidBodyManager::create_body_for_id(RegionID id, const RegionGeometry& geo
 
     b2BodyId bodyId = b2CreateBody(m_world_id, &def);
     update_fixtures(bodyId, geo, pixel_count);
-
+    b2Body_ApplyMassFromShapes(bodyId);
     m_body_map[id] = { bodyId, version };
 }
 void RigidBodyManager::update_fixtures(b2BodyId bodyId, const RegionGeometry& geo,float pixel_count) {
@@ -245,18 +276,35 @@ void RigidBodyManager::update_fixtures(b2BodyId bodyId, const RegionGeometry& ge
             b2DestroyShape(shapes[i], false); 
         }
     }
+
+
+
+
+b2BodyType bodyType = b2Body_GetType(bodyId);
     const float SMALL_THRESHOLD = 20.0f;
     b2ShapeDef shapeDef = b2DefaultShapeDef();
+    
+    // Set material properties so they don't slide like ice
     shapeDef.density = 1.0f;
-    if (pixel_count < SMALL_THRESHOLD) {
-        // Small debris: Only hits Terrain or Large Chunks (Debris ignore each other)
+
+    // --- DATA-DRIVEN FILTERING ---
+    if (bodyType == b2_staticBody) {
+        shapeDef.filter.categoryBits = CAT_TERRAIN;
+        shapeDef.filter.maskBits = 0xFFFF;
+        //shapeDef.filter.maskBits = CAT_LARGE_CHUNK | CAT_SMALL_DEBRIS;
+    } 
+    else if (pixel_count < SMALL_THRESHOLD) {
+        // Falling small debris
         shapeDef.filter.categoryBits = CAT_SMALL_DEBRIS;
         shapeDef.filter.maskBits = CAT_TERRAIN | CAT_LARGE_CHUNK;
-    } else {
-        // Large chunk / Terrain: Hits everything
+    } 
+    else {
+        // Falling large chunks
         shapeDef.filter.categoryBits = CAT_LARGE_CHUNK;
         shapeDef.filter.maskBits = CAT_TERRAIN | CAT_LARGE_CHUNK | CAT_SMALL_DEBRIS;
     }
+
+
 
     // Temporary buffer for vertex transformation
     b2Vec2 localVerts[B2_MAX_POLYGON_VERTICES];
@@ -266,10 +314,8 @@ void RigidBodyManager::update_fixtures(b2BodyId bodyId, const RegionGeometry& ge
         if (vCount < 3) continue;
 
         for (int i = 0; i < vCount; ++i) {
-            localVerts[i] = { 
-                piece.points[i].x - (float)geo.center.x, 
-                piece.points[i].y - (float)geo.center.y 
-            };
+          localVerts[i].x = ((float)piece.points[i].x - (float)geo.center.x) * PTM;
+    localVerts[i].y = ((float)piece.points[i].y - (float)geo.center.y) * PTM;
         }
 
         // Restoring b2ComputeHull to fix winding/collinear points and prevent crashes
