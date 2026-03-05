@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-#include <unordered_map>
 #include <memory>
 #include <RigidPixelTypes.hpp>
 #include <RegionExtractor.hpp>
@@ -10,7 +9,6 @@
 #include <StructuralGraph.hpp>
 #include <RigidBodyManager.hpp>
 #include <IStabilityPolicy.hpp>
-
 #include "RegionMesher.hpp" 
 
 namespace rigid {
@@ -35,7 +33,6 @@ public:
         body_manager = std::make_unique<RigidBodyManager>(world_id);
         structural_engine.init_bins(width, height);
         stability_policy = &apply_basic_connectivity_policy;
-        // Default policy initialization can go here
     }
     // Replace set_policy with a simple pointer assignment
     void set_policy(StabilityPolicyFunc new_policy) {

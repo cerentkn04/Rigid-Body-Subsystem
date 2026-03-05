@@ -9,7 +9,6 @@ struct Bin {
 };
 
 struct StructuralTracker {
-    // Spatial configuration (needed for bin math)
     int bins_x = 0;
     int bins_y = 0;
     static constexpr int BIN_SIZE = 32;

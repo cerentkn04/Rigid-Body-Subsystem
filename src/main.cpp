@@ -176,6 +176,7 @@ int main(int argc, char* argv[]) {
   b2WorldDef worldDef = b2DefaultWorldDef();
   worldDef.gravity = { 0.0f, 9.8f }; // Standard gravity
   b2WorldId worldId = b2CreateWorld(&worldDef);
+  worldDef.enableSleep = false;
 
 // Link it to your system
 rigidSystem.init_physics(worldId, view.width, view.height);
@@ -233,7 +234,7 @@ rigidSystem.init_physics(worldId, view.width, view.height);
 }
 
         // --- RENDER (Restored Tight Loop) ---
-worldDef.gravity = { 0.0f, 9.8f };        const auto& index_to_id = rigidSystem.tracker.get_index_mapping();
+const auto& index_to_id = rigidSystem.tracker.get_index_mapping();
         const size_t num_mappings = index_to_id.size();
         static std::vector<uint32_t> color_cache;
         if (color_cache.size() < num_mappings) color_cache.resize(num_mappings);
@@ -268,7 +269,57 @@ worldDef.gravity = { 0.0f, 9.8f };        const auto& index_to_id = rigidSystem.
         SDL_RenderTexture(renderer, gridTexture, nullptr, nullptr);
 
         // --- RENDER STEP: GEOMETRY (Optimized Debug View) ---
+        //
+        //
+        //
+// --- RENDER STEP: GEOMETRY (Convex Pieces Debug View) ---
 if (showPhysicsHulls) {
+    int winW, winH;
+    SDL_GetWindowSize(window, &winW, &winH);
+    float scaleX = (float)winW / GRID_WIDTH;
+    float scaleY = (float)winH / GRID_HEIGHT;
+
+    for (auto const& [id, geo] : rigidSystem.geometry_cache) {
+        auto it = rigidSystem.tracker.get_active_regions().find(id);
+        if (it == rigidSystem.tracker.get_active_regions().end()) continue;
+
+        // Use the current simulation position (center_f)
+        float curX = it->second.center_f.x;
+        float curY = it->second.center_f.y;
+
+        // DRAW CONVEX PIECES (What Box2D actually sees)
+        SDL_SetRenderDrawColor(renderer, 255, 100, 0, 255); // Orange for convex edges
+        for (const auto& piece : geo.convex_pieces) {
+            const auto& pts = piece.points;
+            if (pts.size() < 2) continue;
+
+            for (size_t i = 0; i < pts.size(); ++i) {
+                const auto& p1 = pts[i];
+                const auto& p2 = pts[(i + 1) % pts.size()];
+
+                float x1 = (p1.x + curX) * scaleX;
+                float y1 = (p1.y + curY) * scaleY;
+                float x2 = (p2.x + curX) * scaleX;
+                float y2 = (p2.y + curY) * scaleY;
+
+                SDL_RenderLine(renderer, x1, y1, x2, y2);
+            }
+            printf("center: %.2f %.2f\n", geo.center.x, geo.center.y);
+
+for(auto &p : piece.points)
+    printf("vertex: %.2f %.2f\n", p.x, p.y);
+        }
+        
+        // OPTIONAL: Draw a small cross at the center of the body
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_RenderPoint(renderer, curX * scaleX, curY * scaleY);
+    }
+}
+
+
+
+
+/*if (showPhysicsHulls) {
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
     
     int winW, winH;
@@ -310,7 +361,7 @@ float y2 = (p2.y + curY) * scaleY + visualOffsetY;
             }
         }
     }
-}
+}*/
             // --- IMGUI (Original Controls) ---
         ImGui_ImplSDLRenderer3_NewFrame(); ImGui_ImplSDL3_NewFrame(); ImGui::NewFrame();
         ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);

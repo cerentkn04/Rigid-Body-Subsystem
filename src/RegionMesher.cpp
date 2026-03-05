@@ -229,8 +229,8 @@ RegionGeometry GeometryExtractor::Build(
     // =====================================================
     // 1️⃣ SCAN CELLS (center + hash + marching squares edges)
     // =====================================================
-    for (int y = bounds.min_y - 1; y <= bounds.max_y; ++y) {
-        for (int x = bounds.min_x - 1; x <= bounds.max_x; ++x) {
+    for (int y = bounds.min_y - 1; y <= bounds.max_y +1; ++y) {
+        for (int x = bounds.min_x - 1; x <= bounds.max_x +1; ++x) {
             if (getLabel(x, y) == regionID) {
               centerX += x;
                 centerY += y;
@@ -309,12 +309,7 @@ RegionGeometry GeometryExtractor::Build(
             current.x * 0.5f ,
             current.y * 0.5f 
       });
-      for (auto& poly : geo.convex_pieces) {
-        for (auto& pt : poly.points) {
-            pt.x -= geo.center.x;
-            pt.y -= geo.center.y;
-        }
-      }
+    
 
         while (true) {
             auto it = find_first_edge(current);
@@ -356,12 +351,7 @@ RegionGeometry GeometryExtractor::Build(
                 outerIndex = static_cast<int>(i);
             }
         }
-         for (auto& contour : geo.contours) {
-              for (auto& pt : contour.points) {
-                  pt.x -= geo.center.x;
-                  pt.y -= geo.center.y;
-              }
-            }
+       
 
         for (size_t i = 0; i < geo.contours.size(); ++i) {
             auto& c = geo.contours[i];
@@ -404,7 +394,7 @@ if (outerIt != geo.contours.end()) {
 DouglasPeucker(mainPoly, 10.0f, optimizedPoly); 
 if (optimizedPoly.size() >= 3) {
         bayazit::Decompose(optimizedPoly, convexPolygons);
-    } else if (mainPoly.size() >= 3) {
+} else if (mainPoly.size() >= 3) {
         // Fallback to the unoptimized version so Box2D doesn't crash
         bayazit::Decompose(mainPoly, convexPolygons);
     }
@@ -412,17 +402,18 @@ if (optimizedPoly.size() >= 3) {
 }
 
 // CRITICAL: Copy the resulting convex polygons into the geo record
-
 for (const auto& polyPoints : convexPolygons) {
     if (polyPoints.size() >= 3) {
         std::vector<Vertex> localPoints = polyPoints;
         for (auto& pt : localPoints) {
-            pt.x -= geo.center.x;
+            // Subtract ONCE here
+            pt.x -= geo.center.x; 
             pt.y -= geo.center.y;
         }
         geo.convex_pieces.push_back({ localPoints });
     }
 }
+
 return geo;
    }
 

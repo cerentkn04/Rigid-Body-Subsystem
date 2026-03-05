@@ -115,107 +115,6 @@ else if (currentType == b2_staticBody && entry.version != record.version) {
         if (normalUpdates >= 2 && complexUpdates >= 1) break;
     }
 }
-/*void RigidBodyManager::synchronize(
-    const StabilitySystem& stability,
-    const std::unordered_map<RegionID, RegionGeometry>& geometry_cache,
-    const std::unordered_map<RegionID, RegionRecord>& active_regions) 
-{
-    // 1. Cleanup vanished regions
-    for (auto it = m_body_map.begin(); it != m_body_map.end(); ) {
-        if (active_regions.find(it->first) == active_regions.end()) {
-            if (b2Body_IsValid(it->second.bodyId)) b2DestroyBody(it->second.bodyId);
-            it = m_body_map.erase(it);
-        } else { ++it; }
-    }
-
-    // 2. Sync State and Logic
-    for (const auto& snapshot : stability.active_snapshots) {
-        const RegionID id = snapshot.id;
-        auto geo_it = geometry_cache.find(id);
-        auto rec_it = active_regions.find(id);
-        
-        if (geo_it == geometry_cache.end() || rec_it == active_regions.end()) continue;
-
-        const auto& geo = geo_it->second;
-        const auto& record = rec_it->second;
-        float size = (float)record.pixel_count;
-        b2BodyType targetType = snapshot.is_stable ? b2_staticBody : b2_dynamicBody;
-
-        auto body_it = m_body_map.find(id);
-        if (body_it == m_body_map.end()) {
-            create_body_for_id(id, geo, record.version, targetType,size);
-            m_body_map[id].topology_hash = geo.topology_hash;
-        } else {
-            BodyEntry& entry = body_it->second;
-            b2BodyType currentType = b2Body_GetType(entry.bodyId);
-            if (entry.is_dirty) {
-              update_fixtures(entry.bodyId, geo, size);
-              entry.is_dirty = false;
-            }
-            if (entry.version != record.version) {
-                if (currentType == b2_staticBody) {
-                    b2Vec2 newPos = { (float)geo.center.x, (float)geo.center.y };
-                    b2Body_SetTransform(entry.bodyId, newPos, b2Rot_identity);
-                }
-                
-                if (entry.topology_hash != geo.topology_hash) {
-                    entry.is_dirty = true; 
-                }
-                entry.version = record.version;
-            }
-
-            // If switching from Static -> Dynamic, we MUST align once
-            if (currentType != targetType) {
-
-              const char* typeStr = (targetType == b2_dynamicBody) ? "DYNAMIC" : "STATIC";
-              printf("[Physics] Region %u changed state to %s\n", id, typeStr);
-                if (targetType == b2_dynamicBody) {
-                    b2Vec2 newPos = { (float)geo.center.x, (float)geo.center.y };
-                    printf("  -> Transitioning to Dynamic at: (%.2f, %.2f)\n", newPos.x, newPos.y);
-                    printf("  -> Transitioning to Dynamic at: (%.2f, %.2f)\n", newPos.x, newPos.y);
-                    b2Body_SetTransform(entry.bodyId, newPos, b2Rot_identity);
-                }
-                b2Body_SetType(entry.bodyId, targetType);
-            }
-        }
-    }
-
-    int normalUpdates = 0;
-    int complexUpdates = 0;
-    const int MAX_NORMAL = 2;
-    const int MAX_COMPLEX = 1;
-// 3. Budgeted Dirty Updates
-    for (auto& [id, entry] : m_body_map) {
-        if (!entry.is_dirty) continue;
-
-        auto geo_it = geometry_cache.find(id);
-        auto rec_it = active_regions.find(id); // Added this to get size
-        if (geo_it == geometry_cache.end() || rec_it == active_regions.end()) continue;
-
-        const auto& geo = geo_it->second;
-        const auto& record = rec_it->second;
-        float size = (float)record.pixel_count;
-        
-        bool is_complex = geo.convex_pieces.size() > 50;
-
-        // Budget checking
-        if (is_complex && complexUpdates >= MAX_COMPLEX) continue;
-        if (!is_complex && normalUpdates >= MAX_NORMAL) continue;
-
-        // FIXED: Removed trailing comma and added size
-        update_fixtures(entry.bodyId, geo, size);
-        
-        entry.topology_hash = geo.topology_hash;
-        entry.is_dirty = false;
-
-        if (is_complex) complexUpdates++; else normalUpdates++;
-        
-        if (normalUpdates >= MAX_NORMAL && complexUpdates >= MAX_COMPLEX) break;
-     }
- }
-
-*/
-
 
 void RigidBodyManager::update_region_transforms(std::unordered_map<RegionID, RegionRecord>& active_regions) {
 for (auto& [id, record] : active_regions) {
@@ -314,8 +213,9 @@ b2BodyType bodyType = b2Body_GetType(bodyId);
         if (vCount < 3) continue;
 
         for (int i = 0; i < vCount; ++i) {
-          localVerts[i].x = piece.points[i].x * PTM;
+             localVerts[i].x = piece.points[i].x * PTM;
 localVerts[i].y = piece.points[i].y * PTM;
+
         }
 
         // Restoring b2ComputeHull to fix winding/collinear points and prevent crashes
