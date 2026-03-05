@@ -301,11 +301,10 @@ if (showPhysicsHulls) {
                 const auto& p1 = points[i];
                 const auto& p2 = points[(i + 1) % points.size()];
 
-                // Apply physics translation: (Point - BuildOrigin) + CurrentPosition
-                float x1 = ((p1.x - origX) + curX) * scaleX + visualOffsetX;
-                float y1 = ((p1.y - origY) + curY) * scaleY + visualOffsetY;
-                float x2 = ((p2.x - origX) + curX) * scaleX + visualOffsetX;
-                float y2 = ((p2.y - origY) + curY) * scaleY + visualOffsetY;
+float x1 = (p1.x + curX) * scaleX + visualOffsetX;
+float y1 = (p1.y + curY) * scaleY + visualOffsetY;
+float x2 = (p2.x + curX) * scaleX + visualOffsetX;
+float y2 = (p2.y + curY) * scaleY + visualOffsetY;
 
                 SDL_RenderLine(renderer, x1, y1, x2, y2);
             }

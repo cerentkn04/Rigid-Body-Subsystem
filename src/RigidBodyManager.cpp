@@ -314,8 +314,8 @@ b2BodyType bodyType = b2Body_GetType(bodyId);
         if (vCount < 3) continue;
 
         for (int i = 0; i < vCount; ++i) {
-          localVerts[i].x = ((float)piece.points[i].x - (float)geo.center.x) * PTM;
-    localVerts[i].y = ((float)piece.points[i].y - (float)geo.center.y) * PTM;
+          localVerts[i].x = piece.points[i].x * PTM;
+localVerts[i].y = piece.points[i].y * PTM;
         }
 
         // Restoring b2ComputeHull to fix winding/collinear points and prevent crashes
