@@ -218,18 +218,16 @@ rigidSystem.init_physics(worldId, view.width, view.height);
 
     b2World_Step(worldId, fixedDeltaTime, 4); 
 
-  if (rigidSystem.body_manager) {
-            rigidSystem.body_manager->update_region_transforms(
-                rigidSystem.tracker.get_active_regions());
-        } 
+
 
     accumulator -= fixedDeltaTime; 
 }
                     }
 
         // --- RIGID SYSTEM ---
-        rigidSystem.update(view);
         if (rigidSystem.body_manager) {
+
+        rigidSystem.update(view);
     rigidSystem.body_manager->update_region_transforms(rigidSystem.tracker.get_active_regions());
 }
 

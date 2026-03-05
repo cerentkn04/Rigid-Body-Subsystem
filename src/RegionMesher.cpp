@@ -391,7 +391,7 @@ if (outerIt != geo.contours.end()) {
     std::vector<Vertex> optimizedPoly;
 // CHANGE THIS FLOAT TO ADJUST DETAIL: 
 // 0.1f = Very detailed, 1.0f = Very simplified
-DouglasPeucker(mainPoly, 10.0f, optimizedPoly); 
+DouglasPeucker(mainPoly, 1.0f, optimizedPoly); 
 if (optimizedPoly.size() >= 3) {
         bayazit::Decompose(optimizedPoly, convexPolygons);
 } else if (mainPoly.size() >= 3) {

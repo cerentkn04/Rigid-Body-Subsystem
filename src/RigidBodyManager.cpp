@@ -122,8 +122,6 @@ for (auto& [id, record] : active_regions) {
     }
   for (auto& [id, entry] : m_body_map) {
         if (!b2Body_IsValid(entry.bodyId)) continue;
-        if (b2Body_GetType(entry.bodyId) != b2_dynamicBody) continue;
-        if (b2Body_IsAwake(entry.bodyId) == false) continue;
 
          b2Vec2 pos = b2Body_GetPosition(entry.bodyId);
         auto it = active_regions.find(id);
@@ -132,7 +130,7 @@ for (auto& [id, record] : active_regions) {
             }
           it->second.center_f.x = pos.x * MTP;
             it->second.center_f.y = pos.y * MTP;
-            it->second.is_dynamic = true;
+            it->second.is_dynamic = (b2Body_GetType(entry.bodyId) == b2_dynamicBody);
         }
     }
 }
@@ -160,6 +158,8 @@ void RigidBodyManager::create_body_for_id(RegionID id, const RegionGeometry& geo
     // Top-down camera constraints
     def.fixedRotation = true; 
     def.gravityScale = 1.0f; 
+
+
 
     b2BodyId bodyId = b2CreateBody(m_world_id, &def);
     update_fixtures(bodyId, geo, pixel_count);
