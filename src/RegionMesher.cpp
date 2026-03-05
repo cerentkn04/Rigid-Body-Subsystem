@@ -229,228 +229,201 @@ RegionGeometry GeometryExtractor::Build(
     // =====================================================
     // 1️⃣ SCAN CELLS (center + hash + marching squares edges)
     // =====================================================
-
     for (int y = bounds.min_y - 1; y <= bounds.max_y; ++y) {
         for (int x = bounds.min_x - 1; x <= bounds.max_x; ++x) {
-
-            if (getLabel(x,y) == regionID)
-            {
-                centerX += x;
+            if (getLabel(x, y) == regionID) {
+              centerX += x;
                 centerY += y;
                 count++;
-
+              geo.topology_hash = hash;
+              if (count > 0) {
+                geo.center.x = (float)(centerX / count);
+                geo.center.y = (float)(centerY / count);
+              } 
                 uint32_t localX = x - bounds.min_x;
                 uint32_t localY = y - bounds.min_y;
                 uint32_t combined = (localX << 16) | localY;
-
                 hash ^= combined;
                 hash *= 0x01000193;
-            }
+                geo.topology_hash = hash;
 
-            int mask = 0;
+        }
 
+             
+                // Accumulate center
+                          int mask = 0;
             if (getLabel(x, y)         == regionID) mask |= 8;
-            if (getLabel(x+1, y)       == regionID) mask |= 4;
-            if (getLabel(x+1, y+1)     == regionID) mask |= 2;
-            if (getLabel(x, y+1)       == regionID) mask |= 1;
+            if (getLabel(x + 1, y)     == regionID) mask |= 4;
+            if (getLabel(x + 1, y + 1) == regionID) mask |= 2;
+            if (getLabel(x, y + 1)     == regionID) mask |= 1;
 
             if (mask == 0 || mask == 15)
                 continue;
 
             const int* caseEdges = CASE_TABLE[mask];
 
-            for (int i = 0; i < 4; i += 2)
-            {
+            for (int i = 0; i < 4; i += 2) {
                 if (caseEdges[i] == -1)
                     break;
 
-                IPoint a = getEdgePoint(x,y,caseEdges[i]);
-                IPoint b = getEdgePoint(x,y,caseEdges[i+1]);
+                IPoint a = getEdgePoint(x, y, caseEdges[i]);
+                IPoint b = getEdgePoint(x, y, caseEdges[i + 1]);
 
-                edges.push_back({a,b,false});
+                edges.push_back({a, b, false});
             }
         }
-    }
-
-    geo.topology_hash = hash;
-
-    if (count > 0)
-    {
-        geo.center.x = (float)(centerX / count);
-        geo.center.y = (float)(centerY / count);
     }
 
     if (edges.empty())
         return geo;
 
-    // =====================================================
-    // 2️⃣ SORT EDGES
-    // =====================================================
+    // =====================
+    // 2️⃣ Sort by "from"
+    // =====================
 
     std::sort(edges.begin(), edges.end(),
-        [](const Edge& a, const Edge& b)
-        {
+        [](const Edge& a, const Edge& b) {
             return a.from < b.from;
         });
 
-    auto find_first_edge = [&](const IPoint& p)
-    {
-        return std::lower_bound(
-            edges.begin(), edges.end(), p,
-            [](const Edge& e, const IPoint& value)
-            {
+    auto find_first_edge = [&](const IPoint& p) {
+        return std::lower_bound(edges.begin(), edges.end(), p,
+            [](const Edge& e, const IPoint& value) {
                 return e.from < value;
             });
     };
 
-    // =====================================================
-    // 3️⃣ STITCH CONTOURS (WORLD SPACE)
-    // =====================================================
+    // =====================
+    // 3️⃣ Stitch Loops
+    // =====================
 
-    for (size_t i = 0; i < edges.size(); ++i)
-    {
+    for (size_t i = 0; i < edges.size(); ++i) {
         if (edges[i].used)
             continue;
-
         Contour contour;
-
         IPoint start = edges[i].from;
         IPoint current = edges[i].to;
         edges[i].used = true;
 
         contour.points.push_back({
-            current.x * 0.5f,
-            current.y * 0.5f
-        });
+            current.x * 0.5f ,
+            current.y * 0.5f 
+      });
+      for (auto& poly : geo.convex_pieces) {
+        for (auto& pt : poly.points) {
+            pt.x -= geo.center.x;
+            pt.y -= geo.center.y;
+        }
+      }
 
-        while (true)
-        {
+        while (true) {
             auto it = find_first_edge(current);
-
             bool found = false;
-
-            for (; it != edges.end() && it->from == current; ++it)
-            {
-                if (!it->used)
-                {
+            for (; it != edges.end() && it->from == current; ++it) {
+                if (!it->used) {
                     it->used = true;
                     current = it->to;
-
                     contour.points.push_back({
                         current.x * 0.5f,
                         current.y * 0.5f
                     });
-
                     found = true;
                     break;
                 }
             }
-
             if (!found || current == start)
                 break;
         }
-
         if (contour.points.size() >= 3)
             geo.contours.push_back(std::move(contour));
     }
 
-    // =====================================================
-    // 4️⃣ WINDING + SIMPLIFICATION
-    // =====================================================
+    // =====================
+    // 4️⃣ Normalize Winding
+    // =====================
+// Inside Step 4, after winding/reversing:
+    if (!geo.contours.empty()) {
 
-    if (!geo.contours.empty())
-    {
-        float maxArea = 0.0f;
+        float maxAbsArea = 0.0f;
         int outerIndex = -1;
 
-        for (size_t i = 0; i < geo.contours.size(); ++i)
-        {
+        for (size_t i = 0; i < geo.contours.size(); ++i) {
             float area = CalculateSignedArea(geo.contours[i].points);
+            float absArea = std::abs(area);
 
-            if (std::abs(area) > maxArea)
-            {
-                maxArea = std::abs(area);
-                outerIndex = (int)i;
+            if (absArea > maxAbsArea) {
+                maxAbsArea = absArea;
+                outerIndex = static_cast<int>(i);
             }
         }
+         for (auto& contour : geo.contours) {
+              for (auto& pt : contour.points) {
+                  pt.x -= geo.center.x;
+                  pt.y -= geo.center.y;
+              }
+            }
 
-        for (size_t i = 0; i < geo.contours.size(); ++i)
-        {
+        for (size_t i = 0; i < geo.contours.size(); ++i) {
             auto& c = geo.contours[i];
             float area = CalculateSignedArea(c.points);
 
-            bool isOuter = ((int)i == outerIndex);
+            bool isOuter = (static_cast<int>(i) == outerIndex);
 
-            if (isOuter)
-            {
+            if (isOuter) {
                 c.is_hole = false;
-                if (area < 0)
+                if (area < 0.0f)
                     std::reverse(c.points.begin(), c.points.end());
-            }
-            else
-            {
+            } else {
                 c.is_hole = true;
-                if (area > 0)
+                if (area > 0.0f)
                     std::reverse(c.points.begin(), c.points.end());
             }
-
             SimplifyContour(c.points);
         }
     }
 
-    // =====================================================
-    // 5️⃣ CONVEX DECOMPOSITION (WORLD SPACE)
-    // =====================================================
+    // --- Inside GeometryExtractor::Build ---
 
-    std::vector<std::vector<Vertex>> convexPolygons;
+// ... (Step 1-4: Marching Squares and Stitching) ...
 
-    auto outerIt = std::find_if(
-        geo.contours.begin(),
-        geo.contours.end(),
-        [](const Contour& c){ return !c.is_hole; });
+std::vector<std::vector<Vertex>> convexPolygons;
+auto outerIt = std::find_if(geo.contours.begin(), geo.contours.end(), 
+                            [](const Contour& c) { return !c.is_hole; });
 
-    if (outerIt != geo.contours.end())
-    {
-        std::vector<Vertex> mainPoly = outerIt->points;
-        std::vector<Vertex> optimized;
+if (outerIt != geo.contours.end()) {
+    std::vector<Vertex> mainPoly = outerIt->points;
 
-        DouglasPeucker(mainPoly, 10.0f, optimized);
-
-        if (optimized.size() >= 3)
-            bayazit::Decompose(optimized, convexPolygons);
-        else if (mainPoly.size() >= 3)
-            bayazit::Decompose(mainPoly, convexPolygons);
+    // Bridging holes into the main polygon
+    for (auto& hole : geo.contours) {
+        if (!hole.is_hole) continue;
     }
 
-    // =====================================================
-    // 6️⃣ FINAL SHIFT TO LOCAL SPACE
-    // =====================================================
+    std::vector<Vertex> optimizedPoly;
+// CHANGE THIS FLOAT TO ADJUST DETAIL: 
+// 0.1f = Very detailed, 1.0f = Very simplified
+DouglasPeucker(mainPoly, 10.0f, optimizedPoly); 
+if (optimizedPoly.size() >= 3) {
+        bayazit::Decompose(optimizedPoly, convexPolygons);
+    } else if (mainPoly.size() >= 3) {
+        // Fallback to the unoptimized version so Box2D doesn't crash
+        bayazit::Decompose(mainPoly, convexPolygons);
+    }
 
-    for (auto& contour : geo.contours)
-    {
-        for (auto& pt : contour.points)
-        {
+}
+
+// CRITICAL: Copy the resulting convex polygons into the geo record
+
+for (const auto& polyPoints : convexPolygons) {
+    if (polyPoints.size() >= 3) {
+        std::vector<Vertex> localPoints = polyPoints;
+        for (auto& pt : localPoints) {
             pt.x -= geo.center.x;
             pt.y -= geo.center.y;
         }
+        geo.convex_pieces.push_back({ localPoints });
     }
-
-    for (const auto& poly : convexPolygons)
-    {
-        if (poly.size() >= 3)
-        {
-            std::vector<Vertex> local = poly;
-
-            for (auto& pt : local)
-            {
-                pt.x -= geo.center.x;
-                pt.y -= geo.center.y;
-            }
-
-            geo.convex_pieces.push_back({local});
-        }
-    }
-
-    return geo;
 }
-} // namespace rigind
+return geo;
+   }
+
+} // namespace rigid
