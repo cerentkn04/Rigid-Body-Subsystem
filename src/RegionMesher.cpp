@@ -41,77 +41,6 @@ static void DouglasPeucker(const std::vector<Vertex>& points, float epsilon, std
         out = { points.front(), points.back() };
     }
 }
-namespace bayazit {
-    using namespace rigid;
-
-    bool Left(const Vertex& a, const Vertex& b, const Vertex& c) {
-        return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x) > 0;
-    }
-
-    bool IsReflex(const std::vector<Vertex>& poly, int i) {
-        int prev = (i == 0) ? (int)poly.size() - 1 : i - 1;
-        int next = (i + 1) % poly.size();
-        return !Left(poly[prev], poly[i], poly[next]);
-    }
-
-    void Decompose(std::vector<Vertex> poly, std::vector<std::vector<Vertex>>& output) {
-        if (poly.size() < 3) return;
-
-        int reflexIdx = -1;
-        for (int i = 0; i < (int)poly.size(); ++i) {
-            if (IsReflex(poly, i)) {
-                reflexIdx = i;
-                break;
-            }
-        }
-
-        // Base Case: Polygon is already convex
-        if (reflexIdx == -1) {
-            output.push_back(poly);
-            return;
-        }
-
-        // Choose split vertex: Simplification of Bayazit
-        // We find a vertex that is visible and furthest from the reflex point to resolve the concavity
-        int bestSplitIdx = -1;
-        float maxDist = -1.0f;
-        Vertex p = poly[reflexIdx];
-
-        for (int i = 0; i < (int)poly.size(); ++i) {
-            // Don't split with self or immediate neighbors
-            if (i == reflexIdx || i == (reflexIdx + 1) % poly.size() || 
-                i == (reflexIdx - 1 + (int)poly.size()) % poly.size()) continue;
-
-            float dst = std::pow(poly[i].x - p.x, 2) + std::pow(poly[i].y - p.y, 2);
-            if (dst > maxDist) {
-                maxDist = dst;
-                bestSplitIdx = i;
-            }
-        }
-
-        if (bestSplitIdx != -1) {
-            std::vector<Vertex> poly1, poly2;
-            // Build first sub-polygon
-            for (int i = reflexIdx; i != (bestSplitIdx + 1) % poly.size(); i = (i + 1) % poly.size()) {
-                poly1.push_back(poly[i]);
-            }
-            // Build second sub-polygon
-            for (int i = bestSplitIdx; i != (reflexIdx + 1) % poly.size(); i = (i + 1) % poly.size()) {
-                poly2.push_back(poly[i]);
-            }
-
-            // Safety check: ensure we actually split the polygon
-            if (poly1.size() < poly.size() && poly2.size() < poly.size()) {
-                Decompose(poly1, output);
-                Decompose(poly2, output);
-            } else {
-                output.push_back(poly); // Fallback to avoid infinite loop
-            }
-        } else {
-            output.push_back(poly);
-        }
-    }
-}
 
 
 // =====================
@@ -142,6 +71,93 @@ struct Edge {
 // =====================
 //
 //
+//
+
+
+
+bool IsReflex(const std::vector<Vertex>& poly, int i) {
+    int prev = (i == 0) ? (int)poly.size() - 1 : i - 1;
+    int next = (i + 1) % poly.size();
+    
+    // Use a small epsilon to ignore "nearly flat" corners 
+    // created by floating point noise or marching squares.
+    float val = (poly[i].x - poly[prev].x) * (poly[next].y - poly[i].y) - 
+                (poly[i].y - poly[prev].y) * (poly[next].x - poly[i].x);
+    return val < -0.001f; // Adjust based on your coordinate scale
+}
+static void RemoveCollinearPoints(std::vector<Vertex>& points) {
+    if (points.size() < 3) return;
+    std::vector<Vertex> result;
+    for (size_t i = 0; i < points.size(); ++i) {
+        const Vertex& prev = points[(i == 0) ? points.size() - 1 : i - 1];
+        const Vertex& curr = points[i];
+        const Vertex& next = points[(i + 1) % points.size()];
+
+        // Calculate the cross product of (curr-prev) and (next-curr)
+        float area = (curr.x - prev.x) * (next.y - curr.y) - (curr.y - prev.y) * (next.x - curr.x);
+        
+        // If area is nearly 0, the points are collinear
+        if (std::abs(area) > 1e-4f) {
+            result.push_back(curr);
+        }
+    }
+    points = std::move(result);
+}
+
+static void BridgeHoles(std::vector<Vertex>& mainPoly, const std::vector<Contour>& contours) {
+    for (const auto& hole : contours) {
+        if (!hole.is_hole) continue;
+
+        // 1. Find the rightmost point in the hole (simple heuristic)
+        size_t holeIdx = 0;
+        float maxHoleX = -1e10f;
+        for (size_t i = 0; i < hole.points.size(); ++i) {
+            if (hole.points[i].x > maxHoleX) {
+                maxHoleX = hole.points[i].x;
+                holeIdx = i;
+            }
+        }
+
+        // 2. Find the "best" bridge point on the mainPoly
+        // For a simple/fast fix, we find the closest vertex on mainPoly 
+        // that is to the right of the hole point.
+        int bridgeIdx = -1;
+     // 2. Find the "best" bridge point on the mainPoly
+        float minDistSq = 1e10f; // Fix: Proper variable name and initialization
+        Vertex hP = hole.points[holeIdx];
+
+        for (size_t i = 0; i < mainPoly.size(); ++i) {
+            if (mainPoly[i].x >= hP.x) {
+                float d2 = std::pow(mainPoly[i].x - hP.x, 2) + std::pow(mainPoly[i].y - hP.y, 2);
+                if (d2 < minDistSq) {
+                    minDistSq = d2;
+                    bridgeIdx = (int)i;
+                }
+            }
+        }
+
+        if (bridgeIdx != -1) {
+            // 3. Inject the hole into the mainPoly
+            // New sequence: ...Main[bridge] -> Hole[idx...end] -> Hole[0...idx] -> Main[bridge]...
+            std::vector<Vertex> newPath;
+            for (int i = 0; i <= bridgeIdx; ++i) newPath.push_back(mainPoly[i]);
+            
+            for (size_t i = 0; i < hole.points.size(); ++i) {
+                newPath.push_back(hole.points[(holeIdx + i) % hole.points.size()]);
+            }
+            // Close the hole loop back to its start
+            newPath.push_back(hole.points[holeIdx]);
+            
+            // Bridge back to main contour
+            for (size_t i = bridgeIdx; i < mainPoly.size(); ++i) newPath.push_back(mainPoly[i]);
+            
+            mainPoly = std::move(newPath);
+        }
+    }
+}
+
+
+
 static void SimplifyContour(std::vector<Vertex>& points) {
     if (points.size() < 5) return; 
 
@@ -187,6 +203,113 @@ static const int CASE_TABLE[16][4] = {
     { 0, 3, -1, -1 },   { 0, 2, -1, -1 }, { 0, 1, 2, 3 },   { 0, 1, -1, -1 },
     { 1, 3, -1, -1 },   { 1, 2, -1, -1 }, { 2, 3, -1, -1 }, { -1, -1, -1, -1 }
 };
+
+
+
+
+
+namespace bayazit {
+    using namespace rigid;
+
+// Helper: Check if two vertices can "see" each other
+    bool IsVisible(const std::vector<Vertex>& poly, int a, int b) {
+        Vertex p1 = poly[a];
+        Vertex p2 = poly[b];
+
+        for (size_t i = 0; i < poly.size(); ++i) {
+            size_t next = (i + 1) % poly.size();
+            // Ignore edges connected to the vertices themselves
+            if (i == a || i == b || next == a || next == b) continue;
+
+            Vertex v1 = poly[i];
+            Vertex v2 = poly[next];
+
+            // Standard line segment intersection check
+            float denominator = (p2.x - p1.x) * (v2.y - v1.y) - (p2.y - p1.y) * (v2.x - v1.x);
+            if (std::abs(denominator) < 1e-6f) continue;
+
+            float ua = ((v2.x - v1.x) * (p1.y - v1.y) - (v2.y - v1.y) * (p1.x - v1.x)) / denominator;
+            float ub = ((p2.x - p1.x) * (p1.y - v1.y) - (p2.y - p1.y) * (p1.x - v1.x)) / denominator;
+
+            if (ua > 0.0f && ua < 1.0f && ub > 0.0f && ub < 1.0f) return false;
+        }
+        return true;
+    }
+
+
+
+    bool Left(const Vertex& a, const Vertex& b, const Vertex& c) {
+        return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x) > 0;
+    }
+
+    bool IsReflex(const std::vector<Vertex>& poly, int i) {
+        int prev = (i == 0) ? (int)poly.size() - 1 : i - 1;
+        int next = (i + 1) % poly.size();
+        return !Left(poly[prev], poly[i], poly[next]);
+    }
+
+    void Decompose(std::vector<Vertex> poly, std::vector<std::vector<Vertex>>& output) {
+        if (poly.size() < 3) return;
+
+        int reflexIdx = -1;
+        for (int i = 0; i < (int)poly.size(); ++i) {
+            if (IsReflex(poly, i)) {
+                reflexIdx = i;
+                break;
+            }
+        }
+
+        // Base Case: Polygon is already convex
+        if (reflexIdx == -1) {
+            output.push_back(poly);
+            return;
+        }
+
+        // Choose split vertex: Simplification of Bayazit
+        // We find a vertex that is visible and furthest from the reflex point to resolve the concavity
+int bestSplitIdx = -1;
+        float minDist = 1e10f; // Use a high value for finding the closest split
+        Vertex p = poly[reflexIdx];
+
+        for (int i = 0; i < (int)poly.size(); ++i) {
+            // Don't split with self or immediate neighbors
+            if (i == reflexIdx || i == (reflexIdx + 1) % poly.size() || 
+                i == (reflexIdx - 1 + (int)poly.size()) % poly.size()) continue;
+
+            if (IsVisible(poly, reflexIdx, i)) {
+                float dst = std::pow(poly[i].x - p.x, 2) + std::pow(poly[i].y - p.y, 2);
+                if (dst < minDist) {
+                    minDist = dst;
+                    bestSplitIdx = i;
+                }
+            }
+        }
+
+        if (bestSplitIdx != -1) {
+            std::vector<Vertex> poly1, poly2;
+            // Build first sub-polygon
+            for (int i = reflexIdx; i != (bestSplitIdx + 1) % poly.size(); i = (i + 1) % poly.size()) {
+                poly1.push_back(poly[i]);
+            }
+            // Build second sub-polygon
+            for (int i = bestSplitIdx; i != (reflexIdx + 1) % poly.size(); i = (i + 1) % poly.size()) {
+                poly2.push_back(poly[i]);
+            }
+
+            // Safety check: ensure we actually split the polygon
+            if (poly1.size() < poly.size() && poly2.size() < poly.size()) {
+                Decompose(poly1, output);
+                Decompose(poly2, output);
+            } else {
+                output.push_back(poly); // Fallback to avoid infinite loop
+            }
+        } else {
+            output.push_back(poly);
+        }
+    }
+}
+
+
 
 
 // =====================
@@ -383,15 +506,14 @@ auto outerIt = std::find_if(geo.contours.begin(), geo.contours.end(),
 if (outerIt != geo.contours.end()) {
     std::vector<Vertex> mainPoly = outerIt->points;
 
-    // Bridging holes into the main polygon
-    for (auto& hole : geo.contours) {
-        if (!hole.is_hole) continue;
-    }
+    BridgeHoles(mainPoly, geo.contours);  
+   // for (auto& hole : geo.contours) {
+   //     if (!hole.is_hole) continue;
+   // }
 
     std::vector<Vertex> optimizedPoly;
-// CHANGE THIS FLOAT TO ADJUST DETAIL: 
-// 0.1f = Very detailed, 1.0f = Very simplified
-DouglasPeucker(mainPoly, 1.0f, optimizedPoly); 
+DouglasPeucker(mainPoly, 0.25f, optimizedPoly); 
+RemoveCollinearPoints(optimizedPoly);
 if (optimizedPoly.size() >= 3) {
         bayazit::Decompose(optimizedPoly, convexPolygons);
 } else if (mainPoly.size() >= 3) {
