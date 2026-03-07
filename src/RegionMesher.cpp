@@ -74,7 +74,15 @@ struct Edge {
 //
 
 
-
+static float CalculateSignedArea(const std::vector<Vertex>& points) {
+    float area = 0.0f;
+    for (size_t i = 0; i < points.size(); ++i) {
+        const Vertex& v1 = points[i];
+        const Vertex& v2 = points[(i + 1) % points.size()];
+        area += (v1.x * v2.y) - (v2.x * v1.y);
+    }
+    return area * 0.5f;
+}
 bool IsReflex(const std::vector<Vertex>& poly, int i) {
     int prev = (i == 0) ? (int)poly.size() - 1 : i - 1;
     int next = (i + 1) % poly.size();
@@ -103,128 +111,23 @@ static void RemoveCollinearPoints(std::vector<Vertex>& points) {
     }
     points = std::move(result);
 }
-
-static void BridgeHoles(std::vector<Vertex>& mainPoly, const std::vector<Contour>& contours) {
-    for (const auto& hole : contours) {
-        if (!hole.is_hole) continue;
-
-        // 1. Find the rightmost point in the hole (simple heuristic)
-        size_t holeIdx = 0;
-        float maxHoleX = -1e10f;
-        for (size_t i = 0; i < hole.points.size(); ++i) {
-            if (hole.points[i].x > maxHoleX) {
-                maxHoleX = hole.points[i].x;
-                holeIdx = i;
-            }
-        }
-
-        // 2. Find the "best" bridge point on the mainPoly
-        // For a simple/fast fix, we find the closest vertex on mainPoly 
-        // that is to the right of the hole point.
-        int bridgeIdx = -1;
-     // 2. Find the "best" bridge point on the mainPoly
-        float minDistSq = 1e10f; // Fix: Proper variable name and initialization
-        Vertex hP = hole.points[holeIdx];
-
-        for (size_t i = 0; i < mainPoly.size(); ++i) {
-            if (mainPoly[i].x >= hP.x) {
-                float d2 = std::pow(mainPoly[i].x - hP.x, 2) + std::pow(mainPoly[i].y - hP.y, 2);
-                if (d2 < minDistSq) {
-                    minDistSq = d2;
-                    bridgeIdx = (int)i;
-                }
-            }
-        }
-
-        if (bridgeIdx != -1) {
-            // 3. Inject the hole into the mainPoly
-            // New sequence: ...Main[bridge] -> Hole[idx...end] -> Hole[0...idx] -> Main[bridge]...
-            std::vector<Vertex> newPath;
-            for (int i = 0; i <= bridgeIdx; ++i) newPath.push_back(mainPoly[i]);
-            
-            for (size_t i = 0; i < hole.points.size(); ++i) {
-                newPath.push_back(hole.points[(holeIdx + i) % hole.points.size()]);
-            }
-            // Close the hole loop back to its start
-            newPath.push_back(hole.points[holeIdx]);
-            
-            // Bridge back to main contour
-            for (size_t i = bridgeIdx; i < mainPoly.size(); ++i) newPath.push_back(mainPoly[i]);
-            
-            mainPoly = std::move(newPath);
-        }
-    }
-}
-
-
-
-static void SimplifyContour(std::vector<Vertex>& points) {
-    if (points.size() < 5) return; 
-
-    std::vector<Vertex> simplified;
-    simplified.push_back(points[0]);
-
-    for (size_t i = 1; i < points.size(); ++i) {
-        const Vertex& last = simplified.back();
-        const Vertex& curr = points[i];
-
-        // If the point is closer than 3.0 units, Nuke it.
-        // This is the "Detail" slider. Increase 9.0f to 16.0f for even less detail.
-        float distSq = std::pow(curr.x - last.x, 2) + std::pow(curr.y - last.y, 2);
-        if (distSq < 9.0f) continue; 
-
-        simplified.push_back(curr);
-    }
-
-    if (simplified.size() >= 3) {
-        points = std::move(simplified);
-    }
-}
-static float CalculateSignedArea(const std::vector<Vertex>& points) {
-    float area = 0.0f;
-    for (size_t i = 0; i < points.size(); ++i) {
-        const Vertex& v1 = points[i];
-        const Vertex& v2 = points[(i + 1) % points.size()];
-        area += (v1.x * v2.y) - (v2.x * v1.y);
-    }
-    return area * 0.5f;
-}
-
-} // anonymous namespace
-
-
-// =====================
-// Marching Squares Table
-// =====================
-
-static const int CASE_TABLE[16][4] = {
-    { -1, -1, -1, -1 }, { 3, 2, -1, -1 }, { 2, 1, -1, -1 }, { 3, 1, -1, -1 },
-    { 1, 0, -1, -1 },   { 3, 0, 1, 2 },   { 2, 0, -1, -1 }, { 3, 0, -1, -1 },
-    { 0, 3, -1, -1 },   { 0, 2, -1, -1 }, { 0, 1, 2, 3 },   { 0, 1, -1, -1 },
-    { 1, 3, -1, -1 },   { 1, 2, -1, -1 }, { 2, 3, -1, -1 }, { -1, -1, -1, -1 }
-};
-
-
-
-
-
 namespace bayazit {
     using namespace rigid;
 
-// Helper: Check if two vertices can "see" each other
-    bool IsVisible(const std::vector<Vertex>& poly, int a, int b) {
-        Vertex p1 = poly[a];
-        Vertex p2 = poly[b];
-
+// Version A: Check visibility between two arbitrary points
+    bool IsVisible(const std::vector<Vertex>& poly, const Vertex& p1, const Vertex& p2) {
         for (size_t i = 0; i < poly.size(); ++i) {
             size_t next = (i + 1) % poly.size();
-            // Ignore edges connected to the vertices themselves
-            if (i == a || i == b || next == a || next == b) continue;
-
+            
             Vertex v1 = poly[i];
             Vertex v2 = poly[next];
 
-            // Standard line segment intersection check
+            // Ignore edges that share a vertex with the segment endpoints to avoid false positives
+            if ((std::abs(v1.x - p1.x) < 1e-4f && std::abs(v1.y - p1.y) < 1e-4f) ||
+                (std::abs(v2.x - p1.x) < 1e-4f && std::abs(v2.y - p1.y) < 1e-4f) ||
+                (std::abs(v1.x - p2.x) < 1e-4f && std::abs(v1.y - p2.y) < 1e-4f) ||
+                (std::abs(v2.x - p2.x) < 1e-4f && std::abs(v2.y - p2.y) < 1e-4f)) continue;
+
             float denominator = (p2.x - p1.x) * (v2.y - v1.y) - (p2.y - p1.y) * (v2.x - v1.x);
             if (std::abs(denominator) < 1e-6f) continue;
 
@@ -234,6 +137,11 @@ namespace bayazit {
             if (ua > 0.0f && ua < 1.0f && ub > 0.0f && ub < 1.0f) return false;
         }
         return true;
+    }
+
+    // Version B: Keep your index-based version for Decompose
+    bool IsVisible(const std::vector<Vertex>& poly, int a, int b) {
+        return IsVisible(poly, poly[a], poly[b]);
     }
 
 
@@ -308,6 +216,130 @@ int bestSplitIdx = -1;
         }
     }
 }
+
+
+static void BridgeHoles(std::vector<Vertex>& mainPoly, const std::vector<Contour>& contours) {
+    for (const auto& hole : contours) {
+        if (!hole.is_hole) continue;
+
+        // 1. Find the rightmost point in the hole
+        size_t holeIdx = 0;
+        float maxHoleX = -1e10f;
+        for (size_t i = 0; i < hole.points.size(); ++i) {
+            if (hole.points[i].x > maxHoleX) {
+                maxHoleX = hole.points[i].x;
+                holeIdx = i;
+            }
+        }
+
+        // 2. Find the best bridge point on mainPoly
+        int bridgeIdx = -1;
+        float minDistSq = 1e10f;
+        Vertex hP = hole.points[holeIdx];
+
+        for (size_t i = 0; i < mainPoly.size(); ++i) {
+            // Basic visibility heuristic: bridge to the right
+            if (mainPoly[i].x >= hP.x) {
+
+              // ✅ Use your existing visibility check to ensure the bridge is valid
+                if (bayazit::IsVisible(mainPoly, hP, mainPoly[i])) { 
+                    float d2 = std::pow(mainPoly[i].x - hP.x, 2) + std::pow(mainPoly[i].y - hP.y, 2);
+                    if (d2 < minDistSq) {
+                        minDistSq = d2;
+                        bridgeIdx = (int)i;
+                    }
+                }
+            }
+        }
+
+        if (bridgeIdx != -1) {
+            // 3. Prepare the Hole points (Ensuring CW winding for a CCW outer poly)
+            std::vector<Vertex> holePoints = hole.points;
+            
+            // Logic: If outer is CCW (Area > 0), hole must be CW (Area < 0)
+            float holeArea = CalculateSignedArea(holePoints);
+            float mainArea = CalculateSignedArea(mainPoly);
+            
+            // If they have the same sign, reverse the hole
+            if ((mainArea > 0 && holeArea > 0) || (mainArea < 0 && holeArea < 0)) {
+                std::reverse(holePoints.begin(), holePoints.end());
+                // After reversal, we must find the new index of our rightmost point
+                maxHoleX = -1e10f;
+                for (size_t i = 0; i < holePoints.size(); ++i) {
+                    if (holePoints[i].x > maxHoleX) {
+                        maxHoleX = holePoints[i].x;
+                        holeIdx = i;
+                    }
+                }
+            }
+
+            // 4. Inject the bridge
+            std::vector<Vertex> newPath;
+            // a. Main up to bridge point
+            for (int i = 0; i <= bridgeIdx; ++i) newPath.push_back(mainPoly[i]);
+            
+            // b. Hole loop (starting from holeIdx)
+            for (size_t i = 0; i < holePoints.size(); ++i) {
+                newPath.push_back(holePoints[(holeIdx + i) % holePoints.size()]);
+            }
+            
+            // c. Close hole and bridge back
+            newPath.push_back(holePoints[holeIdx]); // Back to hole start
+            newPath.push_back(mainPoly[bridgeIdx]); // Back to main bridge point
+            
+            // d. Rest of main
+            for (size_t i = bridgeIdx + 1; i < mainPoly.size(); ++i) {
+                newPath.push_back(mainPoly[i]);
+            }
+            
+            mainPoly = std::move(newPath);
+        }
+    }
+}
+
+
+
+
+static void SimplifyContour(std::vector<Vertex>& points) {
+    if (points.size() < 5) return; 
+
+    std::vector<Vertex> simplified;
+    simplified.push_back(points[0]);
+
+    for (size_t i = 1; i < points.size(); ++i) {
+        const Vertex& last = simplified.back();
+        const Vertex& curr = points[i];
+
+        // If the point is closer than 3.0 units, Nuke it.
+        // This is the "Detail" slider. Increase 9.0f to 16.0f for even less detail.
+        float distSq = std::pow(curr.x - last.x, 2) + std::pow(curr.y - last.y, 2);
+        if (distSq < 9.0f) continue; 
+
+        simplified.push_back(curr);
+    }
+
+    if (simplified.size() >= 3) {
+        points = std::move(simplified);
+    }
+}
+} // anonymous namespace
+
+
+// =====================
+// Marching Squares Table
+// =====================
+
+static const int CASE_TABLE[16][4] = {
+    { -1, -1, -1, -1 }, { 3, 2, -1, -1 }, { 2, 1, -1, -1 }, { 3, 1, -1, -1 },
+    { 1, 0, -1, -1 },   { 3, 0, 1, 2 },   { 2, 0, -1, -1 }, { 3, 0, -1, -1 },
+    { 0, 3, -1, -1 },   { 0, 2, -1, -1 }, { 0, 1, 2, 3 },   { 0, 1, -1, -1 },
+    { 1, 3, -1, -1 },   { 1, 2, -1, -1 }, { 2, 3, -1, -1 }, { -1, -1, -1, -1 }
+};
+
+
+
+
+
 
 
 
@@ -421,13 +453,16 @@ RegionGeometry GeometryExtractor::Build(
     // =====================
 
     for (size_t i = 0; i < edges.size(); ++i) {
-        if (edges[i].used)
-            continue;
+        if (edges[i].used) continue;
         Contour contour;
         IPoint start = edges[i].from;
         IPoint current = edges[i].to;
         edges[i].used = true;
-
+        
+        contour.points.push_back({
+                start.x * 0.5f,
+                start.y * 0.5f
+            });
         contour.points.push_back({
             current.x * 0.5f ,
             current.y * 0.5f 
