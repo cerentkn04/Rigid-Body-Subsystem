@@ -174,7 +174,7 @@ int main(int argc, char* argv[]) {
 
 
   b2WorldDef worldDef = b2DefaultWorldDef();
-  worldDef.gravity = { 0.0f, 9.8f }; // Standard gravity
+  worldDef.gravity = { 0.0f, 9.8f }; 
   b2WorldId worldId = b2CreateWorld(&worldDef);
   worldDef.enableSleep = false;
 
@@ -213,23 +213,17 @@ rigidSystem.init_physics(worldId, view.width, view.height);
         if (!paused) {
             accumulator += deltaTime;
             while (accumulator >= fixedDeltaTime) { 
-    sim.update();
-
-
-    b2World_Step(worldId, fixedDeltaTime, 4); 
-
-
-
-    accumulator -= fixedDeltaTime; 
+                 sim.update();
+                 b2World_Step(worldId, fixedDeltaTime, 4); 
+                 accumulator -= fixedDeltaTime; 
+            }
 }
-                    }
 
         // --- RIGID SYSTEM ---
         if (rigidSystem.body_manager) {
-
-        rigidSystem.update(view);
-    rigidSystem.body_manager->update_region_transforms(rigidSystem.tracker.get_active_regions());
-}
+          rigidSystem.update(view);
+          rigidSystem.body_manager->update_region_transforms(rigidSystem.tracker.get_active_regions());
+        }
 
         // --- RENDER (Restored Tight Loop) ---
 const auto& index_to_id = rigidSystem.tracker.get_index_mapping();

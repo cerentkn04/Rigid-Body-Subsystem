@@ -20,7 +20,7 @@ struct RegionPixel {
 struct RegionRecord {
     RegionID id;
     RegionGeneration generation;
-    CellAABB bounds; // This is the frozen version
+    CellAABB bounds; 
     uint32_t pixel_count;
      BodyVersion version;
      bool is_dynamic;

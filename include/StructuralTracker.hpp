@@ -18,11 +18,11 @@ struct StructuralTracker {
     std::vector<rigid::CellAABB>  influence_bounds;
     std::vector<uint64_t>         revisions;
     std::vector<uint8_t>          dirty_flags;
-    std::vector<bool>             is_stable; // Moved from snapshot to array
+    std::vector<bool>             is_stable; 
 
     std::vector<Bin> bins;
     void init_bins(int world_width, int world_height);
-    void rebuild_bins();
+
 
     void mark_mutated_regions(const world::WorldView& world);
     void propagate_dirt(); 
