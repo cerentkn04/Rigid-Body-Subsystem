@@ -2,7 +2,6 @@
 #include <vector>
 #include <unordered_map>
 #include <box2d/box2d.h>
-#include "RigidPixelTypes.hpp"
 #include "RegionMesher.hpp"
 #include "RegionStability.hpp"
 #include <StabilityResolver.hpp>
@@ -27,7 +26,7 @@ enum CollisionCategory {
         ~RigidBodyManager();
 
         void synchronize(
-            const StructuralGraph& graph,            // Change 1
+            const StructuralGraph& graph,          
             const std::vector<bool>& is_stable_decisions,
             const std::unordered_map<RegionID, RegionGeometry>& geometry_cache,
             const std::unordered_map<RegionID, RegionRecord>& active_regions);

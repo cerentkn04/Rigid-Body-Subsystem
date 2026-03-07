@@ -15,24 +15,6 @@ void StructuralTracker::init_bins(int world_width, int world_height) {
     bins.resize(bins_x * bins_y);
 }
 
-void StructuralTracker::rebuild_bins() {
-    for (auto& bin : bins) bin.region_indices.clear();
-
-    for (uint32_t i = 0; i < ids.size(); ++i) {
-        const auto& b = influence_bounds[i];
-        int bx0 = std::max(0, b.min_x / BIN_SIZE);
-        int by0 = std::max(0, b.min_y / BIN_SIZE);
-        int bx1 = std::min(bins_x - 1, b.max_x / BIN_SIZE);
-        int by1 = std::min(bins_y - 1, b.max_y / BIN_SIZE);
-
-        for (int by = by0; by <= by1; ++by) {
-            for (int bx = bx0; bx <= bx1; ++bx) {
-                bins[by * bins_x + bx].region_indices.push_back(i);
-            }
-        }
-    }
-}
-
 void StructuralTracker::propagate_dirt() {
     std::deque<uint32_t> work_queue;
 
@@ -43,6 +25,7 @@ void StructuralTracker::propagate_dirt() {
     while (!work_queue.empty()) {
         uint32_t dirty_idx = work_queue.front();
         work_queue.pop_front();
+
 
         const auto& d_bounds = influence_bounds[dirty_idx];
         int bx0 = std::max(0, d_bounds.min_x / BIN_SIZE);

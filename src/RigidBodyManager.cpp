@@ -41,7 +41,6 @@ void RigidBodyManager::synchronize(
         const auto& geo = geo_it->second;
         const auto& record = rec_it->second;
         
-        // Use the decision from the Policy!
         b2BodyType targetType = is_stable_decisions[i] ? b2_staticBody : b2_dynamicBody;
 
         auto body_it = m_body_map.find(id);

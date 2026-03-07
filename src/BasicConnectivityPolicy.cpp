@@ -4,7 +4,6 @@
 
 namespace rigid {
 
-// This is a flat DOD function, not a class method.
 void apply_basic_connectivity_policy(const StructuralGraph& graph, std::vector<bool>& out_is_stable) {
     // 1. Access the vector 'nodes' (not 'node')
     const auto& nodes = graph.nodes; 
@@ -27,9 +26,7 @@ void apply_basic_connectivity_policy(const StructuralGraph& graph, std::vector<b
     while (!queue.empty()) {
         uint32_t curr = queue.front();
         queue.pop_front();
-
         for (uint32_t neighbor_idx : nodes[curr].neighbor_indices) {
-            // Check the vector directly
             if (!out_is_stable[neighbor_idx]) {
                 out_is_stable[neighbor_idx] = true;
                 queue.push_back(neighbor_idx);

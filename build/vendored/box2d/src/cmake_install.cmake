@@ -1,4 +1,4 @@
-# Install script for directory: /home/ceen/projects/ceren/vendored/box2d/src
+# Install script for directory: /Users/cerentekin/Rigid-Body-Subsystem/vendored/box2d/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -27,11 +27,6 @@ if(NOT CMAKE_INSTALL_COMPONENT)
   endif()
 endif()
 
-# Install shared libraries without execute permission?
-if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
-  set(CMAKE_INSTALL_SO_NO_EXE "0")
-endif()
-
 # Is this installation the result of a crosscompile?
 if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "FALSE")
@@ -43,14 +38,18 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "/home/ceen/projects/ceren/build/vendored/box2d/src/libbox2d.a")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "/Users/cerentekin/Rigid-Body-Subsystem/build/vendored/box2d/src/libbox2d.a")
+  if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libbox2d.a" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libbox2d.a")
+    execute_process(COMMAND "/usr/bin/ranlib" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libbox2d.a")
+  endif()
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/cmake/box2d/box2dConfig.cmake")
     file(DIFFERENT _cmake_export_file_changed FILES
          "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/cmake/box2d/box2dConfig.cmake"
-         "/home/ceen/projects/ceren/build/vendored/box2d/src/CMakeFiles/Export/1f7e0de6fbfb5d20e365871ec89ce73e/box2dConfig.cmake")
+         "/Users/cerentekin/Rigid-Body-Subsystem/build/vendored/box2d/src/CMakeFiles/Export/1f7e0de6fbfb5d20e365871ec89ce73e/box2dConfig.cmake")
     if(_cmake_export_file_changed)
       file(GLOB _cmake_old_config_files "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/cmake/box2d/box2dConfig-*.cmake")
       if(_cmake_old_config_files)
@@ -63,30 +62,30 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
     endif()
     unset(_cmake_export_file_changed)
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/box2d" TYPE FILE FILES "/home/ceen/projects/ceren/build/vendored/box2d/src/CMakeFiles/Export/1f7e0de6fbfb5d20e365871ec89ce73e/box2dConfig.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/box2d" TYPE FILE FILES "/Users/cerentekin/Rigid-Body-Subsystem/build/vendored/box2d/src/CMakeFiles/Export/1f7e0de6fbfb5d20e365871ec89ce73e/box2dConfig.cmake")
   if(CMAKE_INSTALL_CONFIG_NAME MATCHES "^()$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/box2d" TYPE FILE FILES "/home/ceen/projects/ceren/build/vendored/box2d/src/CMakeFiles/Export/1f7e0de6fbfb5d20e365871ec89ce73e/box2dConfig-noconfig.cmake")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/box2d" TYPE FILE FILES "/Users/cerentekin/Rigid-Body-Subsystem/build/vendored/box2d/src/CMakeFiles/Export/1f7e0de6fbfb5d20e365871ec89ce73e/box2dConfig-noconfig.cmake")
   endif()
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/box2d" TYPE FILE FILES
-    "/home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/base.h"
-    "/home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/box2d.h"
-    "/home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/collision.h"
-    "/home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/id.h"
-    "/home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/math_functions.h"
-    "/home/ceen/projects/ceren/vendored/box2d/src/../include/box2d/types.h"
+    "/Users/cerentekin/Rigid-Body-Subsystem/vendored/box2d/src/../include/box2d/base.h"
+    "/Users/cerentekin/Rigid-Body-Subsystem/vendored/box2d/src/../include/box2d/box2d.h"
+    "/Users/cerentekin/Rigid-Body-Subsystem/vendored/box2d/src/../include/box2d/collision.h"
+    "/Users/cerentekin/Rigid-Body-Subsystem/vendored/box2d/src/../include/box2d/id.h"
+    "/Users/cerentekin/Rigid-Body-Subsystem/vendored/box2d/src/../include/box2d/math_functions.h"
+    "/Users/cerentekin/Rigid-Body-Subsystem/vendored/box2d/src/../include/box2d/types.h"
     )
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/box2d" TYPE FILE FILES "/home/ceen/projects/ceren/build/vendored/box2d/src/box2dConfigVersion.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/box2d" TYPE FILE FILES "/Users/cerentekin/Rigid-Body-Subsystem/build/vendored/box2d/src/box2dConfigVersion.cmake")
 endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "/home/ceen/projects/ceren/build/vendored/box2d/src/install_local_manifest.txt"
+  file(WRITE "/Users/cerentekin/Rigid-Body-Subsystem/build/vendored/box2d/src/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()

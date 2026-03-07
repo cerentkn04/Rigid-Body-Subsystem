@@ -1,3 +1,2 @@
 CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o: \
- /home/ceen/projects/ceren/src/StabilitySystem.cpp \
- /usr/include/stdc-predef.h
+  /Users/cerentekin/Rigid-Body-Subsystem/src/StabilitySystem.cpp

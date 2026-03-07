@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-#include <memory>
 #include <RigidPixelTypes.hpp>
 #include <RegionExtractor.hpp>
 #include <RegionTracker.hpp>
@@ -8,7 +7,6 @@
 #include <StructuralTracker.hpp>
 #include <StructuralGraph.hpp>
 #include <RigidBodyManager.hpp>
-#include <IStabilityPolicy.hpp>
 #include "RegionMesher.hpp" 
 
 namespace rigid {
@@ -20,7 +18,7 @@ public:
     RegionTracker tracker;
     StructuralTracker structural_engine; 
     StructuralGraph structural_graph;      
-    StabilityPolicyFunc stability_policy = nullptr;// Added: The Fact Engine
+    StabilityPolicyFunc stability_policy = nullptr;
 
     // --- Data ---
     std::unordered_map<uint32_t, RegionGeometry> geometry_cache;
