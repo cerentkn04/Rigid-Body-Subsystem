@@ -14,7 +14,18 @@ void StructuralTracker::init_bins(int world_width, int world_height) {
     bins.clear();
     bins.resize(bins_x * bins_y);
 }
+static bool provides_support(const rigid::CellAABB& supported, const rigid::CellAABB& supporter) {
+    // Standard AABB intersection check
+    bool touching = (supported.min_x <= supporter.max_x && supported.max_x >= supporter.min_x) &&
+                    (supported.min_y <= supporter.max_y && supported.max_y >= supporter.min_y);
+    
+    if (!touching) return false;
 
+    // PHYSICAL RULE: The supporter must be at the same level or lower than the object
+    // In many 2D engines, Y increases downwards. 
+    // So "below" means supporter.max_y > supported.max_y
+    return supporter.max_y >= supported.max_y; 
+}
 void StructuralTracker::propagate_dirt() {
     std::deque<uint32_t> work_queue;
 

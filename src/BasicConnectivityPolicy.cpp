@@ -22,17 +22,28 @@ void apply_basic_connectivity_policy(const StructuralGraph& graph, std::vector<b
         }
     }
 
-    // 4. Phase 2: Flood-Fill Connectivity
     while (!queue.empty()) {
-        uint32_t curr = queue.front();
+        uint32_t curr_idx = queue.front();
         queue.pop_front();
-        for (uint32_t neighbor_idx : nodes[curr].neighbor_indices) {
-            if (!out_is_stable[neighbor_idx]) {
-                out_is_stable[neighbor_idx] = true;
-                queue.push_back(neighbor_idx);
+
+        const auto& supporter = nodes[curr_idx];
+
+        for (uint32_t n_idx : supporter.neighbor_indices) {
+            if (out_is_stable[n_idx]) continue;
+
+            const auto& candidate = nodes[n_idx];
+
+            // DIRECTIONAL RULE:
+            // The 'supporter' provides stability to the 'candidate' 
+            // ONLY if the supporter's bottom (max_y) is at or below the candidate's bottom.
+            // This prevents the inner object of an "O" from being supported by the "O" top/sides.
+            if (supporter.bounds.max_y >= candidate.bounds.max_y) {
+                out_is_stable[n_idx] = true;
+                queue.push_back(n_idx);
             }
         }
     }
+    // 4. Phase 2: Flood-Fill Connectivity
 }
 
 } // namespace rigid
