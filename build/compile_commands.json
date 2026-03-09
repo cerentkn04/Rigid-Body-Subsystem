@@ -25,6 +25,18 @@
 },
 {
   "directory": "/home/ceen/projects/ceren/build",
+  "command": "/usr/bin/c++  -I/home/ceen/projects/ceren/vendored/glm -I/home/ceen/projects/ceren/include -I/home/ceen/projects/ceren/vendored/imgui -I/home/ceen/projects/ceren/vendored/imgui/backends -I/home/ceen/projects/ceren/build/vendored/SDL/include-revision -I/home/ceen/projects/ceren/vendored/SDL/include -I/home/ceen/projects/ceren/vendored/box2d/src/../include -I/home/ceen/projects/ceren/build/vendored/box2d/src -std=gnu++20 -o CMakeFiles/Ceren.dir/src/RegionMotion.cpp.o -c /home/ceen/projects/ceren/src/RegionMotion.cpp",
+  "file": "/home/ceen/projects/ceren/src/RegionMotion.cpp",
+  "output": "CMakeFiles/Ceren.dir/src/RegionMotion.cpp.o"
+},
+{
+  "directory": "/home/ceen/projects/ceren/build",
+  "command": "/usr/bin/c++  -I/home/ceen/projects/ceren/vendored/glm -I/home/ceen/projects/ceren/include -I/home/ceen/projects/ceren/vendored/imgui -I/home/ceen/projects/ceren/vendored/imgui/backends -I/home/ceen/projects/ceren/build/vendored/SDL/include-revision -I/home/ceen/projects/ceren/vendored/SDL/include -I/home/ceen/projects/ceren/vendored/box2d/src/../include -I/home/ceen/projects/ceren/build/vendored/box2d/src -std=gnu++20 -o CMakeFiles/Ceren.dir/src/RegionMotionApplier.cpp.o -c /home/ceen/projects/ceren/src/RegionMotionApplier.cpp",
+  "file": "/home/ceen/projects/ceren/src/RegionMotionApplier.cpp",
+  "output": "CMakeFiles/Ceren.dir/src/RegionMotionApplier.cpp.o"
+},
+{
+  "directory": "/home/ceen/projects/ceren/build",
   "command": "/usr/bin/c++  -I/home/ceen/projects/ceren/vendored/glm -I/home/ceen/projects/ceren/include -I/home/ceen/projects/ceren/vendored/imgui -I/home/ceen/projects/ceren/vendored/imgui/backends -I/home/ceen/projects/ceren/build/vendored/SDL/include-revision -I/home/ceen/projects/ceren/vendored/SDL/include -I/home/ceen/projects/ceren/vendored/box2d/src/../include -I/home/ceen/projects/ceren/build/vendored/box2d/src -std=gnu++20 -o CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o -c /home/ceen/projects/ceren/src/RegionTracker.cpp",
   "file": "/home/ceen/projects/ceren/src/RegionTracker.cpp",
   "output": "CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o"

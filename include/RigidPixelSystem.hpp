@@ -9,7 +9,7 @@
 #include <StructuralGraph.hpp>
 #include <RigidBodyManager.hpp>
 #include "RegionMesher.hpp" 
-
+#include <RegionMotion.hpp>
 namespace rigid {
 
 class RigidPixelSystem {
@@ -20,7 +20,6 @@ public:
     StructuralTracker structural_engine; 
     StructuralGraph structural_graph;      
     StabilityPolicyFunc stability_policy = nullptr;
-
     // --- Data ---
     std::unordered_map<uint32_t, RegionGeometry> geometry_cache;
     std::vector<RegionBuildRecord> build_records;
@@ -37,7 +36,29 @@ public:
     void set_policy(StabilityPolicyFunc new_policy) {
         stability_policy = new_policy;
     }
-    // --- The Pipeline ---
+
+template<typename CellType>
+    void apply_region_motion(
+        std::vector<CellType>& grid, 
+        int width, 
+        int height, 
+        CellType empty_cell,
+        MotionSystemState<CellType>& state) // Pass state in here
+    {
+        if (!body_manager) return;
+
+        MotionSystem::Apply<CellType>(
+            state,               
+            grid, 
+            extractor.label_grid(), 
+            tracker.get_active_regions(), 
+            width, 
+            height,
+            empty_cell
+        );
+    }
+
+        // --- The Pipeline ---
     void update(const world::WorldView& view) {
         uint64_t current_world_rev = view.world_revision();
 
@@ -89,6 +110,7 @@ public:
             for (uint32_t i = 0; i < structural_engine.revisions.size(); ++i) {
         structural_engine.revisions[i] = current_world_rev;
     }
+            
     last_processed_rev = current_world_rev;
 
             std::fill(structural_engine.dirty_flags.begin(), structural_engine.dirty_flags.end(), 0);
@@ -105,7 +127,7 @@ void sync_engine_with_tracker() {
     structural_engine.ids.assign(count, 0);
     structural_engine.influence_bounds.assign(count, {0,0,0,0});
     structural_engine.dirty_flags.assign(count, 0);
-    structural_engine.is_stable.assign(count, true);
+   // structural_engine.is_stable.assign(count, true);
 
     // Use a temporary map or persistent storage for revisions 
     // to prevent "Time Leaking" between different objects.

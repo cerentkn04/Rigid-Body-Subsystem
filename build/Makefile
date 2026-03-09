@@ -322,6 +322,54 @@ src/RegionMesher.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RegionMesher.cpp.s
 .PHONY : src/RegionMesher.cpp.s
 
+src/RegionMotion.o: src/RegionMotion.cpp.o
+.PHONY : src/RegionMotion.o
+
+# target to build an object file
+src/RegionMotion.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RegionMotion.cpp.o
+.PHONY : src/RegionMotion.cpp.o
+
+src/RegionMotion.i: src/RegionMotion.cpp.i
+.PHONY : src/RegionMotion.i
+
+# target to preprocess a source file
+src/RegionMotion.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RegionMotion.cpp.i
+.PHONY : src/RegionMotion.cpp.i
+
+src/RegionMotion.s: src/RegionMotion.cpp.s
+.PHONY : src/RegionMotion.s
+
+# target to generate assembly for a file
+src/RegionMotion.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RegionMotion.cpp.s
+.PHONY : src/RegionMotion.cpp.s
+
+src/RegionMotionApplier.o: src/RegionMotionApplier.cpp.o
+.PHONY : src/RegionMotionApplier.o
+
+# target to build an object file
+src/RegionMotionApplier.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RegionMotionApplier.cpp.o
+.PHONY : src/RegionMotionApplier.cpp.o
+
+src/RegionMotionApplier.i: src/RegionMotionApplier.cpp.i
+.PHONY : src/RegionMotionApplier.i
+
+# target to preprocess a source file
+src/RegionMotionApplier.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RegionMotionApplier.cpp.i
+.PHONY : src/RegionMotionApplier.cpp.i
+
+src/RegionMotionApplier.s: src/RegionMotionApplier.cpp.s
+.PHONY : src/RegionMotionApplier.s
+
+# target to generate assembly for a file
+src/RegionMotionApplier.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RegionMotionApplier.cpp.s
+.PHONY : src/RegionMotionApplier.cpp.s
+
 src/RegionTracker.o: src/RegionTracker.cpp.o
 .PHONY : src/RegionTracker.o
 
@@ -711,6 +759,12 @@ help:
 	@echo "... src/RegionMesher.o"
 	@echo "... src/RegionMesher.i"
 	@echo "... src/RegionMesher.s"
+	@echo "... src/RegionMotion.o"
+	@echo "... src/RegionMotion.i"
+	@echo "... src/RegionMotion.s"
+	@echo "... src/RegionMotionApplier.o"
+	@echo "... src/RegionMotionApplier.i"
+	@echo "... src/RegionMotionApplier.s"
 	@echo "... src/RegionTracker.o"
 	@echo "... src/RegionTracker.i"
 	@echo "... src/RegionTracker.s"

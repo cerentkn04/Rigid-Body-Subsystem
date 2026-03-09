@@ -154,7 +154,7 @@ for (size_t i = 0; i < num_current; ++i) {
 
 
     // 4. STATE UPDATE
-    auto previous_regions = m_active_regions;
+    auto previous_regions = std::move(m_active_regions); // Move old data to a temp map
     m_active_regions.clear();
     for (size_t i = 0; i < num_current; ++i) {
         RegionID id = m_impl->current_index_to_id[i];
@@ -164,23 +164,37 @@ for (size_t i = 0; i < num_current; ++i) {
         rec.generation = m_impl->generations[id];
         rec.pixel_count = build.pixel_count;
         rec.bounds = { build.bounds};
-auto prev_it = previous_regions.find(id);
+        
+  auto prev_it = previous_regions.find(id);
 if (prev_it != previous_regions.end()) {
-    const RegionRecord& old = prev_it->second;
+            const RegionRecord& old = prev_it->second;
 
-    bool changed =
-        (old.pixel_count != build.pixel_count) ||
-        (old.bounds.min_x != build.bounds.min_x) ||
-        (old.bounds.min_y != build.bounds.min_y) ||
-        (old.bounds.max_x != build.bounds.max_x) ||
-        (old.bounds.max_y != build.bounds.max_y);
+            // --- CRITICAL PHYSICS CARRY-OVER ---
+            // Carry over the sub-pixel positions so the MotionSystem has continuity
+            rec.center_f = old.center_f;
+            rec.prev_center_f = old.prev_center_f;
+            rec.is_dynamic = old.is_dynamic;
 
-    rec.version = changed ? old.version + 1 : old.version;
-} else {
-    // New body
-    rec.version = 1;
-}
+            bool changed = (old.pixel_count != build.pixel_count) ||
+                           (old.bounds.min_x != build.bounds.min_x) ||
+                           (old.bounds.min_y != build.bounds.min_y) ||
+                           (old.bounds.max_x != build.bounds.max_x) ||
+                           (old.bounds.max_y != build.bounds.max_y);
 
+            rec.version = changed ? old.version + 1 : old.version;
+        } else {
+            // --- NEW BODY INITIALIZATION ---
+            rec.version = 1;
+            rec.is_dynamic = false;
+            
+            // Use the integer bounds center as the starting float center
+            float start_x = (build.bounds.min_x + build.bounds.max_x) * 0.5f;
+            float start_y = (build.bounds.min_y + build.bounds.max_y) * 0.5f;
+            
+            rec.center_f = { start_x, start_y };
+            rec.prev_center_f = { start_x, start_y };
+        }
+  
 
 
     }

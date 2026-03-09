@@ -6,6 +6,8 @@ Ceren: \
   CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o \
   CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o \
   CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o \
+  CMakeFiles/Ceren.dir/src/RegionMotion.cpp.o \
+  CMakeFiles/Ceren.dir/src/RegionMotionApplier.cpp.o \
   CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o \
   CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o \
   CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o \
@@ -64,6 +66,10 @@ CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o:
 CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o:
 
 CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o:
+
+CMakeFiles/Ceren.dir/src/RegionMotion.cpp.o:
+
+CMakeFiles/Ceren.dir/src/RegionMotionApplier.cpp.o:
 
 CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o:
 

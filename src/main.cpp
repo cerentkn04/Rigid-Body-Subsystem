@@ -147,6 +147,7 @@ int main(int argc, char* argv[]) {
     g_pixel_sim_ptr = &sim;
 
     rigid::RigidPixelSystem rigidSystem;
+    rigid::MotionSystemState<Cell> motionState;
 
     world::WorldView view;
     view.width = GRID_WIDTH; view.height = GRID_HEIGHT;
@@ -221,8 +222,20 @@ rigidSystem.init_physics(worldId, view.width, view.height);
 
         // --- RIGID SYSTEM ---
         if (rigidSystem.body_manager) {
-          rigidSystem.update(view);
           rigidSystem.body_manager->update_region_transforms(rigidSystem.tracker.get_active_regions());
+
+    // 2. MOTION: Move pixels in the grid based on the physics delta
+    // We capture if any actual movement happened
+    rigidSystem.apply_region_motion(sim.grid, GRID_WIDTH, GRID_HEIGHT, 
+                                    Cell{CellType::Empty}, motionState);
+
+    // 3. DIRTY FLAG: If pixels moved, we MUST tell the system to re-extract
+    // otherwise it thinks the pixels are still in the old place.
+    sim.world_revision_counter++; 
+
+    // 4. RE-VALIDATE: Re-run extraction to update label_grid and handle splits/merges
+    // This makes the label_grid match the new pixel positions immediately
+    rigidSystem.update(view);
         }
 
         // --- RENDER (Restored Tight Loop) ---
@@ -242,6 +255,14 @@ const auto& index_to_id = rigidSystem.tracker.get_index_mapping();
 
         for (int i = 0; i < GRID_WIDTH * GRID_HEIGHT; ++i) {
             const Cell& cell = cell_ptr[i];
+            const rigid::RegionIndex rIdx = label_ptr[i];
+   if (cell.type == CellType::Rock && rIdx == 0) {
+        pixel_ptr[i] = 0xFF0000FF; // Bright Red
+    }
+    else if (cell.type >= CellType::Wall) {
+        pixel_ptr[i] = (rIdx < num_mappings) ? cached_colors[rIdx] : 0x646464FF;
+    } 
+ 
             if (cell.type >= CellType::Wall) {
               const rigid::RegionIndex rIdx = label_ptr[i];
                 pixel_ptr[i] = (rIdx < num_mappings) ? cached_colors[rIdx] : 0x646464FF;
@@ -265,95 +286,56 @@ const auto& index_to_id = rigidSystem.tracker.get_index_mapping();
         //
         //
 // --- RENDER STEP: GEOMETRY (Convex Pieces Debug View) ---
+
 if (showPhysicsHulls) {
     int winW, winH;
     SDL_GetWindowSize(window, &winW, &winH);
     float scaleX = (float)winW / GRID_WIDTH;
     float scaleY = (float)winH / GRID_HEIGHT;
 
-    for (auto const& [id, geo] : rigidSystem.geometry_cache) {
-        auto it = rigidSystem.tracker.get_active_regions().find(id);
-        if (it == rigidSystem.tracker.get_active_regions().end()) continue;
+    for (auto const& [id, record] : rigidSystem.tracker.get_active_regions()) {
+        auto geo_it = rigidSystem.geometry_cache.find(id);
+        if (geo_it == rigidSystem.geometry_cache.end()) continue;
 
-        // Use the current simulation position (center_f)
-        float curX = it->second.center_f.x;
-        float curY = it->second.center_f.y;
+        const auto& geo = geo_it->second;
+        float curX = record.center_f.x;
+        float curY = record.center_f.y;
+        float prevX = record.prev_center_f.x;
+        float prevY = record.prev_center_f.y;
 
-        // DRAW CONVEX PIECES (What Box2D actually sees)
-        SDL_SetRenderDrawColor(renderer, 255, 100, 0, 255); // Orange for convex edges
+        // 1. DRAW PHYSICS HULL (Orange)
+        SDL_SetRenderDrawColor(renderer, 255, 100, 0, 255); 
         for (const auto& piece : geo.convex_pieces) {
             const auto& pts = piece.points;
-            if (pts.size() < 2) continue;
-
             for (size_t i = 0; i < pts.size(); ++i) {
                 const auto& p1 = pts[i];
                 const auto& p2 = pts[(i + 1) % pts.size()];
-
-                float x1 = (p1.x + curX) * scaleX;
-                float y1 = (p1.y + curY) * scaleY;
-                float x2 = (p2.x + curX) * scaleX;
-                float y2 = (p2.y + curY) * scaleY;
-
-                SDL_RenderLine(renderer, x1, y1, x2, y2);
+                SDL_RenderLine(renderer, (p1.x + curX) * scaleX, (p1.y + curY) * scaleY,
+                                         (p2.x + curX) * scaleX, (p2.y + curY) * scaleY);
             }
-            printf("center: %.2f %.2f\n", geo.center.x, geo.center.y);
-
-for(auto &p : piece.points)
-    printf("vertex: %.2f %.2f\n", p.x, p.y);
         }
-        
-        // OPTIONAL: Draw a small cross at the center of the body
+
+        // 2. DRAW MOTION VECTOR (Blue)
+        // This line shows the movement from the last frame to this frame
+        SDL_SetRenderDrawColor(renderer, 0, 150, 255, 255);
+        SDL_RenderLine(renderer, prevX * scaleX, prevY * scaleY, curX * scaleX, curY * scaleY);
+
+        // 3. LOGGING (Console - Limited to dynamic bodies to avoid spam)
+        if (record.is_dynamic) {
+            int dx = (int)std::round(curX - prevX);
+            int dy = (int)std::round(curY - prevY);
+            if (dx != 0 || dy != 0) {
+                printf("Region %u moved: [%d, %d] pixels\n", id, dx, dy);
+            }
+        }
+
+        // 4. CENTER POINT (White)
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderPoint(renderer, curX * scaleX, curY * scaleY);
     }
 }
 
 
-
-
-/*if (showPhysicsHulls) {
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-    
-    int winW, winH;
-    SDL_GetWindowSize(window, &winW, &winH);
-    float scaleX = (float)winW / GRID_WIDTH;
-    float scaleY = (float)winH / GRID_HEIGHT;
-    // Keep your original visual offset for pixel alignment
-    float visualOffsetX = 0.5f * scaleX; 
-    float visualOffsetY = 0.5f * scaleY;
-
-    for (auto const& [id, geo] : rigidSystem.geometry_cache) {
-        auto it = rigidSystem.tracker.get_active_regions().find(id);
-        if (it == rigidSystem.tracker.get_active_regions().end()) continue;
-
-        // Check if the body is actually supposed to be moving
-        // We look at the record's current float center
-        bool isDynamic = (it->second.center_f.x != 0 || it->second.center_f.y != 0);
-
-        // If it's static, the offset should be 0 so we use original coordinates
-        float curX = isDynamic ? it->second.center_f.x : (float)geo.center.x;
-        float curY = isDynamic ? it->second.center_f.y : (float)geo.center.y;
-        float origX = (float)geo.center.x;
-        float origY = (float)geo.center.y;
-
-        for (const auto& contour : geo.contours) {
-            const auto& points = contour.points;
-            if (points.size() < 2) continue;
-
-            for (size_t i = 0; i < points.size(); ++i) {
-                const auto& p1 = points[i];
-                const auto& p2 = points[(i + 1) % points.size()];
-
-float x1 = (p1.x + curX) * scaleX + visualOffsetX;
-float y1 = (p1.y + curY) * scaleY + visualOffsetY;
-float x2 = (p2.x + curX) * scaleX + visualOffsetX;
-float y2 = (p2.y + curY) * scaleY + visualOffsetY;
-
-                SDL_RenderLine(renderer, x1, y1, x2, y2);
-            }
-        }
-    }
-}*/
             // --- IMGUI (Original Controls) ---
         ImGui_ImplSDLRenderer3_NewFrame(); ImGui_ImplSDL3_NewFrame(); ImGui::NewFrame();
         ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);

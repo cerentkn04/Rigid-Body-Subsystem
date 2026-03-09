@@ -12,6 +12,8 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/ceen/projects/ceren/src/Box2dBackend.cpp" "CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o" "gcc" "CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o.d"
   "/home/ceen/projects/ceren/src/RegionExtractor.cpp" "CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o" "gcc" "CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o.d"
   "/home/ceen/projects/ceren/src/RegionMesher.cpp" "CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o" "gcc" "CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o.d"
+  "/home/ceen/projects/ceren/src/RegionMotion.cpp" "CMakeFiles/Ceren.dir/src/RegionMotion.cpp.o" "gcc" "CMakeFiles/Ceren.dir/src/RegionMotion.cpp.o.d"
+  "/home/ceen/projects/ceren/src/RegionMotionApplier.cpp" "CMakeFiles/Ceren.dir/src/RegionMotionApplier.cpp.o" "gcc" "CMakeFiles/Ceren.dir/src/RegionMotionApplier.cpp.o.d"
   "/home/ceen/projects/ceren/src/RegionTracker.cpp" "CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o" "gcc" "CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o.d"
   "/home/ceen/projects/ceren/src/RigidBodyManager.cpp" "CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o" "gcc" "CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o.d"
   "/home/ceen/projects/ceren/src/RigidPixelSystem.cpp" "CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o" "gcc" "CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o.d"
