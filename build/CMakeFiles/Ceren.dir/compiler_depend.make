@@ -530,6 +530,65 @@ CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o: /home/ceen/projects/ceren/src/R
   /home/ceen/projects/ceren/include/StructuralGraph.hpp \
   /home/ceen/projects/ceren/include/StructuralTracker.hpp \
   /home/ceen/projects/ceren/include/regionScratch.hpp \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_assert.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_asyncio.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_atomic.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_audio.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_begin_code.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_bits.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_blendmode.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_camera.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_clipboard.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_close_code.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_cpuinfo.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_dialog.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_endian.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_error.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_events.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_filesystem.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_gamepad.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_gpu.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_guid.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_haptic.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_hidapi.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_hints.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_init.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_iostream.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_joystick.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_keyboard.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_keycode.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_loadso.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_locale.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_log.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_messagebox.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_metal.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_misc.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_mouse.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_mutex.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_oldnames.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_pen.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_pixels.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_platform.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_platform_defines.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_power.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_process.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_properties.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_rect.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_render.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_scancode.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_sensor.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_stdinc.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_storage.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_surface.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_system.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_thread.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_time.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_timer.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_touch.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_tray.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_version.h \
+  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_video.h \
   /home/ceen/projects/ceren/vendored/box2d/include/box2d/base.h \
   /home/ceen/projects/ceren/vendored/box2d/include/box2d/box2d.h \
   /home/ceen/projects/ceren/vendored/box2d/include/box2d/collision.h \
@@ -580,12 +639,14 @@ CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o: /home/ceen/projects/ceren/src/R
   /usr/include/bits/types/clockid_t.h \
   /usr/include/bits/types/cookie_io_functions_t.h \
   /usr/include/bits/types/locale_t.h \
+  /usr/include/bits/types/mbstate_t.h \
   /usr/include/bits/types/sigset_t.h \
   /usr/include/bits/types/struct_FILE.h \
   /usr/include/bits/types/struct_timespec.h \
   /usr/include/bits/types/struct_timeval.h \
   /usr/include/bits/types/time_t.h \
   /usr/include/bits/types/timer_t.h \
+  /usr/include/bits/types/wint_t.h \
   /usr/include/bits/typesizes.h \
   /usr/include/bits/uintn-identity.h \
   /usr/include/bits/waitflags.h \
@@ -700,9 +761,12 @@ CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o: /home/ceen/projects/ceren/src/R
   /usr/include/stdint.h \
   /usr/include/stdio.h \
   /usr/include/stdlib.h \
+  /usr/include/string.h \
+  /usr/include/strings.h \
   /usr/include/sys/cdefs.h \
   /usr/include/sys/select.h \
   /usr/include/sys/types.h \
+  /usr/include/wchar.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/float.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdbool.h \
@@ -3045,6 +3109,34 @@ CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/tbmintrin.h:
 
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512fp16vlintrin.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_tray.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_thread.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_system.h:
+
+/usr/include/c++/15.2.1/bits/stl_iterator_base_funcs.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_surface.h:
+
+/usr/include/c++/15.2.1/bits/ranges_util.h:
+
+/usr/include/c++/15.2.1/bits/stl_heap.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_stdinc.h:
+
+/usr/include/bits/types/clock_t.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_render.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_rect.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_storage.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_process.h:
+
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_oldnames.h:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_blendmode.h:
@@ -3063,13 +3155,21 @@ CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_keyboard.h:
 
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_gamepad.h:
+
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_events.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512vpopcntdqintrin.h:
 
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_error.h:
+
+/usr/include/bits/sigthread.h:
+
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_endian.h:
 
 /home/ceen/projects/ceren/src/StructuralGraph.cpp:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_dialog.h:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_close_code.h:
 
@@ -3077,49 +3177,19 @@ CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_camera.h:
 
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_error.h:
-
-/usr/include/bits/sigthread.h:
-
-/usr/include/c++/15.2.1/set:
-
-/usr/include/c++/15.2.1/bits/stl_tree.h:
-
-/usr/include/c++/15.2.1/pstl/glue_algorithm_defs.h:
-
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_dialog.h:
-
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_log.h:
-
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_gamepad.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/float.h:
-
-/usr/include/linux/errno.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512dqintrin.h:
-
 /home/ceen/projects/ceren/include/RegionExtractor.hpp:
 
 /usr/include/c++/15.2.1/bits/refwrap.h:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/prfchiintrin.h:
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_log.h:
 
-/home/ceen/projects/ceren/src/StabilitySystem.cpp:
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/prfchiintrin.h:
 
 CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdl3.cpp.o:
 
 /usr/include/c++/15.2.1/bits/unordered_set.h:
 
 /usr/include/bits/sigstack.h:
-
-/usr/include/bits/stdint-uintn.h:
-
-/home/ceen/projects/ceren/include/RegionStability.hpp:
-
-/home/ceen/projects/ceren/vendored/imgui/imgui.h:
-
-/usr/include/c++/15.2.1/system_error:
 
 /usr/include/c++/15.2.1/bits/string_view.tcc:
 
@@ -3146,8 +3216,6 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.o:
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/xmmintrin.h:
 
 /usr/include/stdint.h:
-
-/usr/include/c++/15.2.1/bits/stl_set.h:
 
 /usr/include/bits/mathcalls-macros.h:
 
@@ -3199,21 +3267,11 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.o:
 
 /usr/include/bits/wordsize.h:
 
-/usr/include/bits/thread-shared-types.h:
-
-/home/ceen/projects/ceren/src/RegionMotion.cpp:
-
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_timer.h:
-
-/usr/include/c++/15.2.1/ios:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/amxfp16intrin.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2minmaxintrin.h:
-
 /usr/include/c++/15.2.1/cassert:
 
 /usr/include/c++/15.2.1/algorithm:
+
+/usr/include/bits/floatn.h:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_messagebox.h:
 
@@ -3253,9 +3311,25 @@ CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o:
 
 /usr/include/c++/15.2.1/cstdlib:
 
+/usr/include/bits/stdint-uintn.h:
+
+/home/ceen/projects/ceren/include/RegionStability.hpp:
+
+/home/ceen/projects/ceren/vendored/imgui/imgui.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_properties.h:
+
+/usr/include/asm/errno.h:
+
+/usr/include/c++/15.2.1/system_error:
+
 /usr/include/c++/15.2.1/bits/ranges_base.h:
 
 /usr/include/c++/15.2.1/bits/range_access.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL.h:
+
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++allocator.h:
 
 /usr/include/ctype.h:
 
@@ -3263,17 +3337,7 @@ CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o:
 
 /usr/include/c++/15.2.1/backward/binders.h:
 
-/home/ceen/projects/ceren/vendored/box2d/include/box2d/math_functions.h:
-
-/usr/include/c++/15.2.1/bits/ranges_util.h:
-
-/usr/include/c++/15.2.1/bits/stl_heap.h:
-
 /usr/include/c++/15.2.1/pstl/pstl_config.h:
-
-/usr/include/asm/errno.h:
-
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_properties.h:
 
 /usr/include/c++/15.2.1/bits/move.h:
 
@@ -3319,15 +3383,7 @@ CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o:
 
 /usr/include/c++/15.2.1/bits/stringfwd.h:
 
-/usr/include/c++/15.2.1/tr1/riemann_zeta.tcc:
-
-/home/ceen/projects/ceren/src/StructuralTracker.cpp:
-
-/usr/include/bits/types/siginfo_t.h:
-
 /usr/include/sys/cdefs.h:
-
-/usr/include/c++/15.2.1/backward/auto_ptr.h:
 
 /usr/include/c++/15.2.1/bits/stl_iterator_base_types.h:
 
@@ -3343,15 +3399,19 @@ CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2bf16intrin.h:
 
-/usr/include/c++/15.2.1/iosfwd:
-
-/home/ceen/projects/ceren/src/StabilityResolver.cpp:
-
 /usr/include/c++/15.2.1/bits/hashtable_policy.h:
 
 /usr/include/bits/waitflags.h:
 
 /usr/include/c++/15.2.1/bits/stl_pair.h:
+
+/usr/include/locale.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_sensor.h:
+
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/rtmintrin.h:
 
 /usr/include/c++/15.2.1/bits/stl_construct.h:
 
@@ -3360,6 +3420,12 @@ CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o:
 /usr/include/c++/15.2.1/bits/cpp_type_traits.h:
 
 /home/ceen/projects/ceren/include/RegionType.hpp:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/mwaitxintrin.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_power.h:
+
+/usr/include/math.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/sm4intrin.h:
 
@@ -3373,25 +3439,19 @@ CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o:
 
 /usr/include/c++/15.2.1/bits/functexcept.h:
 
-/usr/include/c++/15.2.1/bits/stl_iterator_base_funcs.h:
-
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_system.h:
-
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_locale.h:
 
 /usr/include/c++/15.2.1/bits/ranges_algo.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/adxintrin.h:
 
+/usr/include/c++/15.2.1/set:
+
 /usr/include/bits/types/__FILE.h:
 
 /usr/include/features.h:
 
 /usr/include/c++/15.2.1/bits/hashtable.h:
-
-/usr/include/c++/15.2.1/math.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/pmmintrin.h:
 
 /home/ceen/projects/ceren/src/RegionTracker.cpp:
 
@@ -3412,8 +3472,6 @@ CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o:
 /usr/include/endian.h:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_init.h:
-
-/usr/include/bits/floatn.h:
 
 /usr/include/c++/15.2.1/bits/stl_tempbuf.h:
 
@@ -3487,15 +3545,19 @@ CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/clzerointrin.h:
 
-/home/ceen/projects/ceren/vendored/box2d/include/box2d/collision.h:
-
-/usr/include/bits/siginfo-arch.h:
-
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_filesystem.h:
-
-/usr/include/c++/15.2.1/bits/stl_bvector.h:
-
 /usr/include/c++/15.2.1/bits/unordered_map.h:
+
+/home/ceen/projects/ceren/src/RegionMotion.cpp:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_timer.h:
+
+/usr/include/bits/thread-shared-types.h:
+
+/usr/include/c++/15.2.1/ios:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/amxfp16intrin.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2minmaxintrin.h:
 
 /usr/include/bits/select.h:
 
@@ -3519,9 +3581,9 @@ CMakeFiles/Ceren.dir/src/main.cpp.o:
 
 /usr/include/c++/15.2.1/bits/iterator_concepts.h:
 
-/home/ceen/projects/ceren/src/Box2dBackend.cpp:
-
 /usr/include/c++/15.2.1/tr1/special_function_util.h:
+
+/home/ceen/projects/ceren/src/Box2dBackend.cpp:
 
 /usr/include/c++/15.2.1/bits/std_abs.h:
 
@@ -3543,19 +3605,25 @@ CMakeFiles/Ceren.dir/src/main.cpp.o:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_begin_code.h:
 
-/home/ceen/projects/ceren/vendored/box2d/include/box2d/id.h:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++locale.h:
-
 /usr/include/c++/15.2.1/vector:
 
 /usr/include/c++/15.2.1/cstddef:
+
+/usr/include/c++/15.2.1/pstl/glue_algorithm_defs.h:
+
+/usr/include/c++/15.2.1/bits/stl_tree.h:
 
 /usr/include/bits/types/sigset_t.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h:
 
 /usr/include/c++/15.2.1/bits/vector.tcc:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_platform_defines.h:
+
+/usr/include/bits/sigaction.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_version.h:
 
 /usr/include/c++/15.2.1/bits/uses_allocator.h:
 
@@ -3568,14 +3636,6 @@ CMakeFiles/Ceren.dir/src/main.cpp.o:
 /usr/include/linux/posix_types.h:
 
 /usr/include/c++/15.2.1/ext/aligned_buffer.h:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++allocator.h:
-
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL.h:
-
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_storage.h:
-
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_process.h:
 
 /home/ceen/projects/ceren/include/IStabilityPolicy.hpp:
 
@@ -3643,9 +3703,9 @@ CMakeFiles/Ceren.dir/src/main.cpp.o:
 
 /usr/include/strings.h:
 
-/usr/include/c++/15.2.1/bits/stl_multiset.h:
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_scancode.h:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2convertintrin.h:
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/fxsrintrin.h:
 
 /usr/include/bits/typesizes.h:
 
@@ -3681,10 +3741,6 @@ CMakeFiles/Ceren.dir/src/main.cpp.o:
 
 /usr/include/bits/getopt_posix.h:
 
-/home/ceen/projects/ceren/src/RigidPixelSystem.cpp:
-
-/usr/include/errno.h:
-
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/limits.h:
 
 /usr/include/bits/pthreadtypes.h:
@@ -3711,6 +3767,10 @@ CMakeFiles/Ceren.dir/src/main.cpp.o:
 
 /usr/include/c++/15.2.1/bits/ranges_algobase.h:
 
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_platform.h:
+
+/usr/include/bits/types/__fpos64_t.h:
+
 /home/ceen/projects/ceren/src/RegionExtractor.cpp:
 
 /usr/include/bits/types/struct_itimerspec.h:
@@ -3723,49 +3783,65 @@ CMakeFiles/Ceren.dir/src/main.cpp.o:
 
 /usr/include/bits/mathcalls.h:
 
-/usr/include/bits/types/clock_t.h:
+/usr/include/bits/siginfo-arch.h:
 
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_stdinc.h:
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_filesystem.h:
 
-/usr/include/bits/types/__fpos64_t.h:
+/usr/include/c++/15.2.1/bits/stl_bvector.h:
 
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_platform.h:
+/home/ceen/projects/ceren/vendored/box2d/include/box2d/collision.h:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/fxsrintrin.h:
+/usr/include/linux/errno.h:
 
-/usr/include/bits/sigaction.h:
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512dqintrin.h:
 
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_platform_defines.h:
+/home/ceen/projects/ceren/vendored/box2d/include/box2d/id.h:
 
-/usr/include/math.h:
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++locale.h:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/mwaitxintrin.h:
+/home/ceen/projects/ceren/vendored/box2d/include/box2d/math_functions.h:
 
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_power.h:
+/usr/include/bits/types/mbstate_t.h:
 
-/usr/include/locale.h:
+/usr/include/bits/signal_ext.h:
 
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_rect.h:
+/usr/include/bits/types/wint_t.h:
 
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_render.h:
+/usr/include/c++/15.2.1/math.h:
 
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_scancode.h:
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/pmmintrin.h:
 
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_sensor.h:
+/usr/include/string.h:
 
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h:
+/usr/include/wchar.h:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/rtmintrin.h:
+/usr/include/bits/posix1_lim.h:
 
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_surface.h:
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/float.h:
 
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_thread.h:
+/usr/include/errno.h:
 
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_tray.h:
+/home/ceen/projects/ceren/src/RigidPixelSystem.cpp:
 
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_version.h:
+/usr/include/c++/15.2.1/iosfwd:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512fp16vlintrin.h:
+/home/ceen/projects/ceren/src/StabilityResolver.cpp:
+
+/home/ceen/projects/ceren/src/StabilitySystem.cpp:
+
+/usr/include/c++/15.2.1/bits/stl_multiset.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2convertintrin.h:
+
+/usr/include/c++/15.2.1/bits/stl_set.h:
+
+/usr/include/c++/15.2.1/tr1/riemann_zeta.tcc:
+
+/home/ceen/projects/ceren/src/StructuralTracker.cpp:
+
+/usr/include/bits/types/siginfo_t.h:
+
+/usr/include/c++/15.2.1/backward/auto_ptr.h:
 
 /home/ceen/projects/ceren/vendored/imgui/imconfig.h:
 
@@ -3815,10 +3891,6 @@ CMakeFiles/Ceren.dir/src/main.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2copyintrin.h:
 
-/usr/include/bits/posix1_lim.h:
-
-/usr/include/wchar.h:
-
 /usr/include/bits/posix2_lim.h:
 
 /usr/lib/libm.so:
@@ -3839,10 +3911,6 @@ CMakeFiles/Ceren.dir/src/main.cpp.o:
 
 /usr/include/bits/types/error_t.h:
 
-/usr/include/bits/types/mbstate_t.h:
-
-/usr/include/bits/signal_ext.h:
-
 /usr/include/bits/types/struct_sched_param.h:
 
 CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o:
@@ -3850,8 +3918,6 @@ CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o:
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/immintrin.h:
 
 /usr/include/bits/types/struct_tm.h:
-
-/usr/include/bits/types/wint_t.h:
 
 /usr/include/bits/stdint-intn.h:
 
@@ -3879,9 +3945,9 @@ CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o:
 
 /usr/include/c++/15.2.1/bits/locale_facets.h:
 
-/home/ceen/projects/ceren/src/main.cpp:
-
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/bmiintrin.h:
+
+/home/ceen/projects/ceren/src/main.cpp:
 
 /usr/include/c++/15.2.1/bits/localefwd.h:
 
@@ -4003,8 +4069,6 @@ CMakeFiles/Ceren.dir/src/RegionMotionApplier.cpp.o:
 
 /usr/include/linux/stddef.h:
 
-/usr/include/string.h:
-
 /usr/include/syscall.h:
 
 /usr/include/time.h:
@@ -4041,9 +4105,9 @@ CMakeFiles/Ceren.dir/src/RegionMotionApplier.cpp.o:
 
 CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o:
 
-/home/ceen/projects/ceren/include/RegionMotion.hpp:
-
 /usr/include/bits/types/struct_FILE.h:
+
+/home/ceen/projects/ceren/include/RegionMotion.hpp:
 
 /usr/include/sys/wait.h:
 
@@ -4147,9 +4211,9 @@ CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/fmaintrin.h:
 
-/usr/include/bits/endianness.h:
-
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_video.h:
+
+/usr/include/bits/endianness.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/lwpintrin.h:
 

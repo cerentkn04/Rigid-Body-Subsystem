@@ -7,6 +7,7 @@
 #include <StabilityResolver.hpp>
 #include <StructuralTracker.hpp>
 #include <StructuralGraph.hpp>
+#include <SDL3/SDL.h>
 namespace rigid {
 enum CollisionCategory {
     CAT_TERRAIN    = 0x0001,
@@ -32,6 +33,11 @@ enum CollisionCategory {
             const std::unordered_map<RegionID, RegionRecord>& active_regions);
 
         void update_region_transforms(std::unordered_map<RegionID, RegionRecord>& active_regions);
+        void render_debug_hulls(
+        SDL_Renderer* renderer, 
+        const std::unordered_map<RegionID, RegionRecord>& active_regions,
+        const std::unordered_map<RegionID, RegionGeometry>& geometry_cache,
+        float scaleX, float scaleY);
 
     private:
         // Updated signatures to match implementation

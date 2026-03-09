@@ -14,6 +14,38 @@ RigidBodyManager::~RigidBodyManager() {
         }
     }
 }
+void RigidBodyManager::render_debug_hulls(
+    SDL_Renderer* renderer,
+    const std::unordered_map<RegionID, RegionRecord>& active_regions,
+    const std::unordered_map<RegionID, RegionGeometry>& geometry_cache,
+    float scaleX, float scaleY) 
+{
+    for (auto const& [id, record] : active_regions) {
+        // Look up our internal body mapping
+        auto it = m_body_map.find(id);
+        if (it == m_body_map.end() || !b2Body_IsValid(it->second.bodyId)) continue;
+
+        // Look up geometry
+        auto geo_it = geometry_cache.find(id);
+        if (geo_it == geometry_cache.end()) continue;
+
+        // Set color based on body type
+        bool isStatic = b2Body_GetType(it->second.bodyId) == b2_staticBody;
+        if (isStatic) SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Red
+        else SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);          // Green
+
+        const auto& geo = geo_it->second;
+        for (const auto& piece : geo.convex_pieces) {
+            for (size_t i = 0; i < piece.points.size(); ++i) {
+                const auto& p1 = piece.points[i];
+                const auto& p2 = piece.points[(i + 1) % piece.points.size()];
+                SDL_RenderLine(renderer, 
+                    (p1.x + record.center_f.x) * scaleX, (p1.y + record.center_f.y) * scaleY,
+                    (p2.x + record.center_f.x) * scaleX, (p2.y + record.center_f.y) * scaleY);
+            }
+        }
+    }
+}
 void RigidBodyManager::synchronize(
     const StructuralGraph& graph,            // Change 1
     const std::vector<bool>& is_stable_decisions,
@@ -65,7 +97,9 @@ if (currentType != targetType) {
     if (targetType == b2_dynamicBody) {
       b2Body_SetAwake(entry.bodyId, true);
     // Use PTM here as well
+    b2Body_SetLinearVelocity(entry.bodyId, {0.0f, 0.1f});
     b2Vec2 newPos = { (float)geo.center.x * PTM, (float)geo.center.y * PTM };
+
     b2Body_SetTransform(entry.bodyId, newPos, b2Rot_identity);
     b2Body_SetAwake(entry.bodyId, true);
        // b2Vec2 newPos = { (float)geo.center.x, (float)geo.center.y };
