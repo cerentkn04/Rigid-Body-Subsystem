@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <regionScratch.hpp>
 #include "RigidPixelSystem.hpp"
+#include "MotionSystem.hpp"
 constexpr int WINDOW_WIDTH = 800;
 constexpr int WINDOW_HEIGHT = 600;
 constexpr int CELL_SIZE = 4;
@@ -220,10 +221,19 @@ rigidSystem.init_physics(worldId, view.width, view.height);
 }
 
         // --- RIGID SYSTEM ---
-        if (rigidSystem.body_manager) {
-          rigidSystem.update(view);
-          rigidSystem.body_manager->update_region_transforms(rigidSystem.tracker.get_active_regions());
-        }
+rigidSystem.update(view);
+if (rigidSystem.body_manager && !rigidSystem.geometry_cache.empty()) {
+    rigidSystem.body_manager->update_region_transforms(rigidSystem.tracker.get_active_regions());
+    rigid::ApplyRegionMotion(
+        sim.grid.data(),                   // Raw pointer to pixels
+        rigidSystem.extractor.label_grid().data(), // Raw pointer to labels
+        GRID_WIDTH, GRID_HEIGHT, 
+        sim.world_revision_counter,        // Direct ref to counter
+        rigidSystem.tracker.get_active_regions(),
+        Cell{ CellType::Empty }            // The "Zero" state for your pixels
+    );
+}       
+
 
         // --- RENDER (Restored Tight Loop) ---
 const auto& index_to_id = rigidSystem.tracker.get_index_mapping();
@@ -260,10 +270,6 @@ const auto& index_to_id = rigidSystem.tracker.get_index_mapping();
         SDL_UpdateTexture(gridTexture, nullptr, pixels.data(), GRID_WIDTH * sizeof(uint32_t));
         SDL_RenderTexture(renderer, gridTexture, nullptr, nullptr);
 
-        // --- RENDER STEP: GEOMETRY (Optimized Debug View) ---
-        //
-        //
-        //
 // --- RENDER STEP: GEOMETRY (Convex Pieces Debug View) ---
 if (showPhysicsHulls) {
     int winW, winH;
@@ -309,51 +315,6 @@ for(auto &p : piece.points)
 }
 
 
-
-
-/*if (showPhysicsHulls) {
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-    
-    int winW, winH;
-    SDL_GetWindowSize(window, &winW, &winH);
-    float scaleX = (float)winW / GRID_WIDTH;
-    float scaleY = (float)winH / GRID_HEIGHT;
-    // Keep your original visual offset for pixel alignment
-    float visualOffsetX = 0.5f * scaleX; 
-    float visualOffsetY = 0.5f * scaleY;
-
-    for (auto const& [id, geo] : rigidSystem.geometry_cache) {
-        auto it = rigidSystem.tracker.get_active_regions().find(id);
-        if (it == rigidSystem.tracker.get_active_regions().end()) continue;
-
-        // Check if the body is actually supposed to be moving
-        // We look at the record's current float center
-        bool isDynamic = (it->second.center_f.x != 0 || it->second.center_f.y != 0);
-
-        // If it's static, the offset should be 0 so we use original coordinates
-        float curX = isDynamic ? it->second.center_f.x : (float)geo.center.x;
-        float curY = isDynamic ? it->second.center_f.y : (float)geo.center.y;
-        float origX = (float)geo.center.x;
-        float origY = (float)geo.center.y;
-
-        for (const auto& contour : geo.contours) {
-            const auto& points = contour.points;
-            if (points.size() < 2) continue;
-
-            for (size_t i = 0; i < points.size(); ++i) {
-                const auto& p1 = points[i];
-                const auto& p2 = points[(i + 1) % points.size()];
-
-float x1 = (p1.x + curX) * scaleX + visualOffsetX;
-float y1 = (p1.y + curY) * scaleY + visualOffsetY;
-float x2 = (p2.x + curX) * scaleX + visualOffsetX;
-float y2 = (p2.y + curY) * scaleY + visualOffsetY;
-
-                SDL_RenderLine(renderer, x1, y1, x2, y2);
-            }
-        }
-    }
-}*/
             // --- IMGUI (Original Controls) ---
         ImGui_ImplSDLRenderer3_NewFrame(); ImGui_ImplSDL3_NewFrame(); ImGui::NewFrame();
         ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);

@@ -125,11 +125,26 @@ for (auto& [id, record] : active_regions) {
          b2Vec2 pos = b2Body_GetPosition(entry.bodyId);
         auto it = active_regions.find(id);
         if (it != active_regions.end()) {
-          if (std::abs(it->second.center_f.y - pos.y) > 0.05f) {
+
+
+          RegionRecord& record = it->second;
+
+            // IF this is a brand new body (center is currently 0,0), 
+            // initialize both to the current position to avoid a massive teleport.
+            if (record.center_f.x == 0.0f && record.center_f.y == 0.0f) {
+                record.center_f.x = pos.x * MTP;
+                record.center_f.y = pos.y * MTP;
+                record.prev_center_f.x = record.center_f.x; 
+                record.prev_center_f.y = record.center_f.y; 
+            } else {
+                // Normal update: center_f gets the new physics position.
+                // NOTE: DO NOT update prev_center_f here! 
+                // It must be updated in ApplyRegionMotion AFTER pixels move.
+                record.center_f.x = pos.x * MTP;
+                record.center_f.y = pos.y * MTP;
             }
-          it->second.center_f.x = pos.x * MTP;
-            it->second.center_f.y = pos.y * MTP;
-            it->second.is_dynamic = (b2Body_GetType(entry.bodyId) == b2_dynamicBody);
+
+            record.is_dynamic = (b2Body_GetType(entry.bodyId) == b2_dynamicBody);
         }
     }
 }
@@ -164,6 +179,7 @@ void RigidBodyManager::create_body_for_id(RegionID id, const RegionGeometry& geo
     update_fixtures(bodyId, geo, pixel_count);
     b2Body_ApplyMassFromShapes(bodyId);
     m_body_map[id] = { bodyId, version };
+    b2Vec2 pos = b2Body_GetPosition(bodyId);
 }
 void RigidBodyManager::update_fixtures(b2BodyId bodyId, const RegionGeometry& geo,float pixel_count) {
     int count = b2Body_GetShapeCount(bodyId);

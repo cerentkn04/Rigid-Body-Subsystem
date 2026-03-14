@@ -103,6 +103,9 @@ CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o: /home/ceen/projects/cere
 CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o: /home/ceen/projects/ceren/src/Box2dBackend.cpp \
   /usr/include/stdc-predef.h
 
+CMakeFiles/Ceren.dir/src/MotionSystem.cpp.o: /home/ceen/projects/ceren/src/MotionSystem.cpp \
+  /usr/include/stdc-predef.h
+
 CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o: /home/ceen/projects/ceren/src/RegionExtractor.cpp \
   /home/ceen/projects/ceren/include/RegionExtractor.hpp \
   /home/ceen/projects/ceren/include/RegionType.hpp \
@@ -1107,6 +1110,7 @@ CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.o: /home/ceen/projects/ceren/src/
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h
 
 CMakeFiles/Ceren.dir/src/main.cpp.o: /home/ceen/projects/ceren/src/main.cpp \
+  /home/ceen/projects/ceren/include/MotionSystem.hpp \
   /home/ceen/projects/ceren/include/RegionExtractor.hpp \
   /home/ceen/projects/ceren/include/RegionMesher.hpp \
   /home/ceen/projects/ceren/include/RegionStability.hpp \
@@ -2928,6 +2932,7 @@ Ceren: /usr/lib/Scrt1.o \
   /usr/lib/libmvec.so.1 \
   CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o \
   CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o \
+  CMakeFiles/Ceren.dir/src/MotionSystem.cpp.o \
   CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o \
   CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o \
   CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o \
@@ -2974,6 +2979,8 @@ CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o:
 CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o:
 
 CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o:
+
+CMakeFiles/Ceren.dir/src/MotionSystem.cpp.o:
 
 /usr/lib/libm.so.6:
 
@@ -3027,6 +3034,10 @@ CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/uintrintrin.h:
 
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/tsxldtrkintrin.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/tmmintrin.h:
+
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_oldnames.h:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_blendmode.h:
@@ -3049,10 +3060,6 @@ CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512vpopcntdqintrin.h:
 
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_endian.h:
-
-/home/ceen/projects/ceren/src/StructuralGraph.cpp:
-
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_close_code.h:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_cpuinfo.h:
@@ -3068,6 +3075,10 @@ CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o:
 /usr/include/c++/15.2.1/bits/stl_tree.h:
 
 /usr/include/c++/15.2.1/pstl/glue_algorithm_defs.h:
+
+/home/ceen/projects/ceren/src/StructuralGraph.cpp:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_endian.h:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_dialog.h:
 
@@ -3192,6 +3203,8 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.o:
 /usr/include/c++/15.2.1/cwchar:
 
 /usr/include/c++/15.2.1/algorithm:
+
+/home/ceen/projects/ceren/include/MotionSystem.hpp:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_messagebox.h:
 
@@ -3330,8 +3343,6 @@ CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o:
 /usr/include/bits/waitflags.h:
 
 /usr/include/c++/15.2.1/bits/stl_pair.h:
-
-/usr/include/locale.h:
 
 /usr/include/c++/15.2.1/bits/stl_construct.h:
 
@@ -3531,15 +3542,13 @@ CMakeFiles/Ceren.dir/src/main.cpp.o:
 
 /usr/include/c++/15.2.1/cstddef:
 
+/home/ceen/projects/ceren/src/MotionSystem.cpp:
+
 /usr/include/bits/types/sigset_t.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h:
 
 /usr/include/c++/15.2.1/bits/vector.tcc:
-
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_platform_defines.h:
-
-/usr/include/bits/sigaction.h:
 
 /usr/include/c++/15.2.1/bits/uses_allocator.h:
 
@@ -3582,6 +3591,16 @@ CMakeFiles/Ceren.dir/src/main.cpp.o:
 /usr/include/c++/15.2.1/stdlib.h:
 
 /usr/include/c++/15.2.1/bits/locale_classes.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_clipboard.h:
+
+/usr/include/c++/15.2.1/tuple:
+
+/usr/include/bits/getopt_posix.h:
+
+/home/ceen/projects/ceren/src/RigidPixelSystem.cpp:
+
+/usr/include/errno.h:
 
 /usr/include/c++/15.2.1/bits/basic_string.tcc:
 
@@ -3661,16 +3680,6 @@ CMakeFiles/Ceren.dir/src/main.cpp.o:
 
 /usr/include/bits/atomic_wide_counter.h:
 
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_clipboard.h:
-
-/usr/include/c++/15.2.1/tuple:
-
-/usr/include/bits/getopt_posix.h:
-
-/home/ceen/projects/ceren/src/RigidPixelSystem.cpp:
-
-/usr/include/errno.h:
-
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/limits.h:
 
 /usr/include/bits/pthreadtypes.h:
@@ -3717,11 +3726,17 @@ CMakeFiles/Ceren.dir/src/main.cpp.o:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_stdinc.h:
 
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_power.h:
+/usr/include/bits/sigaction.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_platform_defines.h:
 
 /usr/include/math.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/mwaitxintrin.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_power.h:
+
+/usr/include/locale.h:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_rect.h:
 
@@ -3873,6 +3888,12 @@ CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o:
 
 /usr/include/c++/15.2.1/bits/random.tcc:
 
+/usr/include/linux/types.h:
+
+/usr/include/c++/15.2.1/ext/string_conversions.h:
+
+/usr/include/c++/15.2.1/bits/ranges_uninitialized.h:
+
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_guid.h:
 
 /usr/include/c++/15.2.1/bits/shared_ptr.h:
@@ -3908,12 +3929,6 @@ CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o:
 /usr/include/c++/15.2.1/bits/node_handle.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avxifmaintrin.h:
-
-/usr/include/linux/types.h:
-
-/usr/include/c++/15.2.1/bits/ranges_uninitialized.h:
-
-/usr/include/c++/15.2.1/ext/string_conversions.h:
 
 /usr/include/c++/15.2.1/memory:
 
@@ -4144,7 +4159,3 @@ CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o:
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/smmintrin.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/tbmintrin.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/tmmintrin.h:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/tsxldtrkintrin.h:

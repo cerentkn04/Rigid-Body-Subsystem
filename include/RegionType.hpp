@@ -26,6 +26,7 @@ struct RegionRecord {
      bool is_dynamic;
      uint32_t group_id;
      struct { float x, y; } center_f;
+     struct { float x, y; } prev_center_f;
 };
 
 } // namespace rigid

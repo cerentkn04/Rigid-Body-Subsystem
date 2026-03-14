@@ -154,7 +154,7 @@ for (size_t i = 0; i < num_current; ++i) {
 
 
     // 4. STATE UPDATE
-    auto previous_regions = m_active_regions;
+  /* auto previous_regions = m_active_regions;
     m_active_regions.clear();
     for (size_t i = 0; i < num_current; ++i) {
         RegionID id = m_impl->current_index_to_id[i];
@@ -183,11 +183,63 @@ if (prev_it != previous_regions.end()) {
 
 
 
+
+
+
+
+
     }
 
     m_impl->prev_label_grid = current_label_grid;
     m_impl->prev_index_to_id = m_impl->current_index_to_id;
-    m_index_to_id_map = m_impl->prev_index_to_id; // CRITICAL for renderer
+    m_index_to_id_map = m_impl->prev_index_to_id; // CRITICAL for renderer */
+                                                  //
+                                                  //
+    // 4. STATE UPDATE
+    //
+    //
+
+
+// 4. STATE UPDATE
+    auto previous_regions = m_active_regions;
+    m_active_regions.clear();
+
+    for (size_t i = 0; i < num_current; ++i) {
+        RegionID id = m_impl->current_index_to_id[i];
+        const auto& build = current_records[i];
+        
+        RegionRecord& rec = m_active_regions[id];
+        rec.id = id;
+        rec.generation = m_impl->generations[id];
+        rec.pixel_count = build.pixel_count;
+        rec.bounds = { build.bounds };
+
+        auto prev_it = previous_regions.find(id);
+        if (prev_it != previous_regions.end()) {
+            const RegionRecord& old = prev_it->second;
+            rec.prev_center_f = old.prev_center_f;
+            rec.center_f = old.center_f;
+            
+            bool changed = (old.pixel_count != build.pixel_count) || 
+                           (old.bounds.min_x != build.bounds.min_x) ||
+                           (old.bounds.min_y != build.bounds.min_y);
+            rec.version = changed ? old.version + 1 : old.version;
+        } else {
+            rec.center_f = { 0.0f, 0.0f };
+            rec.prev_center_f = { 0.0f, 0.0f };
+            rec.version = 1;
+        }
+    }
+
+    // --- THE FIX IS HERE ---
+    // You must store these so the rest of the engine can read them!
+    m_impl->prev_label_grid = current_label_grid;
+    m_impl->prev_index_to_id = m_impl->current_index_to_id;
+    
+    // This is the specific variable RigidPixelSystem and the Renderer read:
+    m_index_to_id_map = m_impl->current_index_to_id; 
 }
+
+
 
 }
