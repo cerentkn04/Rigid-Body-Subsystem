@@ -214,13 +214,16 @@ if (prev_it != previous_regions.end()) {
         rec.pixel_count = build.pixel_count;
         rec.bounds = { build.bounds };
 
+        rec.current_index = static_cast<uint32_t>(i);
+
         auto prev_it = previous_regions.find(id);
         if (prev_it != previous_regions.end()) {
             const RegionRecord& old = prev_it->second;
             rec.prev_center_f = old.prev_center_f;
             rec.center_f = old.center_f;
-            
-            bool changed = (old.pixel_count != build.pixel_count) || 
+            rec.motion_initialized = old.motion_initialized;
+
+            bool changed = (old.pixel_count != build.pixel_count) ||
                            (old.bounds.min_x != build.bounds.min_x) ||
                            (old.bounds.min_y != build.bounds.min_y);
             rec.version = changed ? old.version + 1 : old.version;

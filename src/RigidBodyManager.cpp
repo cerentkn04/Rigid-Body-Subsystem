@@ -115,60 +115,57 @@ else if (currentType == b2_staticBody && entry.version != record.version) {
     }
 }
 
+
+
 void RigidBodyManager::update_region_transforms(std::unordered_map<RegionID, RegionRecord>& active_regions) {
-for (auto& [id, record] : active_regions) {
+    for (auto& [id, record] : active_regions) {
         record.is_dynamic = false;
     }
-  for (auto& [id, entry] : m_body_map) {
+
+    for (auto& [id, entry] : m_body_map) {
         if (!b2Body_IsValid(entry.bodyId)) continue;
 
-         b2Vec2 pos = b2Body_GetPosition(entry.bodyId);
+        b2Vec2 pos = b2Body_GetPosition(entry.bodyId);
         auto it = active_regions.find(id);
         if (it != active_regions.end()) {
+            RegionRecord& record = it->second;
 
-
-          RegionRecord& record = it->second;
-
-            // IF this is a brand new body (center is currently 0,0), 
-            // initialize both to the current position to avoid a massive teleport.
-            if (record.center_f.x == 0.0f && record.center_f.y == 0.0f) {
+            // Step 2: Only update current center_f
+            if (!record.motion_initialized) {
                 record.center_f.x = pos.x * MTP;
                 record.center_f.y = pos.y * MTP;
-                record.prev_center_f.x = record.center_f.x; 
-                record.prev_center_f.y = record.center_f.y; 
+                record.prev_center_f = record.center_f; // First time sync
+                record.motion_initialized = true;
             } else {
-                // Normal update: center_f gets the new physics position.
-                // NOTE: DO NOT update prev_center_f here! 
-                // It must be updated in ApplyRegionMotion AFTER pixels move.
                 record.center_f.x = pos.x * MTP;
                 record.center_f.y = pos.y * MTP;
+                // DO NOT set prev_center_f here!
             }
+            printf("Region %u center_f: %.2f %.2f prev: %.2f %.2f\n",
 
+       id,
+       record.center_f.x,
+       record.center_f.y,
+       record.prev_center_f.x,
+       record.prev_center_f.y);
             record.is_dynamic = (b2Body_GetType(entry.bodyId) == b2_dynamicBody);
         }
     }
 }
-
 void RigidBodyManager::create_body_for_id(RegionID id, const RegionGeometry& geo, uint64_t version, b2BodyType type, float pixel_count) {
     if (std::isnan(geo.center.x) || std::isnan(geo.center.y) || 
         std::abs(geo.center.x) > 1e6f || std::abs(geo.center.y) > 1e6f) {
         return; // Skip creating this body; it's corrupt
     }
-
     if (geo.convex_pieces.empty()) return;
-
     b2BodyDef def = b2DefaultBodyDef();
     def.type = type;
     def.userData = (void*)(uintptr_t)id;
-
     def.enableSleep = true; 
     def.linearDamping = (type == b2_dynamicBody) ? 2.5f : 0.0f; 
     def.angularDamping = 0.1f;
-    
     // Position body at centroid
     def.position = { (float)geo.center.x * PTM, (float)geo.center.y * PTM };
-    //def.position = { (float)geo.center.x, (float)geo.center.y };
-    
     // Top-down camera constraints
     def.fixedRotation = true; 
     def.gravityScale = 1.0f; 

@@ -15,18 +15,22 @@ struct RegionPixel {
     int32_t x;
     int32_t y;
 };
-
+struct FloatPos {
+        float x, y;
+    };
 // RegionRecord uses the frozen CellAABB
 struct RegionRecord {
     RegionID id;
     RegionGeneration generation;
-    CellAABB bounds; 
+    CellAABB bounds;
     uint32_t pixel_count;
-     BodyVersion version;
-     bool is_dynamic;
-     uint32_t group_id;
-     struct { float x, y; } center_f;
-     struct { float x, y; } prev_center_f;
+    BodyVersion version;
+    bool is_dynamic;
+    uint32_t group_id;
+    bool motion_initialized = false;
+    uint32_t current_index = UINT32_MAX; // frame-local index into label_grid
+    FloatPos center_f;
+    FloatPos prev_center_f;
 };
 
 } // namespace rigid

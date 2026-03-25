@@ -61,28 +61,28 @@ if (std::abs(dx) > width || std::abs(dy) > height) {
         if (dx == 0 && dy == 0) continue;
         moved_any = true;
 
-        // Bounded iteration
+        // Pass 1: clear all source pixels from write_buffer
         for (int y = region.bounds.min_y; y <= region.bounds.max_y; ++y) {
             if (y < 0 || y >= height) continue;
-            
             for (int x = region.bounds.min_x; x <= region.bounds.max_x; ++x) {
                 if (x < 0 || x >= width) continue;
-
                 size_t src_idx = static_cast<size_t>(y) * width + x;
-                
-                // Masking via label grid
-                if (label_grid[src_idx] != region.id) continue;
+                if (label_grid[src_idx] != region.current_index) continue;
+                write_buffer[src_idx] = empty_value;
+            }
+        }
 
+        // Pass 2: write all pixels to their displaced destinations
+        for (int y = region.bounds.min_y; y <= region.bounds.max_y; ++y) {
+            if (y < 0 || y >= height) continue;
+            for (int x = region.bounds.min_x; x <= region.bounds.max_x; ++x) {
+                if (x < 0 || x >= width) continue;
+                size_t src_idx = static_cast<size_t>(y) * width + x;
+                if (label_grid[src_idx] != region.current_index) continue;
                 int tx = x + dx;
                 int ty = y + dy;
-
-                // Move pixel if target is in bounds
                 if (tx >= 0 && tx < width && ty >= 0 && ty < height) {
-                    size_t dst_idx = static_cast<size_t>(ty) * width + tx;
-                    
-                    // Clear old, write new in the write_buffer
-                    write_buffer[src_idx] = empty_value;
-                    write_buffer[dst_idx] = pixel_grid[src_idx];
+                    write_buffer[static_cast<size_t>(ty) * width + tx] = pixel_grid[src_idx];
                 }
             }
         }

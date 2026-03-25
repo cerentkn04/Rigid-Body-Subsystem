@@ -57,7 +57,6 @@ public:
     }
 
     void updateWater(int x, int y) {
-        if (at(x, y).updated) return;
         if (isEmpty(x, y + 1)) { swap(x, y, x, y + 1); return; }
         bool cDL = isEmpty(x - 1, y + 1), cDR = isEmpty(x + 1, y + 1);
         if (cDL && cDR) { swap(x, y, x + ((rng() % 2) ? -1 : 1), y + 1); return; }
@@ -211,7 +210,7 @@ rigidSystem.init_physics(worldId, view.width, view.height);
 
         Uint64 currentTime = SDL_GetTicks();
         float deltaTime = (currentTime - lastTime) / 1000.0f; lastTime = currentTime;
-        if (!paused) {
+       if (!paused) {
             accumulator += deltaTime;
             while (accumulator >= fixedDeltaTime) { 
                  sim.update();
@@ -233,7 +232,7 @@ if (rigidSystem.body_manager && !rigidSystem.geometry_cache.empty()) {
         Cell{ CellType::Empty }            // The "Zero" state for your pixels
     );
 }       
-
+ 
 
         // --- RENDER (Restored Tight Loop) ---
 const auto& index_to_id = rigidSystem.tracker.get_index_mapping();
