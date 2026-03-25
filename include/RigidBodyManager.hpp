@@ -3,49 +3,45 @@
 #include <unordered_map>
 #include <box2d/box2d.h>
 #include "RegionMesher.hpp"
-#include "RegionStability.hpp"
-#include <StabilityResolver.hpp>
-#include <StructuralTracker.hpp>
 #include <StructuralGraph.hpp>
 #include <SDL3/SDL.h>
+
 namespace rigid {
-enum CollisionCategory {
-    CAT_TERRAIN    = 0x0001,
-    CAT_LARGE_CHUNK = 0x0002,
-    CAT_SMALL_DEBRIS = 0x0004
+
+enum CollisionCategory : uint32_t {
+  CAT_TERRAIN      = 0x0001,
+  CAT_LARGE_CHUNK  = 0x0002,
+  CAT_SMALL_DEBRIS = 0x0004
 };
-    struct BodyEntry {
-        b2BodyId bodyId;
-        uint64_t version;
-        uint64_t topology_hash;
-        bool is_dirty;
-    };
+struct BodyStore {
+  b2WorldId world_id = b2_nullWorldId;
+  std::vector<RegionID>   ids;
+  std::vector<b2BodyId>   body_ids;
+  std::vector<uint64_t>   versions;
+  std::vector<uint64_t>   topo_hashes;
+  std::vector<uint8_t>    dirty;       // 1 = fixture rebuild pending
+  std::unordered_map<RegionID, uint32_t> id_to_slot;
+};
 
-    class RigidBodyManager {
-    public:
-        explicit RigidBodyManager(b2WorldId worldId);
-        ~RigidBodyManager();
+void body_store_init   (BodyStore& store, b2WorldId world_id);
+void body_store_destroy(BodyStore& store);
 
-        void synchronize(
-            const StructuralGraph& graph,          
-            const std::vector<bool>& is_stable_decisions,
-            const std::unordered_map<RegionID, RegionGeometry>& geometry_cache,
-            const std::unordered_map<RegionID, RegionRecord>& active_regions);
+void physics_sync(
+  BodyStore& store,
+  const StructuralGraph& graph,
+  const std::vector<bool>& is_stable,
+  const std::unordered_map<RegionID, RegionGeometry>& geometry_cache,
+  const std::unordered_map<RegionID, RegionRecord>& active_regions);
 
-        void update_region_transforms(std::unordered_map<RegionID, RegionRecord>& active_regions);
-        void render_debug_hulls(
-        SDL_Renderer* renderer, 
-        const std::unordered_map<RegionID, RegionRecord>& active_regions,
-        const std::unordered_map<RegionID, RegionGeometry>& geometry_cache,
-        float scaleX, float scaleY);
+void physics_read_transforms(
+    const BodyStore& store,
+    std::unordered_map<RegionID, RegionRecord>& active_regions);
 
-    private:
-        // Updated signatures to match implementation
-        void create_body_for_id(RegionID id, const RegionGeometry& geo, uint64_t version, b2BodyType type, float pixel_count);
-        void update_fixtures(b2BodyId bodyId, const RegionGeometry& geo, float pixel_count);
+void physics_render_debug(
+    const BodyStore& store,
+    SDL_Renderer* renderer,
+    const std::unordered_map<RegionID, RegionRecord>& active_regions,
+    const std::unordered_map<RegionID, RegionGeometry>& geometry_cache,
+    float scale_x, float scale_y);
 
-        std::unordered_map<RegionID, BodyEntry> m_body_map;
-        b2WorldId m_world_id;
-    };
-
-} // namespace rigid
+} // namesrace rigid

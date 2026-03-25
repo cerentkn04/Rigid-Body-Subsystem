@@ -11,7 +11,6 @@ Ceren: \
   CMakeFiles/Ceren.dir/src/RegionMotionApplier.cpp.o \
   CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o \
   CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o \
-  CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o \
   CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o \
   CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o \
   CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.o \
@@ -77,8 +76,6 @@ CMakeFiles/Ceren.dir/src/RegionMotionApplier.cpp.o:
 CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o:
 
 CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o:
-
-CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o:
 
 CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o:
 

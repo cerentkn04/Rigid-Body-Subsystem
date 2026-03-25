@@ -6,56 +6,39 @@
 
 namespace rigid {
 
-// Forward declaration of the Step 4 build record
-struct RegionBuildRecord;
-
-// Ensure RegionIndex is available (usually uint32_t)
+struct RegionBuildRecord; 
 using RegionIndex = uint32_t;
 
-enum class LifecycleType {
-    Created,
-    Destroyed,
-    Split,   // One parent ID -> Multiple child IDs
-    Merged   // Multiple parent IDs -> One child ID
-};
+enum class LifecycleType { Created, Destroyed, Split, Merged };
 
 struct RegionLifecycleEvent {
     LifecycleType type;
-    // For Split/Merge, this contains all involved IDs.
-    // For Created/Destroyed, it contains the single relevant ID.
     std::vector<RegionID> involved_ids;
 };
 
-class RegionTracker {
-public:
-    RegionTracker();
-    ~RegionTracker();
+// All tracker state flat in one struct — no pimpl, no hidden scratch.
+struct TrackerState {
+    // ── Cross-frame persistent state ─────────────────────────────────────
+    uint32_t next_id = 1;
+    std::unordered_map<RegionID, uint32_t> generations;
+    std::vector<RegionIndex> prev_label_grid;
+    std::vector<RegionID>    prev_index_to_id;
 
-    /**
-     * Step 5: Process the current frame's extraction results.
-     * Compares current topology against previous frame to manage persistent IDs.
-     */
-    void process_frame(
-        const std::vector<RegionIndex>& current_label_grid,
-        const std::vector<RegionBuildRecord>& current_records,
-        int width, int height);
-const std::vector<RegionID>& get_index_mapping() const { return m_index_to_id_map; }
-    // Accessors for the current state
-    const std::vector<RegionLifecycleEvent>& get_events() const { return m_events; }
-    const std::unordered_map<RegionID, RegionRecord>& get_active_regions() const { return m_active_regions; }
+    // ── Current-frame output (read directly by other systems) ─────────────
+    std::unordered_map<RegionID, RegionRecord> active_regions;
+    std::vector<RegionID>    index_to_id;   // frame-local index -> persistent ID
+    std::vector<RegionLifecycleEvent> events;
 
-    std::unordered_map<RegionID, RegionRecord>& get_active_regions() { return m_active_regions; }
-
-private:
-    struct Impl;
-    Impl* m_impl;
-    std::vector<RegionID> m_index_to_id_map;
-
-    std::unordered_map<RegionID, RegionRecord> m_active_regions;
-    std::vector<RegionLifecycleEvent> m_events;
-    
-    uint32_t m_next_id_sequence = 1;
-    RegionID generate_id();
+    // ── Scratch buffers (reused each frame to avoid allocation) ───────────
+    std::vector<RegionID>    scratch_index_to_id;
+    std::vector<uint32_t>    overlap_counts;  // indexed by prev RegionIndex
+    std::vector<RegionIndex> touched_scratch; // prev indices touched by current region
 };
+
+void tracker_process_frame(
+    TrackerState& state,
+    const std::vector<RegionIndex>& label_grid,
+    const std::vector<RegionBuildRecord>& records,
+    int width, int height);
 
 } // namespace rigid

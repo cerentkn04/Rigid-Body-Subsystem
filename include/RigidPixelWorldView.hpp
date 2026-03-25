@@ -3,17 +3,16 @@
 
 namespace world {
 
-using WorldRevision = uint64_t;
-using GroupID = uint32_t; // Or whatever type your engine uses for Entities/Groups
-static constexpr GroupID InvalidGroupID = 0;        
-enum class CellSolidity : uint8_t {
+  using WorldRevision = uint64_t;
+  using GroupID = uint32_t; 
+  enum class CellSolidity : uint8_t {
     Empty = 0,
     Solid = 1
-};
-struct WorldView final {
+  };
+  struct WorldView final {
     // ---- World bounds ----
-  int width;
-  int height;
+    int width;
+    int height;
     // ---- Query functions ----
 
     /*
@@ -21,7 +20,7 @@ struct WorldView final {
 
         Out-of-bounds coordinates are treated as Empty.
     */
-  CellSolidity (*solidity_at)(int x, int y);
+    CellSolidity (*solidity_at)(int x, int y);
 
     /*
         Returns a monotonically increasing revision number representing
@@ -31,7 +30,7 @@ struct WorldView final {
         - The value must remain constant for the duration of a snapshot.
         - Any mutation that affects solidity must increment the revision.
     */
-  WorldRevision (*world_revision)();
+    WorldRevision (*world_revision)();
 
     /*
         Returns a revision number associated with the region containing
@@ -44,7 +43,6 @@ struct WorldView final {
     */
     WorldRevision (*region_revision)(int x, int y);
     GroupID (*group_id_at)(int x, int y);
-};
-
+  };
 } 
 

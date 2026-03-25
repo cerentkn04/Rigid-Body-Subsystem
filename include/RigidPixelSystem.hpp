@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-#include <memory>
 #include <RigidPixelTypes.hpp>
 #include <RegionExtractor.hpp>
 #include <RegionTracker.hpp>
@@ -8,30 +7,30 @@
 #include <StructuralTracker.hpp>
 #include <StructuralGraph.hpp>
 #include <RigidBodyManager.hpp>
-#include "RegionMesher.hpp" 
+#include <StabilityResolver.hpp>
+#include "RegionMesher.hpp"
 #include <RegionMotion.hpp>
 namespace rigid {
 
 class RigidPixelSystem {
 public:
-    // --- Systems ---
-    RegionExtractor extractor;
-    RegionTracker tracker;
-    StructuralTracker structural_engine; 
-    StructuralGraph structural_graph;      
-    StabilityPolicyFunc stability_policy = nullptr;
+  RegionExtractor extractor;
+  TrackerState tracker;
+  StructuralTracker structural_engine; 
+  StructuralGraph structural_graph;      
+  StabilityPolicyFunc stability_policy = nullptr;
     // --- Data ---
-    std::unordered_map<uint32_t, RegionGeometry> geometry_cache;
-    std::vector<RegionBuildRecord> build_records;
-    std::unique_ptr<RigidBodyManager> body_manager;
-    uint64_t last_processed_rev = 0;
+  std::unordered_map<uint32_t, RegionGeometry> geometry_cache;
+  std::vector<RegionBuildRecord> build_records;
+  BodyStore body_store;
+  uint64_t last_processed_rev = 0;
 
     // --- Lifecycle ---
-    void init_physics(b2WorldId world_id, int width, int height) {
-        body_manager = std::make_unique<RigidBodyManager>(world_id);
-        structural_engine.init_bins(width, height);
-        stability_policy = &apply_basic_connectivity_policy;
-    }
+  void init_physics(b2WorldId world_id, int width, int height) {
+     body_store_init(body_store, world_id);
+     structural_engine.init_bins(width, height);
+     stability_policy = &apply_basic_connectivity_policy;
+  }
     // Replace set_policy with a simple pointer assignment
     void set_policy(StabilityPolicyFunc new_policy) {
         stability_policy = new_policy;
@@ -45,14 +44,14 @@ template<typename CellType>
         CellType empty_cell,
         MotionSystemState<CellType>& state) // Pass state in here
     {
-        if (!body_manager) return;
+        if (!b2World_IsValid(body_store.world_id)) return;
 
         MotionSystem::Apply<CellType>(
-            state,               
-            grid, 
-            extractor.label_grid(), 
-            tracker.get_active_regions(), 
-            width, 
+            state,
+            grid,
+            extractor.label_grid(),
+            tracker.active_regions,
+            width,
             height,
             empty_cell
         );
@@ -74,39 +73,32 @@ template<typename CellType>
             }
         }
 
-        // 3. ENGINE: Build Structural Graph (Find who touches whom)
-        structural_graph.build(tracker.get_active_regions(), extractor.label_grid(), view.width, view.height);
-        
-        size_t node_count = structural_graph.nodes.size();
-        structural_engine.is_stable.assign(node_count, true);
-        // 4. POLICY: Evaluate Stability (The Decision Layer)
-
-         if (stability_policy) {
-            stability_policy(structural_graph, structural_engine.is_stable);
-        } 
-        // 5. PHYSICS & EXTRACTION: Heavy Lifting
+        // 3. PHYSICS & EXTRACTION: Heavy Lifting
         bool needs_physics_sync = (current_world_rev > last_processed_rev);
         for (uint8_t flag : structural_engine.dirty_flags) {
             if (flag == 1) { needs_physics_sync = true; break; }
         }
 
-    
-
         if (needs_physics_sync) {
-          //printf("RUNNING EXTRACTION: World Rev %llu\n", current_world_rev);
             extractor.extract(view, build_records);
-            tracker.process_frame(extractor.label_grid(), build_records, view.width, view.height);
-           printf("Extracted %zu build records\n", build_records.size()); 
-            cleanup_dead_geometry(); 
+            tracker_process_frame(tracker, extractor.label_grid(), build_records, view.width, view.height);
+            cleanup_dead_geometry();
             refresh_geometry_cache(view);
-            if (body_manager) {
-              // We now have a vector of bools 'is_stable' from the Policy
-    body_manager->synchronize(
-        structural_graph, 
-        structural_engine.is_stable, // This is your vector<bool>
-        geometry_cache, 
-        tracker.get_active_regions()
-    );
+
+            // Graph and stability only needed when topology changes
+            structural_graph.build(tracker.active_regions, extractor.label_grid(), tracker.index_to_id, view.width, view.height);
+            structural_engine.is_stable.assign(structural_graph.nodes.size(), true);
+            if (stability_policy)
+                stability_policy(structural_graph, structural_engine.is_stable);
+
+            if (b2World_IsValid(body_store.world_id)) {
+                physics_sync(
+                    body_store,
+                    structural_graph,
+                    structural_engine.is_stable,
+                    geometry_cache,
+                    tracker.active_regions
+                );
             }
             for (uint32_t i = 0; i < structural_engine.revisions.size(); ++i) {
         structural_engine.revisions[i] = current_world_rev;
@@ -121,7 +113,7 @@ template<typename CellType>
 private:
 
 void sync_engine_with_tracker() {
-    const auto& active = tracker.get_active_regions();
+    const auto& active = tracker.active_regions;
     const size_t count = active.size();
 
     // Resize but keep existing data for the IDs we already know
@@ -162,40 +154,27 @@ void sync_engine_with_tracker() {
     }
 
     void refresh_geometry_cache(const world::WorldView& view) {
-        const auto& active_regions = tracker.get_active_regions();
-        const auto& label_grid = extractor.label_grid();
-        const auto& index_to_id = tracker.get_index_mapping();
-        printf("DEBUG: Cache Refresh - IndexToId Size: %zu, BuildRecords: %zu\n", 
-            index_to_id.size(), build_records.size());
+        const auto& active_regions = tracker.active_regions;
+        const auto& label_grid     = extractor.label_grid();
+        const auto& index_to_id    = tracker.index_to_id;
 
+        for (RegionIndex idx = 0; idx < (RegionIndex)index_to_id.size(); ++idx) {
+            RegionID id = index_to_id[idx];
+            if (active_regions.find(id) == active_regions.end()) continue;
 
-
-        for (RegionIndex idx = 0; idx < index_to_id.size(); ++idx) {
-        RegionID id = index_to_id[idx];
-        
-        // Safety check: is the ID actually in active_regions?
-        if (active_regions.find(id) == active_regions.end()) {
-            printf("DEBUG: ID %u not found in active_regions!\n", id);
-            continue;
+            const RegionRecord& region = active_regions.at(id);
+            auto cache_it = geometry_cache.find(id);
+            if (cache_it == geometry_cache.end() || cache_it->second.version != region.version) {
+                RegionGeometry geo = GeometryExtractor::Build(idx, build_records[idx].bounds, label_grid, view.width, view.height);
+                geo.version = region.version;
+                geometry_cache[id] = std::move(geo);
+            }
         }
-
-        const RegionBuildRecord& record = build_records[idx];
-        const RegionRecord& region = active_regions.at(id);
-
-        bool is_missing = geometry_cache.find(id) == geometry_cache.end();
-        
-        if (is_missing || geometry_cache[id].version != region.version) {
-            printf("DEBUG: Generating Geometry for ID %u (Version %u)\n", id, region.version);
-            RegionGeometry geo = GeometryExtractor::Build(idx, record.bounds, label_grid, view.width, view.height);
-            geo.version = region.version;
-            geometry_cache[id] = std::move(geo);
-        }
-    }
 
             }
 
     void cleanup_dead_geometry() {
-        const auto& active = tracker.get_active_regions();
+        const auto& active = tracker.active_regions;
         for (auto it = geometry_cache.begin(); it != geometry_cache.end();) {
             if (active.find(it->first) == active.end()) it = geometry_cache.erase(it);
             else ++it;

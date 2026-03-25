@@ -18,8 +18,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/Ceren.dir/src/RegionTracker.cpp.o.d"
   "CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o"
   "CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o.d"
-  "CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o"
-  "CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o.d"
   "CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o"
   "CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o.d"
   "CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o"

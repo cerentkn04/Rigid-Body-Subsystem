@@ -442,30 +442,6 @@ src/RigidBodyManager.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.s
 .PHONY : src/RigidBodyManager.cpp.s
 
-src/RigidPixelSystem.o: src/RigidPixelSystem.cpp.o
-.PHONY : src/RigidPixelSystem.o
-
-# target to build an object file
-src/RigidPixelSystem.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.o
-.PHONY : src/RigidPixelSystem.cpp.o
-
-src/RigidPixelSystem.i: src/RigidPixelSystem.cpp.i
-.PHONY : src/RigidPixelSystem.i
-
-# target to preprocess a source file
-src/RigidPixelSystem.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.i
-.PHONY : src/RigidPixelSystem.cpp.i
-
-src/RigidPixelSystem.s: src/RigidPixelSystem.cpp.s
-.PHONY : src/RigidPixelSystem.s
-
-# target to generate assembly for a file
-src/RigidPixelSystem.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/RigidPixelSystem.cpp.s
-.PHONY : src/RigidPixelSystem.cpp.s
-
 src/StabilityResolver.o: src/StabilityResolver.cpp.o
 .PHONY : src/StabilityResolver.o
 
@@ -798,9 +774,6 @@ help:
 	@echo "... src/RigidBodyManager.o"
 	@echo "... src/RigidBodyManager.i"
 	@echo "... src/RigidBodyManager.s"
-	@echo "... src/RigidPixelSystem.o"
-	@echo "... src/RigidPixelSystem.i"
-	@echo "... src/RigidPixelSystem.s"
 	@echo "... src/StabilityResolver.o"
 	@echo "... src/StabilityResolver.i"
 	@echo "... src/StabilityResolver.s"

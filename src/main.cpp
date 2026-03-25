@@ -121,13 +121,13 @@ world::WorldRevision region_rev_callback(int x, int y) {
     return (g_pixel_sim_ptr && g_pixel_sim_ptr->inBounds(x, y)) ? g_pixel_sim_ptr->region_revisions[y * GRID_WIDTH + x] : 0;
 }
 world::GroupID group_id_callback(int x, int y) {
-    if (!g_pixel_sim_ptr || !g_pixel_sim_ptr->inBounds(x, y)) return world::InvalidGroupID;
+    if (!g_pixel_sim_ptr || !g_pixel_sim_ptr->inBounds(x, y)) return -1;
     
     CellType t = g_pixel_sim_ptr->at(x, y).type;
     if (t == CellType::Wall) return 1; // Group 1 for Walls
     if (t == CellType::Rock) return 2; // Group 2 for Rocks
     
-    return world::InvalidGroupID;
+    return -1;
 }
 
 SDL_Color get_id_color(rigid::RegionID id) {
@@ -221,21 +221,21 @@ rigidSystem.init_physics(worldId, view.width, view.height);
 
         // --- RIGID SYSTEM ---
 rigidSystem.update(view);
-if (rigidSystem.body_manager && !rigidSystem.geometry_cache.empty()) {
-    rigidSystem.body_manager->update_region_transforms(rigidSystem.tracker.get_active_regions());
+if (b2World_IsValid(rigidSystem.body_store.world_id) && !rigidSystem.geometry_cache.empty()) {
+    physics_read_transforms(rigidSystem.body_store, rigidSystem.tracker.active_regions);
     rigid::ApplyRegionMotion(
-        sim.grid.data(),                   // Raw pointer to pixels
-        rigidSystem.extractor.label_grid().data(), // Raw pointer to labels
-        GRID_WIDTH, GRID_HEIGHT, 
-        sim.world_revision_counter,        // Direct ref to counter
-        rigidSystem.tracker.get_active_regions(),
-        Cell{ CellType::Empty }            // The "Zero" state for your pixels
+        sim.grid.data(),
+        rigidSystem.extractor.label_grid().data(),
+        GRID_WIDTH, GRID_HEIGHT,
+        sim.world_revision_counter,
+        rigidSystem.tracker.active_regions,
+        Cell{ CellType::Empty }
     );
 }       
  
 
         // --- RENDER (Restored Tight Loop) ---
-const auto& index_to_id = rigidSystem.tracker.get_index_mapping();
+const auto& index_to_id = rigidSystem.tracker.index_to_id;
         const size_t num_mappings = index_to_id.size();
         static std::vector<uint32_t> color_cache;
         if (color_cache.size() < num_mappings) color_cache.resize(num_mappings);
@@ -277,8 +277,8 @@ if (showPhysicsHulls) {
     float scaleY = (float)winH / GRID_HEIGHT;
 
     for (auto const& [id, geo] : rigidSystem.geometry_cache) {
-        auto it = rigidSystem.tracker.get_active_regions().find(id);
-        if (it == rigidSystem.tracker.get_active_regions().end()) continue;
+        auto it = rigidSystem.tracker.active_regions.find(id);
+        if (it == rigidSystem.tracker.active_regions.end()) continue;
 
         // Use the current simulation position (center_f)
         float curX = it->second.center_f.x;
@@ -329,16 +329,12 @@ for(auto &p : piece.points)
         ImGui::Checkbox("Paused (Space)", &paused);
         ImGui::Checkbox("Show Physics Hulls (Debug)", &showPhysicsHulls);
         if (ImGui::Button("Clear (C)")) sim.clear();
-        ImGui::Text("Total Active Regions: %zu", rigidSystem.tracker.get_active_regions().size());
+        ImGui::Text("Total Active Regions: %zu", rigidSystem.tracker.active_regions.size());
         ImGui::Text("Geometry Cache: %zu", rigidSystem.geometry_cache.size());
         ImGui::Separator();
         ImGui::Text("Physics Debug:");
-if (rigidSystem.body_manager) {
-    // We can see how many physics bodies exist by looking at your geometry cache
-    // which usually matches the body map 1:1
-    ImGui::Text("Active Bodies: %zu", rigidSystem.geometry_cache.size());
-    
-    // Check if the world itself is valid
+if (b2World_IsValid(rigidSystem.body_store.world_id)) {
+    ImGui::Text("Active Bodies: %zu", rigidSystem.body_store.ids.size());
     ImGui::Text("World ID: %llu", (unsigned long long)worldId.index1);
 }
         ImGui::Text("FPS: %.1f", io.Framerate);

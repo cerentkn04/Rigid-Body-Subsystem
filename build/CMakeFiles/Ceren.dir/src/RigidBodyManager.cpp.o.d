@@ -126,13 +126,9 @@ CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o: \
  /home/ceen/projects/ceren/include/RegionMesher.hpp \
  /usr/include/c++/15.2.1/cstdint \
  /home/ceen/projects/ceren/include/RigidPixelTypes.hpp \
- /home/ceen/projects/ceren/include/RegionStability.hpp \
- /home/ceen/projects/ceren/include/StabilityResolver.hpp \
  /home/ceen/projects/ceren/include/StructuralGraph.hpp \
  /home/ceen/projects/ceren/include/RegionType.hpp \
  /home/ceen/projects/ceren/include/regionScratch.hpp \
- /home/ceen/projects/ceren/include/StructuralTracker.hpp \
- /home/ceen/projects/ceren/include/RigidPixelWorldView.hpp \
  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL.h \
  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_stdinc.h \
  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_platform_defines.h \
@@ -197,11 +193,7 @@ CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o: \
  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_tray.h \
  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_version.h \
  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_oldnames.h \
- /usr/include/c++/15.2.1/cstdio /usr/include/stdio.h \
- /usr/include/bits/types/__fpos_t.h /usr/include/bits/types/__fpos64_t.h \
- /usr/include/bits/types/struct_FILE.h \
- /usr/include/bits/types/cookie_io_functions_t.h \
- /usr/include/bits/stdio_lim.h /usr/include/c++/15.2.1/algorithm \
+ /usr/include/c++/15.2.1/algorithm \
  /usr/include/c++/15.2.1/bits/stl_algo.h \
  /usr/include/c++/15.2.1/bits/algorithmfwd.h \
  /usr/include/c++/15.2.1/bits/stl_heap.h \
