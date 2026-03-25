@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <regionScratch.hpp>
 #include "RigidPixelSystem.hpp"
+#include "MotionSystem.hpp"
 constexpr int WINDOW_WIDTH = 800;
 constexpr int WINDOW_HEIGHT = 600;
 constexpr int CELL_SIZE = 4;
@@ -56,7 +57,6 @@ public:
     }
 
     void updateWater(int x, int y) {
-        if (at(x, y).updated) return;
         if (isEmpty(x, y + 1)) { swap(x, y, x, y + 1); return; }
         bool cDL = isEmpty(x - 1, y + 1), cDR = isEmpty(x + 1, y + 1);
         if (cDL && cDR) { swap(x, y, x + ((rng() % 2) ? -1 : 1), y + 1); return; }
@@ -136,23 +136,7 @@ SDL_Color get_id_color(rigid::RegionID id) {
     h = ((h >> 16) ^ h) * 0x45d9f3b; h = ((h >> 16) ^ h) * 0x45d9f3b; h = (h >> 16) ^ h;
     return { static_cast<uint8_t>(h & 0xFF), static_cast<uint8_t>((h >> 8) & 0xFF), static_cast<uint8_t>((h >> 16) & 0xFF), 255 };
 }
-void clear_all_systems(SandSimulation& sim, rigid::RigidPixelSystem& rigidSystem, b2WorldId worldId) {
-    // 1. Clear Pixel Grid
-    sim.clear();
-    sim.world_revision_counter++;
 
-    // 2. Clear Physics World
-    // Instead of destroying the world, we can destroy all bodies
-    // Or simpler: iterate and destroy
-    if (rigidSystem.body_manager) {
-        auto& active = rigidSystem.tracker.get_active_regions();
-        // The body_manager destructor/cleanup usually handles this, 
-        // but we need an explicit reset here.
-        rigidSystem.geometry_cache.clear();
-        // Force tracker to reset
-        rigidSystem.tracker = rigid::RegionTracker(); 
-    }
-}
 int main(int argc, char* argv[]) {
     if (!SDL_Init(SDL_INIT_VIDEO)) return 1;
     SDL_Window* window = SDL_CreateWindow("Sand Falling Simulation", WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE);
@@ -163,7 +147,6 @@ int main(int argc, char* argv[]) {
     g_pixel_sim_ptr = &sim;
 
     rigid::RigidPixelSystem rigidSystem;
-    rigid::MotionSystemState<Cell> motionState;
 
     world::WorldView view;
     view.width = GRID_WIDTH; view.height = GRID_HEIGHT;
@@ -212,11 +195,7 @@ rigidSystem.init_physics(worldId, view.width, view.height);
                     case SDLK_4: selectedMaterial = 3; break;
                     case SDLK_5: selectedMaterial = 4; break;
                     case SDLK_SPACE: paused = !paused; break;
-                    case SDLK_C:
-                                  sim.clear();
-                                  b2DestroyWorld(worldId);
-                                  rigidSystem.body_manager = std::make_unique<rigid::RigidBodyManager>(worldId);
-                                  break;
+                    case SDLK_C: sim.clear();break;
                 }
             }
         }
@@ -231,7 +210,7 @@ rigidSystem.init_physics(worldId, view.width, view.height);
 
         Uint64 currentTime = SDL_GetTicks();
         float deltaTime = (currentTime - lastTime) / 1000.0f; lastTime = currentTime;
-        if (!paused) {
+       if (!paused) {
             accumulator += deltaTime;
             while (accumulator >= fixedDeltaTime) { 
                  sim.update();
@@ -241,39 +220,21 @@ rigidSystem.init_physics(worldId, view.width, view.height);
 }
 
         // --- RIGID SYSTEM ---
-        if (rigidSystem.body_manager) {
-          rigidSystem.body_manager->update_region_transforms(rigidSystem.tracker.get_active_regions());
-
-    // 2. MOTION: Move pixels in the grid based on the physics delta
-    // We capture if any actual movement happened
-    rigidSystem.apply_region_motion(sim.grid, GRID_WIDTH, GRID_HEIGHT, 
-                                    Cell{CellType::Empty}, motionState);
-
-    // 3. DIRTY FLAG: If pixels moved, we MUST tell the system to re-extract
-    // otherwise it thinks the pixels are still in the old place.
-    sim.world_revision_counter++; 
-
-    // 4. RE-VALIDATE: Re-run extraction to update label_grid and handle splits/merges
-    // This makes the label_grid match the new pixel positions immediately
-    rigidSystem.update(view);
-        }
-for (auto const& [id, record] : rigidSystem.tracker.get_active_regions()) {
-    if (!record.is_dynamic) continue;
-    
-    auto geo_it = rigidSystem.geometry_cache.find(id);
-    // Draw the "Stamp" of pixels at (pixel_pos + record.center_f - geo.center)
-    // This uses your geometry data to know which pixels to draw where.
-}
+rigidSystem.update(view);
+if (rigidSystem.body_manager && !rigidSystem.geometry_cache.empty()) {
+    rigidSystem.body_manager->update_region_transforms(rigidSystem.tracker.get_active_regions());
+    rigid::ApplyRegionMotion(
+        sim.grid.data(),                   // Raw pointer to pixels
+        rigidSystem.extractor.label_grid().data(), // Raw pointer to labels
+        GRID_WIDTH, GRID_HEIGHT, 
+        sim.world_revision_counter,        // Direct ref to counter
+        rigidSystem.tracker.get_active_regions(),
+        Cell{ CellType::Empty }            // The "Zero" state for your pixels
+    );
+}       
+ 
 
         // --- RENDER (Restored Tight Loop) ---
-        //
-        //
-        //
-        //
-
-
-
-
 const auto& index_to_id = rigidSystem.tracker.get_index_mapping();
         const size_t num_mappings = index_to_id.size();
         static std::vector<uint32_t> color_cache;
@@ -283,55 +244,18 @@ const auto& index_to_id = rigidSystem.tracker.get_index_mapping();
             color_cache[i] = (c.r << 24) | (c.g << 16) | (c.b << 8) | 255;
         }
 
-
-
-
-
-
-
         uint32_t* __restrict pixel_ptr = pixels.data();
         const Cell* __restrict cell_ptr = sim.grid.data();
         const rigid::RegionIndex* __restrict label_ptr = rigidSystem.extractor.label_grid().data();
         const uint32_t* __restrict cached_colors = color_cache.data();
 
-
-
-// --- RENDER PASS (Corrected Mapping) ---
-// --- RENDER PASS 1: Static Grid (Safe Version) ---
-// --- 1. PREPARE MAPPINGS ---
-        // Get the absolute current state of the tracker AFTER the update
-        const auto& active_regions = rigidSystem.tracker.get_active_regions();
-
-        // Update color cache to match the new mappings
-        if (color_cache.size() < num_mappings) color_cache.resize(num_mappings);
-        for (size_t i = 0; i < num_mappings; ++i) {
-            SDL_Color c = get_id_color(index_to_id[i]);
-            color_cache[i] = (c.r << 24) | (c.g << 16) | (c.b << 8) | 255;
-        }
-
-        // --- 2. PASS 1: STATIC GRID BLIT ---
-
         for (int i = 0; i < GRID_WIDTH * GRID_HEIGHT; ++i) {
             const Cell& cell = cell_ptr[i];
-            const rigid::RegionIndex rIdx = label_ptr[i];
-
             if (cell.type >= CellType::Wall) {
-                // SAFETY: Check if index exists in our mapping
-                if (rIdx != 0 && rIdx < num_mappings) {
-                    uint32_t id = index_to_id[rIdx];
-                    auto it = active_regions.find(id);
-                    
-                    // If the region is dynamic, cut a hole (Ghost logic)
-                    if (it != active_regions.end() && it->second.is_dynamic) {
-                        pixel_ptr[i] = 0x14141EFA; 
-                    } else {
-                        pixel_ptr[i] = cached_colors[rIdx];
-                    }
-                } else {
-                    pixel_ptr[i] = 0x646464FF; // Default Wall
-                }
-            } else {
-                // Standard CA (Sand/Water)
+              const rigid::RegionIndex rIdx = label_ptr[i];
+                pixel_ptr[i] = (rIdx < num_mappings) ? cached_colors[rIdx] : 0x646464FF;
+            }
+            else {
                 const uint8_t v = cell.colorVariation;
                 if (cell.type == CellType::Sand) pixel_ptr[i] = ((220-v) << 24) | ((180-v) << 16) | ((80-v) << 8) | 0xFF;
                 else if (cell.type == CellType::Water) pixel_ptr[i] = ((30+v) << 24) | ((100+v) << 16) | ((200+v) << 8) | 0xC8;
@@ -339,125 +263,55 @@ const auto& index_to_id = rigidSystem.tracker.get_index_mapping();
             }
         }
 
+
+
+// --- RENDER (Pixel Texture) ---
         SDL_UpdateTexture(gridTexture, nullptr, pixels.data(), GRID_WIDTH * sizeof(uint32_t));
         SDL_RenderTexture(renderer, gridTexture, nullptr, nullptr);
-// --- RENDER PASS 2: Floating Chunks (Unified Scale Fix) ---
-// --- RENDER PASS 2: Floating Chunks (Fixed Scale & Origin) ---
-float scaleX = (float)WINDOW_WIDTH / GRID_WIDTH;
-float scaleY = (float)WINDOW_HEIGHT / GRID_HEIGHT;
 
-for (auto const& [id, record] : active_regions) {
-    if (!record.is_dynamic) continue;
-    
-    auto geo_it = rigidSystem.geometry_cache.find(id);
-    if (geo_it == rigidSystem.geometry_cache.end()) continue;
-
-    const auto& geo = geo_it->second;
-
-    // Current physics position in pixel units
-    float curPX = record.center_f.x;
-    float curPY = record.center_f.y;
-    
-    // Original extraction center in pixel units
-    float origPX = geo.center.x;
-    float origPY = geo.center.y;
-
-    // The shift from 'extraction spot' to 'physics spot'
-    float dx = curPX - origPX;
-    float dy = curPY - origPY;
-
-    SDL_Color col = get_id_color(id);
-    SDL_SetRenderDrawColor(renderer, col.r, col.g, col.b, 255);
-
-    // Iterating the bounds where the pixels WERE when extracted
-    for (int y = record.bounds.min_y; y <= record.bounds.max_y; ++y) {
-        for (int x = record.bounds.min_x; x <= record.bounds.max_x; ++x) {
-            int idx = y * GRID_WIDTH + x;
-
-            // Use the label_ptr to find pixels belonging to this body
-            if (idx >= 0 && idx < (GRID_WIDTH * GRID_HEIGHT)) {
-              rigid::RegionIndex rIdx = label_ptr[idx];
-                if (rIdx != 0 && rIdx < num_mappings && index_to_id[rIdx] == id) {
-                    
-                   // The magic formula: (Original_X + Shift) * Window_Scale
-                    SDL_FRect pRect = {
-                        ( (float)x + dx ) * scaleX,
-                        ( (float)y + dy ) * scaleY,
-                        scaleX, 
-                        scaleY
-                    };
-                    SDL_RenderFillRect(renderer, &pRect);
-                }
-            }
-        }
-    }
-}          
-       // --- RENDER STEP: GEOMETRY (Optimized Debug View) ---
-        //
-        //
-        //
 // --- RENDER STEP: GEOMETRY (Convex Pieces Debug View) ---
-if (showPhysicsHulls && rigidSystem.body_manager) {
+if (showPhysicsHulls) {
     int winW, winH;
     SDL_GetWindowSize(window, &winW, &winH);
     float scaleX = (float)winW / GRID_WIDTH;
     float scaleY = (float)winH / GRID_HEIGHT;
 
-    rigidSystem.body_manager->render_debug_hulls(
-        renderer, 
-        rigidSystem.tracker.get_active_regions(), 
-        rigidSystem.geometry_cache, 
-        scaleX, 
-        scaleY
-    );
-}
-/*if (showPhysicsHulls) {
-    int winW, winH;
-    SDL_GetWindowSize(window, &winW, &winH);
-    float scaleX = (float)winW / GRID_WIDTH;
-    float scaleY = (float)winH / GRID_HEIGHT;
+    for (auto const& [id, geo] : rigidSystem.geometry_cache) {
+        auto it = rigidSystem.tracker.get_active_regions().find(id);
+        if (it == rigidSystem.tracker.get_active_regions().end()) continue;
 
-    for (auto const& [id, record] : rigidSystem.tracker.get_active_regions()) {
-        auto geo_it = rigidSystem.geometry_cache.find(id);
-        if (geo_it == rigidSystem.geometry_cache.end()) continue;
+        // Use the current simulation position (center_f)
+        float curX = it->second.center_f.x;
+        float curY = it->second.center_f.y;
 
-        const auto& geo = geo_it->second;
-        float curX = record.center_f.x;
-        float curY = record.center_f.y;
-        float prevX = record.prev_center_f.x;
-        float prevY = record.prev_center_f.y;
-
-        // 1. DRAW PHYSICS HULL (Orange)
-        SDL_SetRenderDrawColor(renderer, 255, 100, 0, 255); 
+        // DRAW CONVEX PIECES (What Box2D actually sees)
+        SDL_SetRenderDrawColor(renderer, 255, 100, 0, 255); // Orange for convex edges
         for (const auto& piece : geo.convex_pieces) {
             const auto& pts = piece.points;
+            if (pts.size() < 2) continue;
+
             for (size_t i = 0; i < pts.size(); ++i) {
                 const auto& p1 = pts[i];
                 const auto& p2 = pts[(i + 1) % pts.size()];
-                SDL_RenderLine(renderer, (p1.x + curX) * scaleX, (p1.y + curY) * scaleY,
-                                         (p2.x + curX) * scaleX, (p2.y + curY) * scaleY);
+
+                float x1 = (p1.x + curX) * scaleX;
+                float y1 = (p1.y + curY) * scaleY;
+                float x2 = (p2.x + curX) * scaleX;
+                float y2 = (p2.y + curY) * scaleY;
+
+                SDL_RenderLine(renderer, x1, y1, x2, y2);
             }
+            printf("center: %.2f %.2f\n", geo.center.x, geo.center.y);
+
+for(auto &p : piece.points)
+    printf("vertex: %.2f %.2f\n", p.x, p.y);
         }
-
-        // 2. DRAW MOTION VECTOR (Blue)
-        // This line shows the movement from the last frame to this frame
-        SDL_SetRenderDrawColor(renderer, 0, 150, 255, 255);
-        SDL_RenderLine(renderer, prevX * scaleX, prevY * scaleY, curX * scaleX, curY * scaleY);
-
-        // 3. LOGGING (Console - Limited to dynamic bodies to avoid spam)
-        if (record.is_dynamic) {
-            int dx = (int)std::round(curX - prevX);
-            int dy = (int)std::round(curY - prevY);
-            if (dx != 0 || dy != 0) {
-                printf("Region %u moved: [%d, %d] pixels\n", id, dx, dy);
-            }
-        }
-
-        // 4. CENTER POINT (White)
+        
+        // OPTIONAL: Draw a small cross at the center of the body
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderPoint(renderer, curX * scaleX, curY * scaleY);
     }
-}*/
+}
 
 
             // --- IMGUI (Original Controls) ---

@@ -13,6 +13,12 @@
 },
 {
   "directory": "/home/ceen/projects/ceren/build",
+  "command": "/usr/bin/c++  -I/home/ceen/projects/ceren/vendored/glm -I/home/ceen/projects/ceren/include -I/home/ceen/projects/ceren/vendored/imgui -I/home/ceen/projects/ceren/vendored/imgui/backends -I/home/ceen/projects/ceren/build/vendored/SDL/include-revision -I/home/ceen/projects/ceren/vendored/SDL/include -I/home/ceen/projects/ceren/vendored/box2d/src/../include -I/home/ceen/projects/ceren/build/vendored/box2d/src -std=gnu++20 -o CMakeFiles/Ceren.dir/src/MotionSystem.cpp.o -c /home/ceen/projects/ceren/src/MotionSystem.cpp",
+  "file": "/home/ceen/projects/ceren/src/MotionSystem.cpp",
+  "output": "CMakeFiles/Ceren.dir/src/MotionSystem.cpp.o"
+},
+{
+  "directory": "/home/ceen/projects/ceren/build",
   "command": "/usr/bin/c++  -I/home/ceen/projects/ceren/vendored/glm -I/home/ceen/projects/ceren/include -I/home/ceen/projects/ceren/vendored/imgui -I/home/ceen/projects/ceren/vendored/imgui/backends -I/home/ceen/projects/ceren/build/vendored/SDL/include-revision -I/home/ceen/projects/ceren/vendored/SDL/include -I/home/ceen/projects/ceren/vendored/box2d/src/../include -I/home/ceen/projects/ceren/build/vendored/box2d/src -std=gnu++20 -o CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o -c /home/ceen/projects/ceren/src/RegionExtractor.cpp",
   "file": "/home/ceen/projects/ceren/src/RegionExtractor.cpp",
   "output": "CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o"

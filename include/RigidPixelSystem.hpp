@@ -93,9 +93,10 @@ template<typename CellType>
     
 
         if (needs_physics_sync) {
+          //printf("RUNNING EXTRACTION: World Rev %llu\n", current_world_rev);
             extractor.extract(view, build_records);
             tracker.process_frame(extractor.label_grid(), build_records, view.width, view.height);
-            
+           printf("Extracted %zu build records\n", build_records.size()); 
             cleanup_dead_geometry(); 
             refresh_geometry_cache(view);
             if (body_manager) {
@@ -164,20 +165,34 @@ void sync_engine_with_tracker() {
         const auto& active_regions = tracker.get_active_regions();
         const auto& label_grid = extractor.label_grid();
         const auto& index_to_id = tracker.get_index_mapping();
+        printf("DEBUG: Cache Refresh - IndexToId Size: %zu, BuildRecords: %zu\n", 
+            index_to_id.size(), build_records.size());
+
+
 
         for (RegionIndex idx = 0; idx < index_to_id.size(); ++idx) {
-            RegionID id = index_to_id[idx];
-            const RegionBuildRecord& record = build_records[idx];
-            const RegionRecord& region = active_regions.at(id);
+        RegionID id = index_to_id[idx];
+        
+        // Safety check: is the ID actually in active_regions?
+        if (active_regions.find(id) == active_regions.end()) {
+            printf("DEBUG: ID %u not found in active_regions!\n", id);
+            continue;
+        }
 
-            bool is_missing = geometry_cache.find(id) == geometry_cache.end();
-            if (is_missing || geometry_cache[id].version != region.version) {
-                RegionGeometry geo = GeometryExtractor::Build(idx, record.bounds, label_grid, view.width, view.height);
-                geo.version = region.version;
-                geometry_cache[id] = std::move(geo);
-            }
+        const RegionBuildRecord& record = build_records[idx];
+        const RegionRecord& region = active_regions.at(id);
+
+        bool is_missing = geometry_cache.find(id) == geometry_cache.end();
+        
+        if (is_missing || geometry_cache[id].version != region.version) {
+            printf("DEBUG: Generating Geometry for ID %u (Version %u)\n", id, region.version);
+            RegionGeometry geo = GeometryExtractor::Build(idx, record.bounds, label_grid, view.width, view.height);
+            geo.version = region.version;
+            geometry_cache[id] = std::move(geo);
         }
     }
+
+            }
 
     void cleanup_dead_geometry() {
         const auto& active = tracker.get_active_regions();

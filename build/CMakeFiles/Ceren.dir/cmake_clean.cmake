@@ -4,6 +4,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o.d"
   "CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o"
   "CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o.d"
+  "CMakeFiles/Ceren.dir/src/MotionSystem.cpp.o"
+  "CMakeFiles/Ceren.dir/src/MotionSystem.cpp.o.d"
   "CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o"
   "CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o.d"
   "CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o"

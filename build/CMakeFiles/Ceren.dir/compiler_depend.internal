@@ -105,6 +105,10 @@ CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o
  /home/ceen/projects/ceren/src/Box2dBackend.cpp
  /usr/include/stdc-predef.h
 
+CMakeFiles/Ceren.dir/src/MotionSystem.cpp.o
+ /home/ceen/projects/ceren/src/MotionSystem.cpp
+ /usr/include/stdc-predef.h
+
 CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o
  /home/ceen/projects/ceren/src/RegionExtractor.cpp
  /home/ceen/projects/ceren/include/RegionExtractor.hpp
@@ -1191,6 +1195,7 @@ CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.o
 
 CMakeFiles/Ceren.dir/src/main.cpp.o
  /home/ceen/projects/ceren/src/main.cpp
+ /home/ceen/projects/ceren/include/MotionSystem.hpp
  /home/ceen/projects/ceren/include/RegionExtractor.hpp
  /home/ceen/projects/ceren/include/RegionMesher.hpp
  /home/ceen/projects/ceren/include/RegionMotion.hpp
@@ -3022,6 +3027,7 @@ Ceren
  /usr/lib/libmvec.so.1
  /home/ceen/projects/ceren/build/CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o
  /home/ceen/projects/ceren/build/CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o
+ /home/ceen/projects/ceren/build/CMakeFiles/Ceren.dir/src/MotionSystem.cpp.o
  /home/ceen/projects/ceren/build/CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o
  /home/ceen/projects/ceren/build/CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o
  /home/ceen/projects/ceren/build/CMakeFiles/Ceren.dir/src/RegionMotion.cpp.o

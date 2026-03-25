@@ -147,8 +147,8 @@ vendored/box2d/src/clean: vendored/box2d/src/CMakeFiles/box2d.dir/clean
 # Target rules for target CMakeFiles/Ceren.dir
 
 # All Build rule for target.
-CMakeFiles/Ceren.dir/all: vendored/box2d/src/CMakeFiles/box2d.dir/all
 CMakeFiles/Ceren.dir/all: vendored/SDL/CMakeFiles/SDL3-shared.dir/all
+CMakeFiles/Ceren.dir/all: vendored/box2d/src/CMakeFiles/box2d.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/ceen/projects/ceren/build/CMakeFiles --progress-num=1,2,3,4,5 "Built target Ceren"

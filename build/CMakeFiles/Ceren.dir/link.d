@@ -4,6 +4,7 @@ Ceren: \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o \
   CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o \
   CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o \
+  CMakeFiles/Ceren.dir/src/MotionSystem.cpp.o \
   CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o \
   CMakeFiles/Ceren.dir/src/RegionMesher.cpp.o \
   CMakeFiles/Ceren.dir/src/RegionMotion.cpp.o \
@@ -62,6 +63,8 @@ Ceren: \
 CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o:
 
 CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.o:
+
+CMakeFiles/Ceren.dir/src/MotionSystem.cpp.o:
 
 CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o:
 

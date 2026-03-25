@@ -274,6 +274,30 @@ src/Box2dBackend.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/Box2dBackend.cpp.s
 .PHONY : src/Box2dBackend.cpp.s
 
+src/MotionSystem.o: src/MotionSystem.cpp.o
+.PHONY : src/MotionSystem.o
+
+# target to build an object file
+src/MotionSystem.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/MotionSystem.cpp.o
+.PHONY : src/MotionSystem.cpp.o
+
+src/MotionSystem.i: src/MotionSystem.cpp.i
+.PHONY : src/MotionSystem.i
+
+# target to preprocess a source file
+src/MotionSystem.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/MotionSystem.cpp.i
+.PHONY : src/MotionSystem.cpp.i
+
+src/MotionSystem.s: src/MotionSystem.cpp.s
+.PHONY : src/MotionSystem.s
+
+# target to generate assembly for a file
+src/MotionSystem.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Ceren.dir/build.make CMakeFiles/Ceren.dir/src/MotionSystem.cpp.s
+.PHONY : src/MotionSystem.cpp.s
+
 src/RegionExtractor.o: src/RegionExtractor.cpp.o
 .PHONY : src/RegionExtractor.o
 
@@ -753,6 +777,9 @@ help:
 	@echo "... src/Box2dBackend.o"
 	@echo "... src/Box2dBackend.i"
 	@echo "... src/Box2dBackend.s"
+	@echo "... src/MotionSystem.o"
+	@echo "... src/MotionSystem.i"
+	@echo "... src/MotionSystem.s"
 	@echo "... src/RegionExtractor.o"
 	@echo "... src/RegionExtractor.i"
 	@echo "... src/RegionExtractor.s"
