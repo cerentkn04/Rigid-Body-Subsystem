@@ -4,7 +4,8 @@
 namespace world {
 
   using WorldRevision = uint64_t;
-  using GroupID = uint32_t; 
+  using GroupID  = uint32_t;
+  using ObjectID = uint32_t; // 0 = runtime solid, >0 = authored object identity
   enum class CellSolidity : uint8_t {
     Empty = 0,
     Solid = 1
@@ -42,7 +43,16 @@ namespace world {
         - Granularity is implementation-defined (cell, chunk, stripe, etc).
     */
     WorldRevision (*region_revision)(int x, int y);
-    GroupID (*group_id_at)(int x, int y);
+    GroupID  (*group_id_at)(int x, int y);
+    /*
+        Returns the authored object identity of the cell at (x, y).
+
+        object_id semantics:
+        - 0 = runtime solid: merges only with neighbours sharing the same group_id.
+        - >0 = authored object: merges with any solid neighbour that shares the same object_id,
+               regardless of material / group_id.
+    */
+    ObjectID (*object_id_at)(int x, int y);
   };
 } 
 

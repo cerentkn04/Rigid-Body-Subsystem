@@ -2,57 +2,39 @@
 #include <algorithm>
 #include <deque>
 
-
 static bool intersects(const rigid::CellAABB& a, const rigid::CellAABB& b) {
     return (a.min_x <= b.max_x && a.max_x >= b.min_x) &&
            (a.min_y <= b.max_y && a.max_y >= b.min_y);
 }
 
-void StructuralTracker::init_bins(int world_width, int world_height) {
-    bins_x = (world_width + BIN_SIZE - 1) / BIN_SIZE;
-    bins_y = (world_height + BIN_SIZE - 1) / BIN_SIZE;
-    bins.clear();
-    bins.resize(bins_x * bins_y);
+void tracker_init_bins(StructuralTracker& st, int world_width, int world_height) {
+    st.bins_x = (world_width  + StructuralTracker::BIN_SIZE - 1) / StructuralTracker::BIN_SIZE;
+    st.bins_y = (world_height + StructuralTracker::BIN_SIZE - 1) / StructuralTracker::BIN_SIZE;
+    st.bins.clear();
+    st.bins.resize(st.bins_x * st.bins_y);
 }
-static bool provides_support(const rigid::CellAABB& supported, const rigid::CellAABB& supporter) {
-    // Standard AABB intersection check
-    bool touching = (supported.min_x <= supporter.max_x && supported.max_x >= supporter.min_x) &&
-                    (supported.min_y <= supporter.max_y && supported.max_y >= supporter.min_y);
-    
-    if (!touching) return false;
 
-    // PHYSICAL RULE: The supporter must be at the same level or lower than the object
-    // In many 2D engines, Y increases downwards. 
-    // So "below" means supporter.max_y > supported.max_y
-    return supporter.max_y >= supported.max_y; 
-}
-void StructuralTracker::propagate_dirt() {
-    std::deque<uint32_t> work_queue;
+void tracker_propagate_dirt(StructuralTracker& st) {
+    std::deque<uint32_t> queue;
+    for (uint32_t i = 0; i < (uint32_t)st.dirty_flags.size(); ++i)
+        if (st.dirty_flags[i] == 1) queue.push_back(i);
 
-    for (uint32_t i = 0; i < dirty_flags.size(); ++i) {
-        if (dirty_flags[i] == 1) work_queue.push_back(i);
-    }
+    while (!queue.empty()) {
+        uint32_t di = queue.front(); queue.pop_front();
+        const auto& db = st.influence_bounds[di];
 
-    while (!work_queue.empty()) {
-        uint32_t dirty_idx = work_queue.front();
-        work_queue.pop_front();
-
-
-        const auto& d_bounds = influence_bounds[dirty_idx];
-        int bx0 = std::max(0, d_bounds.min_x / BIN_SIZE);
-        int by0 = std::max(0, d_bounds.min_y / BIN_SIZE);
-        int bx1 = std::min(bins_x - 1, d_bounds.max_x / BIN_SIZE);
-        int by1 = std::min(bins_y - 1, d_bounds.max_y / BIN_SIZE);
+        int bx0 = std::max(0, db.min_x / StructuralTracker::BIN_SIZE);
+        int by0 = std::max(0, db.min_y / StructuralTracker::BIN_SIZE);
+        int bx1 = std::min(st.bins_x - 1, db.max_x / StructuralTracker::BIN_SIZE);
+        int by1 = std::min(st.bins_y - 1, db.max_y / StructuralTracker::BIN_SIZE);
 
         for (int by = by0; by <= by1; ++by) {
             for (int bx = bx0; bx <= bx1; ++bx) {
-                const auto& bin = bins[by * bins_x + bx];
-                for (uint32_t neighbor_idx : bin.region_indices) {
-                    if (dirty_flags[neighbor_idx]) continue;
-
-                    if (intersects(d_bounds, influence_bounds[neighbor_idx])) {
-                        dirty_flags[neighbor_idx] = 1;
-                        work_queue.push_back(neighbor_idx);
+                for (uint32_t ni : st.bins[by * st.bins_x + bx].region_indices) {
+                    if (st.dirty_flags[ni]) continue;
+                    if (intersects(db, st.influence_bounds[ni])) {
+                        st.dirty_flags[ni] = 1;
+                        queue.push_back(ni);
                     }
                 }
             }

@@ -1,7 +1,7 @@
 CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o: \
  /home/ceen/projects/ceren/src/BasicConnectivityPolicy.cpp \
  /usr/include/stdc-predef.h \
- /home/ceen/projects/ceren/include/IStabilityPolicy.hpp \
+ /home/ceen/projects/ceren/include/StabilityResolver.hpp \
  /usr/include/c++/15.2.1/vector \
  /usr/include/c++/15.2.1/bits/requires_hosted.h \
  /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h \

@@ -1,4 +1,5 @@
 #include "StructuralTracker.hpp"
+#include "RigidPixelWorldView.hpp"
 #include <box2d/box2d.h>
 #include <cstdio>
 namespace rigid {

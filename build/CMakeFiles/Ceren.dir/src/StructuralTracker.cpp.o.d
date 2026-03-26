@@ -72,7 +72,6 @@ CMakeFiles/Ceren.dir/src/StructuralTracker.cpp.o: \
  /usr/include/bits/stdint-least.h \
  /home/ceen/projects/ceren/include/RigidPixelTypes.hpp \
  /home/ceen/projects/ceren/include/RegionType.hpp \
- /home/ceen/projects/ceren/include/RigidPixelWorldView.hpp \
  /usr/include/c++/15.2.1/algorithm \
  /usr/include/c++/15.2.1/bits/stl_algo.h \
  /usr/include/c++/15.2.1/bits/algorithmfwd.h \

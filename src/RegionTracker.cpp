@@ -117,6 +117,7 @@ void tracker_process_frame(
         rec.generation     = state.generations[id];
         rec.pixel_count    = build.pixel_count;
         rec.bounds         = build.bounds;
+        rec.group_id       = build.group_id;
         rec.current_index  = (uint32_t)i;
 
         auto prev_it = previous.find(id);

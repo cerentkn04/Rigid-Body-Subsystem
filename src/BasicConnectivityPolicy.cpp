@@ -1,4 +1,4 @@
-#include "IStabilityPolicy.hpp" // Ensure this has the function declaration
+#include "StabilityResolver.hpp"
 #include "StructuralGraph.hpp"
 #include <deque>
 
@@ -14,9 +14,9 @@ void apply_basic_connectivity_policy(const StructuralGraph& graph, std::vector<b
     // BFS Queue for stability propagation
     std::deque<uint32_t> queue;
 
-    // 3. Phase 1: Seed Anchors (Floor or Group 1/Walls)
+    // Phase 1: Seed Anchors — only regions that physically touch the floor
     for (uint32_t i = 0; i < (uint32_t)nodes.size(); ++i) {
-        if (nodes[i].group_id == 1 || nodes[i].touches_floor) {
+        if (nodes[i].touches_floor) {
             out_is_stable[i] = true;
             queue.push_back(i);
         }

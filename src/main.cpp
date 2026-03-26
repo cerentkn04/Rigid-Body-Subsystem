@@ -13,8 +13,8 @@ constexpr int CELL_SIZE = 4;
 constexpr int GRID_WIDTH = WINDOW_WIDTH / CELL_SIZE;
 constexpr int GRID_HEIGHT = WINDOW_HEIGHT / CELL_SIZE;
 
-enum class CellType : uint8_t { Empty = 0, Sand, Water, Wall,Rock };
-struct Cell { CellType type = CellType::Empty; bool updated = false; uint8_t colorVariation = 0; };
+enum class CellType : uint8_t { Empty = 0, Sand, Water, Wood, Rock };
+struct Cell { CellType type = CellType::Empty; bool updated = false; uint8_t colorVariation = 0; uint32_t object_id = 0; };
 
 class SandSimulation {
 public:
@@ -78,7 +78,7 @@ public:
                 switch (at(x, y).type) {
                     case CellType::Sand: updateSand(x, y); break;
                     case CellType::Water: updateWater(x, y); break;
-                    case CellType::Wall: break;
+                    case CellType::Wood: break;  // rigid, handled by physics
                     case CellType::Rock:  break;    
                     case CellType::Empty: break;
 
@@ -98,7 +98,7 @@ public:
                 if (old == type) continue;
                 at(nx, ny).type = type;
                 at(nx, ny).colorVariation = dist(rng);
-                if (old == CellType::Rock ||old == CellType::Wall || type == CellType::Rock|| type == CellType::Wall) {
+                if (old == CellType::Rock ||old == CellType::Wood || type == CellType::Rock|| type == CellType::Wood) {
                     topology_changed = true;
                     world_revision_counter++;
                     
@@ -114,20 +114,22 @@ public:
 
 static SandSimulation* g_pixel_sim_ptr = nullptr;
 world::CellSolidity solidity_callback(int x, int y) {
-    return (g_pixel_sim_ptr && g_pixel_sim_ptr->inBounds(x, y) && g_pixel_sim_ptr->at(x, y).type == CellType::Wall  ) ? world::CellSolidity::Solid : g_pixel_sim_ptr && g_pixel_sim_ptr->inBounds(x, y) && g_pixel_sim_ptr->at(x, y).type == CellType::Rock ? world::CellSolidity::Solid :  world::CellSolidity::Empty;
+    return (g_pixel_sim_ptr && g_pixel_sim_ptr->inBounds(x, y) && g_pixel_sim_ptr->at(x, y).type == CellType::Wood  ) ? world::CellSolidity::Solid : g_pixel_sim_ptr && g_pixel_sim_ptr->inBounds(x, y) && g_pixel_sim_ptr->at(x, y).type == CellType::Rock ? world::CellSolidity::Solid :  world::CellSolidity::Empty;
 }
 world::WorldRevision revision_callback() { return g_pixel_sim_ptr ? g_pixel_sim_ptr->world_revision_counter : 0; }
 world::WorldRevision region_rev_callback(int x, int y) {
     return (g_pixel_sim_ptr && g_pixel_sim_ptr->inBounds(x, y)) ? g_pixel_sim_ptr->region_revisions[y * GRID_WIDTH + x] : 0;
 }
 world::GroupID group_id_callback(int x, int y) {
-    if (!g_pixel_sim_ptr || !g_pixel_sim_ptr->inBounds(x, y)) return -1;
-    
+    if (!g_pixel_sim_ptr || !g_pixel_sim_ptr->inBounds(x, y)) return 0;
     CellType t = g_pixel_sim_ptr->at(x, y).type;
-    if (t == CellType::Wall) return 1; // Group 1 for Walls
-    if (t == CellType::Rock) return 2; // Group 2 for Rocks
-    
-    return -1;
+    if (t == CellType::Wood) return 1;
+    if (t == CellType::Rock) return 2;
+    return 0;
+}
+world::ObjectID object_id_callback(int x, int y) {
+    if (!g_pixel_sim_ptr || !g_pixel_sim_ptr->inBounds(x, y)) return 0;
+    return g_pixel_sim_ptr->at(x, y).object_id;
 }
 
 SDL_Color get_id_color(rigid::RegionID id) {
@@ -154,15 +156,17 @@ int main(int argc, char* argv[]) {
     view.world_revision = revision_callback;
     view.region_revision = region_rev_callback;
     view.group_id_at = group_id_callback;
+    view.object_id_at = object_id_callback;
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
     ImGui_ImplSDLRenderer3_Init(renderer);
     bool showPhysicsHulls = false;
+    bool colorByRegion = true; // false = color by material type
     bool running = true, paused = false, mouseDown = false;
     int selectedMaterial = 0, brushSize = 3;
-    const char* materials[] = {"Sand", "Water", "Wall", "Rock","Eraser"};
+    const char* materials[] = {"Sand", "Water", "Wood", "Rock","Eraser"};
 
     SDL_Texture* gridTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, GRID_WIDTH, GRID_HEIGHT);
     SDL_SetTextureScaleMode(gridTexture, SDL_SCALEMODE_NEAREST);
@@ -180,6 +184,36 @@ int main(int argc, char* argv[]) {
 
 // Link it to your system
 rigidSystem.init_physics(worldId, view.width, view.height);
+
+    // ── Initial object: dagger (object_id = 1) ───────────────────────────
+    // Blade (Rock) — tapers from single-pixel tip down to a 9-pixel base
+    for (int y = 18; y <= 58; ++y) {
+        int half = (y - 18) * 4 / 40;
+        for (int x = 100 - half; x <= 100 + half; ++x) {
+            sim.placeCell(x, y, CellType::Rock, 1);
+            sim.at(x, y).object_id = 1;
+        }
+    }
+    // Crossguard (Wall)
+    for (int y = 59; y <= 62; ++y)
+        for (int x = 88; x <= 112; ++x) {
+            sim.placeCell(x, y, CellType::Wood, 1);
+            sim.at(x, y).object_id = 1;
+        }
+    // Grip (Wall)
+    for (int y = 63; y <= 80; ++y)
+        for (int x = 97; x <= 103; ++x) {
+            sim.placeCell(x, y, CellType::Wood, 1);
+            sim.at(x, y).object_id = 1;
+        }
+    // Pommel (Wall)
+    for (int y = 81; y <= 86; ++y)
+        for (int x = 94; x <= 106; ++x) {
+            sim.placeCell(x, y, CellType::Wood, 1);
+            sim.at(x, y).object_id = 1;
+        }
+    // ─────────────────────────────────────────────────────────────────────
+
     while (running) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -204,7 +238,7 @@ rigidSystem.init_physics(worldId, view.width, view.height);
             int winW, winH; SDL_GetWindowSize(window, &winW, &winH);
             int gx = static_cast<int>((mx / winW) * GRID_WIDTH);
             int gy = static_cast<int>((my / winH) * GRID_HEIGHT);
-            CellType type = (selectedMaterial == 0) ? CellType::Sand : (selectedMaterial == 1) ? CellType::Water : (selectedMaterial == 2) ? CellType::Wall : (selectedMaterial == 3) ? CellType::Rock :CellType::Empty;
+            CellType type = (selectedMaterial == 0) ? CellType::Sand : (selectedMaterial == 1) ? CellType::Water : (selectedMaterial == 2) ? CellType::Wood : (selectedMaterial == 3) ? CellType::Rock :CellType::Empty;
             sim.placeCell(gx, gy, type, brushSize);
         }
 
@@ -225,7 +259,7 @@ if (b2World_IsValid(rigidSystem.body_store.world_id) && !rigidSystem.geometry_ca
     physics_read_transforms(rigidSystem.body_store, rigidSystem.tracker.active_regions);
     rigid::ApplyRegionMotion(
         sim.grid.data(),
-        rigidSystem.extractor.label_grid().data(),
+        rigidSystem.extractor.label_grid.data(),
         GRID_WIDTH, GRID_HEIGHT,
         sim.world_revision_counter,
         rigidSystem.tracker.active_regions,
@@ -246,20 +280,28 @@ const auto& index_to_id = rigidSystem.tracker.index_to_id;
 
         uint32_t* __restrict pixel_ptr = pixels.data();
         const Cell* __restrict cell_ptr = sim.grid.data();
-        const rigid::RegionIndex* __restrict label_ptr = rigidSystem.extractor.label_grid().data();
+        const rigid::RegionIndex* __restrict label_ptr = rigidSystem.extractor.label_grid.data();
         const uint32_t* __restrict cached_colors = color_cache.data();
 
         for (int i = 0; i < GRID_WIDTH * GRID_HEIGHT; ++i) {
             const Cell& cell = cell_ptr[i];
-            if (cell.type >= CellType::Wall) {
-              const rigid::RegionIndex rIdx = label_ptr[i];
-                pixel_ptr[i] = (rIdx < num_mappings) ? cached_colors[rIdx] : 0x646464FF;
+            if (cell.type >= CellType::Wood) {
+                if (colorByRegion) {
+                    const rigid::RegionIndex rIdx = label_ptr[i];
+                    pixel_ptr[i] = (rIdx < num_mappings) ? cached_colors[rIdx] : 0x646464FF;
+                } else {
+                    const uint8_t v = cell.colorVariation;
+                    if (cell.type == CellType::Wood)
+                        pixel_ptr[i] = ((139-v) << 24) | ((90-v) << 16) | ((43) << 8) | 0xFF;  // woody brown
+                    else // Rock
+                        pixel_ptr[i] = ((120-v) << 24) | ((120-v) << 16) | ((120-v) << 8) | 0xFF; // gray rock
+                }
             }
             else {
                 const uint8_t v = cell.colorVariation;
                 if (cell.type == CellType::Sand) pixel_ptr[i] = ((220-v) << 24) | ((180-v) << 16) | ((80-v) << 8) | 0xFF;
                 else if (cell.type == CellType::Water) pixel_ptr[i] = ((30+v) << 24) | ((100+v) << 16) | ((200+v) << 8) | 0xC8;
-                else pixel_ptr[i] = 0x14141EFA; 
+                else pixel_ptr[i] = 0x14141EFA;
             }
         }
 
@@ -327,6 +369,7 @@ for(auto &p : piece.points)
         ImGui::SliderInt("Brush Size", &brushSize, 1, 10);
         if (ImGui::Button("Select Eraser")) selectedMaterial = 4;
         ImGui::Checkbox("Paused (Space)", &paused);
+        ImGui::Checkbox("Color by Region ID", &colorByRegion);
         ImGui::Checkbox("Show Physics Hulls (Debug)", &showPhysicsHulls);
         if (ImGui::Button("Clear (C)")) sim.clear();
         ImGui::Text("Total Active Regions: %zu", rigidSystem.tracker.active_regions.size());

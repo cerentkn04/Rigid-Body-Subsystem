@@ -348,7 +348,7 @@ static const int CASE_TABLE[16][4] = {
 // Geometry Builder
 // =====================
 
-RegionGeometry GeometryExtractor::Build(
+RegionGeometry build_geometry(
     uint32_t regionID,
     const CellAABB& bounds,
     const std::vector<uint32_t>& labelGrid,
