@@ -177,13 +177,7 @@ int main(int argc, char* argv[]) {
     const float fixedDeltaTime = 1.0f / 60.0f;
 
 
-  b2WorldDef worldDef = b2DefaultWorldDef();
-  worldDef.gravity = { 0.0f, 9.8f }; 
-  b2WorldId worldId = b2CreateWorld(&worldDef);
-  worldDef.enableSleep = false;
-
-// Link it to your system
-rigidSystem.init_physics(worldId, view.width, view.height);
+  rigidSystem.init(view.width, view.height);  // default cfg: gravity 9.8, all defaults
 
     // ── Initial object: dagger (object_id = 1) ───────────────────────────
     // Blade (Rock) — tapers from single-pixel tip down to a 9-pixel base
@@ -248,7 +242,7 @@ rigidSystem.init_physics(worldId, view.width, view.height);
             accumulator += deltaTime;
             while (accumulator >= fixedDeltaTime) { 
                  sim.update();
-                 b2World_Step(worldId, fixedDeltaTime, 4); 
+                 rigidSystem.step(fixedDeltaTime);
                  accumulator -= fixedDeltaTime; 
             }
 }
@@ -378,7 +372,7 @@ for(auto &p : piece.points)
         ImGui::Text("Physics Debug:");
 if (b2World_IsValid(rigidSystem.body_store.world_id)) {
     ImGui::Text("Active Bodies: %zu", rigidSystem.body_store.ids.size());
-    ImGui::Text("World ID: %llu", (unsigned long long)worldId.index1);
+    ImGui::Text("World ID: %llu", (unsigned long long)rigidSystem.body_store.world_id.index1);
 }
         ImGui::Text("FPS: %.1f", io.Framerate);
         ImGui::End();

@@ -193,6 +193,8 @@ CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o: \
  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_tray.h \
  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_version.h \
  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_oldnames.h \
+ /home/ceen/projects/ceren/include/RigidPixelConfig.hpp \
+ /home/ceen/projects/ceren/include/StabilityResolver.hpp \
  /usr/include/c++/15.2.1/algorithm \
  /usr/include/c++/15.2.1/bits/stl_algo.h \
  /usr/include/c++/15.2.1/bits/algorithmfwd.h \

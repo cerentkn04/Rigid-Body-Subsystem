@@ -10,6 +10,7 @@
 #include <RigidBodyManager.hpp>
 #include <StabilityResolver.hpp>
 #include "RegionMesher.hpp"
+#include "RigidPixelConfig.hpp"
 
 namespace rigid {
 
@@ -29,13 +30,39 @@ public:
     uint64_t last_processed_rev = 0;
 
     // ── Lifecycle ─────────────────────────────────────────────────────────
-    void init_physics(b2WorldId world_id, int width, int height) {
-        body_store_init(body_store, world_id);
+
+    /*  init — call once at startup.
+        cfg is optional; defaults are used when omitted.  */
+    void init(int width, int height, const RigidPixelConfig& cfg = {}) {
+        b2WorldDef wd  = b2DefaultWorldDef();
+        wd.gravity     = { cfg.gravity_x, cfg.gravity_y };
+        wd.enableSleep = cfg.bodies_can_sleep;
+        b2WorldId wid  = b2CreateWorld(&wd);
+
+        body_store_init(body_store, wid, cfg);
         tracker_init_bins(structural_engine, width, height);
-        stability_policy = &apply_basic_connectivity_policy;
+        stability_policy = cfg.stability_policy
+                           ? cfg.stability_policy
+                           : &apply_basic_connectivity_policy;
+        _velocity_iters = cfg.velocity_iters;
     }
 
-    void set_policy(StabilityPolicyFunc p) { stability_policy = p; }
+    /*  step — advance the physics simulation one tick.
+        Call this at your fixed timestep rate (e.g. 60 Hz).  */
+    void step(float dt) {
+        if (b2World_IsValid(body_store.world_id))
+            b2World_Step(body_store.world_id, dt, _velocity_iters);
+    }
+
+    /*  shutdown — destroy physics world and all bodies.
+        Safe to call multiple times.  */
+    void shutdown() {
+        body_store_destroy(body_store);
+        if (b2World_IsValid(body_store.world_id)) {
+            b2DestroyWorld(body_store.world_id);
+            body_store.world_id = b2_nullWorldId;
+        }
+    }
 
     // ── Per-frame pipeline ────────────────────────────────────────────────
     void update(const world::WorldView& view) {
@@ -126,6 +153,8 @@ private:
             }
         }
     }
+
+    int _velocity_iters = 4;
 
     void cleanup_dead_geometry() {
         const auto& active = tracker.active_regions;

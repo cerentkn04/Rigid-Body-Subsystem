@@ -495,7 +495,9 @@ CMakeFiles/Ceren.dir/src/RigidBodyManager.cpp.o: /home/ceen/projects/ceren/src/R
   /home/ceen/projects/ceren/include/RegionMesher.hpp \
   /home/ceen/projects/ceren/include/RegionType.hpp \
   /home/ceen/projects/ceren/include/RigidBodyManager.hpp \
+  /home/ceen/projects/ceren/include/RigidPixelConfig.hpp \
   /home/ceen/projects/ceren/include/RigidPixelTypes.hpp \
+  /home/ceen/projects/ceren/include/StabilityResolver.hpp \
   /home/ceen/projects/ceren/include/StructuralGraph.hpp \
   /home/ceen/projects/ceren/include/regionScratch.hpp \
   /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL.h \
@@ -1179,6 +1181,7 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: /home/ceen/projects/ceren/src/main.cpp \
   /home/ceen/projects/ceren/include/RegionTracker.hpp \
   /home/ceen/projects/ceren/include/RegionType.hpp \
   /home/ceen/projects/ceren/include/RigidBodyManager.hpp \
+  /home/ceen/projects/ceren/include/RigidPixelConfig.hpp \
   /home/ceen/projects/ceren/include/RigidPixelSystem.hpp \
   /home/ceen/projects/ceren/include/RigidPixelTypes.hpp \
   /home/ceen/projects/ceren/include/RigidPixelWorldView.hpp \
@@ -3724,6 +3727,8 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o:
 /usr/include/sys/types.h:
 
 /usr/include/bits/flt-eval-method.h:
+
+/home/ceen/projects/ceren/include/RigidPixelConfig.hpp:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512bitalgintrin.h:
 

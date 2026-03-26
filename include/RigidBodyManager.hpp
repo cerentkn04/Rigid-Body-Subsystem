@@ -5,6 +5,7 @@
 #include "RegionMesher.hpp"
 #include <StructuralGraph.hpp>
 #include <SDL3/SDL.h>
+#include "RigidPixelConfig.hpp"
 
 namespace rigid {
 
@@ -15,6 +16,7 @@ enum CollisionCategory : uint32_t {
 };
 struct BodyStore {
   b2WorldId world_id = b2_nullWorldId;
+  RigidPixelConfig cfg;
   std::vector<RegionID>   ids;
   std::vector<b2BodyId>   body_ids;
   std::vector<uint64_t>   versions;
@@ -23,7 +25,7 @@ struct BodyStore {
   std::unordered_map<RegionID, uint32_t> id_to_slot;
 };
 
-void body_store_init   (BodyStore& store, b2WorldId world_id);
+void body_store_init   (BodyStore& store, b2WorldId world_id, const RigidPixelConfig& cfg);
 void body_store_destroy(BodyStore& store);
 
 void physics_sync(

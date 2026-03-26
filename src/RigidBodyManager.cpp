@@ -26,7 +26,8 @@ static void store_remove_slot(BodyStore& store, uint32_t slot) {
     store.id_to_slot.erase(removed_id);
 }
 
-static void rebuild_fixtures(b2BodyId body_id, const RegionGeometry& geo, float pixel_count) {
+static void rebuild_fixtures(b2BodyId body_id, const RegionGeometry& geo, float pixel_count,
+                              const RigidPixelConfig& cfg) {
     int count = b2Body_GetShapeCount(body_id);
     if (count > 0) {
         std::vector<b2ShapeId> shapes(count);
@@ -36,8 +37,10 @@ static void rebuild_fixtures(b2BodyId body_id, const RegionGeometry& geo, float 
     }
 
     b2BodyType body_type = b2Body_GetType(body_id);
-    b2ShapeDef shape_def = b2DefaultShapeDef();
-    shape_def.density    = 1.0f;
+    b2ShapeDef shape_def              = b2DefaultShapeDef();
+    shape_def.density                 = cfg.density;
+    shape_def.material.friction       = cfg.friction;
+    shape_def.material.restitution    = cfg.restitution;
 
     if (body_type == b2_staticBody) {
         shape_def.filter.categoryBits = CAT_TERRAIN;
@@ -66,7 +69,8 @@ static void rebuild_fixtures(b2BodyId body_id, const RegionGeometry& geo, float 
 }
 
 static b2BodyId make_body(b2WorldId world_id, const RegionGeometry& geo,
-                           RegionID id, b2BodyType type, float pixel_count) {
+                           RegionID id, b2BodyType type, float pixel_count,
+                           const RigidPixelConfig& cfg) {
     if (std::isnan(geo.center.x) || std::isnan(geo.center.y) ||
         std::abs(geo.center.x) > 1e6f || std::abs(geo.center.y) > 1e6f)
         return b2_nullBodyId;
@@ -76,22 +80,23 @@ static b2BodyId make_body(b2WorldId world_id, const RegionGeometry& geo,
     b2BodyDef def      = b2DefaultBodyDef();
     def.type           = type;
     def.userData       = (void*)(uintptr_t)id;
-    def.enableSleep    = true;
-    def.linearDamping  = (type == b2_dynamicBody) ? 2.5f : 0.0f;
-    def.angularDamping = 0.1f;
+    def.enableSleep    = cfg.bodies_can_sleep;
+    def.linearDamping  = (type == b2_dynamicBody) ? cfg.linear_damping : 0.0f;
+    def.angularDamping = cfg.angular_damping;
     def.position       = { geo.center.x * PTM, geo.center.y * PTM };
     def.fixedRotation  = true;
     def.gravityScale   = 1.0f;
 
     b2BodyId body_id = b2CreateBody(world_id, &def);
-    rebuild_fixtures(body_id, geo, pixel_count);
+    rebuild_fixtures(body_id, geo, pixel_count, cfg);
     return body_id;
 }
 
 // ── Public API ────────────────────────────────────────────────────────────────
 
-void body_store_init(BodyStore& store, b2WorldId world_id) {
+void body_store_init(BodyStore& store, b2WorldId world_id, const RigidPixelConfig& cfg) {
     store.world_id = world_id;
+    store.cfg      = cfg;
 }
 
 void body_store_destroy(BodyStore& store) {
@@ -137,7 +142,7 @@ void physics_sync(
         auto slot_it = store.id_to_slot.find(id);
         if (slot_it == store.id_to_slot.end()) {
             // New body — append a slot
-            b2BodyId bid = make_body(store.world_id, geo, id, target, (float)record.pixel_count);
+            b2BodyId bid = make_body(store.world_id, geo, id, target, (float)record.pixel_count, store.cfg);
             if (!b2Body_IsValid(bid)) continue;
             uint32_t slot = (uint32_t)store.ids.size();
             store.ids.push_back(id);
@@ -189,11 +194,21 @@ void physics_sync(
         if ( complex && complex_budget >= 1) continue;
         if (!complex && normal_budget  >= 2) continue;
 
-        rebuild_fixtures(store.body_ids[i], geo, (float)rec_it->second.pixel_count);
+        rebuild_fixtures(store.body_ids[i], geo, (float)rec_it->second.pixel_count, store.cfg);
         store.topo_hashes[i] = geo.topology_hash;
         store.dirty[i]       = 0;
         complex ? ++complex_budget : ++normal_budget;
         if (normal_budget >= 2 && complex_budget >= 1) break;
+    }
+
+    // 4. Apply ambient idle force to every awake dynamic body
+    if (store.cfg.idle_force_x != 0.0f || store.cfg.idle_force_y != 0.0f) {
+        b2Vec2 force { store.cfg.idle_force_x, store.cfg.idle_force_y };
+        for (uint32_t i = 0; i < (uint32_t)store.ids.size(); ++i) {
+            b2BodyId bid = store.body_ids[i];
+            if (b2Body_IsValid(bid) && b2Body_GetType(bid) == b2_dynamicBody)
+                b2Body_ApplyForceToCenter(bid, force, true);
+        }
     }
 }
 
