@@ -38,22 +38,21 @@ void ApplyRegionMotion(
             continue;
         }
 
-        // Calculate Pixel Delta
-        int dx = static_cast<int>(std::round(region.center_f.x - region.prev_center_f.x));
-        int dy = static_cast<int>(std::round(region.center_f.y - region.prev_center_f.y));
+        // Delta from where pixels currently ARE (prev_center_f) to where Box2D says they should be.
+        // prev_center_f tracks the pixel position in float space — it is updated by the integer
+        // delta actually applied, NOT set to center_f directly.  This prevents sub-pixel
+        // remainders from being discarded each frame, which would cause pixels to drift behind
+        // the physics body over time and appear to float above objects they've landed on.
+        float fdx = region.center_f.x - region.prev_center_f.x;
+        float fdy = region.center_f.y - region.prev_center_f.y;
+        int dx = static_cast<int>(std::round(fdx));
+        int dy = static_cast<int>(std::round(fdy));
 
-// DEBUG PRINT: Check for insane deltas
-if (std::abs(dx) > width || std::abs(dy) > height) {
-    fprintf(stderr, "[CRITICAL] Insane Delta Detected for Region %u: dx=%d, dy=%d\n", id, dx, dy);
-    fprintf(stderr, "Center: %f, %f | Prev: %f, %f\n", 
-            region.center_f.x, region.center_f.y, 
-            region.prev_center_f.x, region.prev_center_f.y);
-    
-    // Recovery: prevent the loop from running and crashing
-    region.prev_center_f.x = region.center_f.x;
-    region.prev_center_f.y = region.center_f.y;
-    continue;
-}
+        // Sanity-clamp: skip insane deltas that would trash the grid
+        if (std::abs(dx) > width || std::abs(dy) > height) {
+            region.prev_center_f = region.center_f;
+            continue;
+        }
 
 
 
@@ -87,9 +86,10 @@ if (std::abs(dx) > width || std::abs(dy) > height) {
             }
         }
 
-        // Update tracking state
-        region.prev_center_f.x = region.center_f.x;
-        region.prev_center_f.y = region.center_f.y;
+        // Advance prev_center_f by exactly the integer pixels we moved —
+        // the fractional remainder is preserved for the next frame.
+        region.prev_center_f.x += dx;
+        region.prev_center_f.y += dy;
         region.bounds.min_x += dx;
         region.bounds.max_x += dx;
         region.bounds.min_y += dy;

@@ -150,6 +150,7 @@ CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o: /home/ceen/projects/ceren/src/Re
   /usr/include/bits/wchar.h \
   /usr/include/bits/wordsize.h \
   /usr/include/c++/15.2.1/algorithm \
+  /usr/include/c++/15.2.1/array \
   /usr/include/c++/15.2.1/backward/binders.h \
   /usr/include/c++/15.2.1/bit \
   /usr/include/c++/15.2.1/bits/algorithmfwd.h \
@@ -157,11 +158,15 @@ CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o: /home/ceen/projects/ceren/src/Re
   /usr/include/c++/15.2.1/bits/allocator.h \
   /usr/include/c++/15.2.1/bits/concept_check.h \
   /usr/include/c++/15.2.1/bits/cpp_type_traits.h \
+  /usr/include/c++/15.2.1/bits/enable_special_members.h \
+  /usr/include/c++/15.2.1/bits/erase_if.h \
   /usr/include/c++/15.2.1/bits/exception.h \
   /usr/include/c++/15.2.1/bits/exception_defines.h \
   /usr/include/c++/15.2.1/bits/functexcept.h \
   /usr/include/c++/15.2.1/bits/functional_hash.h \
   /usr/include/c++/15.2.1/bits/hash_bytes.h \
+  /usr/include/c++/15.2.1/bits/hashtable.h \
+  /usr/include/c++/15.2.1/bits/hashtable_policy.h \
   /usr/include/c++/15.2.1/bits/invoke.h \
   /usr/include/c++/15.2.1/bits/iterator_concepts.h \
   /usr/include/c++/15.2.1/bits/max_size_type.h \
@@ -169,6 +174,7 @@ CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o: /home/ceen/projects/ceren/src/Re
   /usr/include/c++/15.2.1/bits/memoryfwd.h \
   /usr/include/c++/15.2.1/bits/move.h \
   /usr/include/c++/15.2.1/bits/new_allocator.h \
+  /usr/include/c++/15.2.1/bits/node_handle.h \
   /usr/include/c++/15.2.1/bits/predefined_ops.h \
   /usr/include/c++/15.2.1/bits/ptr_traits.h \
   /usr/include/c++/15.2.1/bits/range_access.h \
@@ -180,6 +186,7 @@ CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o: /home/ceen/projects/ceren/src/Re
   /usr/include/c++/15.2.1/bits/refwrap.h \
   /usr/include/c++/15.2.1/bits/requires_hosted.h \
   /usr/include/c++/15.2.1/bits/std_abs.h \
+  /usr/include/c++/15.2.1/bits/std_function.h \
   /usr/include/c++/15.2.1/bits/stl_algo.h \
   /usr/include/c++/15.2.1/bits/stl_algobase.h \
   /usr/include/c++/15.2.1/bits/stl_bvector.h \
@@ -194,6 +201,7 @@ CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o: /home/ceen/projects/ceren/src/Re
   /usr/include/c++/15.2.1/bits/stl_uninitialized.h \
   /usr/include/c++/15.2.1/bits/stl_vector.h \
   /usr/include/c++/15.2.1/bits/uniform_int_dist.h \
+  /usr/include/c++/15.2.1/bits/unordered_map.h \
   /usr/include/c++/15.2.1/bits/uses_allocator.h \
   /usr/include/c++/15.2.1/bits/uses_allocator_args.h \
   /usr/include/c++/15.2.1/bits/utility.h \
@@ -206,9 +214,11 @@ CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o: /home/ceen/projects/ceren/src/Re
   /usr/include/c++/15.2.1/cstdlib \
   /usr/include/c++/15.2.1/debug/assertions.h \
   /usr/include/c++/15.2.1/debug/debug.h \
+  /usr/include/c++/15.2.1/ext/aligned_buffer.h \
   /usr/include/c++/15.2.1/ext/alloc_traits.h \
   /usr/include/c++/15.2.1/ext/numeric_traits.h \
   /usr/include/c++/15.2.1/ext/type_traits.h \
+  /usr/include/c++/15.2.1/functional \
   /usr/include/c++/15.2.1/initializer_list \
   /usr/include/c++/15.2.1/new \
   /usr/include/c++/15.2.1/numbers \
@@ -217,6 +227,8 @@ CMakeFiles/Ceren.dir/src/RegionExtractor.cpp.o: /home/ceen/projects/ceren/src/Re
   /usr/include/c++/15.2.1/pstl/pstl_config.h \
   /usr/include/c++/15.2.1/tuple \
   /usr/include/c++/15.2.1/type_traits \
+  /usr/include/c++/15.2.1/typeinfo \
+  /usr/include/c++/15.2.1/unordered_map \
   /usr/include/c++/15.2.1/vector \
   /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++allocator.h \
   /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h \
@@ -803,17 +815,22 @@ CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o: /home/ceen/projects/ceren/src/
   /usr/include/bits/waitstatus.h \
   /usr/include/bits/wchar.h \
   /usr/include/bits/wordsize.h \
+  /usr/include/c++/15.2.1/array \
   /usr/include/c++/15.2.1/backward/binders.h \
   /usr/include/c++/15.2.1/bit \
   /usr/include/c++/15.2.1/bits/alloc_traits.h \
   /usr/include/c++/15.2.1/bits/allocator.h \
   /usr/include/c++/15.2.1/bits/concept_check.h \
   /usr/include/c++/15.2.1/bits/cpp_type_traits.h \
+  /usr/include/c++/15.2.1/bits/enable_special_members.h \
+  /usr/include/c++/15.2.1/bits/erase_if.h \
   /usr/include/c++/15.2.1/bits/exception.h \
   /usr/include/c++/15.2.1/bits/exception_defines.h \
   /usr/include/c++/15.2.1/bits/functexcept.h \
   /usr/include/c++/15.2.1/bits/functional_hash.h \
   /usr/include/c++/15.2.1/bits/hash_bytes.h \
+  /usr/include/c++/15.2.1/bits/hashtable.h \
+  /usr/include/c++/15.2.1/bits/hashtable_policy.h \
   /usr/include/c++/15.2.1/bits/invoke.h \
   /usr/include/c++/15.2.1/bits/iterator_concepts.h \
   /usr/include/c++/15.2.1/bits/max_size_type.h \
@@ -821,6 +838,7 @@ CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o: /home/ceen/projects/ceren/src/
   /usr/include/c++/15.2.1/bits/memoryfwd.h \
   /usr/include/c++/15.2.1/bits/move.h \
   /usr/include/c++/15.2.1/bits/new_allocator.h \
+  /usr/include/c++/15.2.1/bits/node_handle.h \
   /usr/include/c++/15.2.1/bits/predefined_ops.h \
   /usr/include/c++/15.2.1/bits/ptr_traits.h \
   /usr/include/c++/15.2.1/bits/range_access.h \
@@ -831,6 +849,7 @@ CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o: /home/ceen/projects/ceren/src/
   /usr/include/c++/15.2.1/bits/requires_hosted.h \
   /usr/include/c++/15.2.1/bits/specfun.h \
   /usr/include/c++/15.2.1/bits/std_abs.h \
+  /usr/include/c++/15.2.1/bits/std_function.h \
   /usr/include/c++/15.2.1/bits/stl_algobase.h \
   /usr/include/c++/15.2.1/bits/stl_bvector.h \
   /usr/include/c++/15.2.1/bits/stl_construct.h \
@@ -841,6 +860,7 @@ CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o: /home/ceen/projects/ceren/src/
   /usr/include/c++/15.2.1/bits/stl_pair.h \
   /usr/include/c++/15.2.1/bits/stl_uninitialized.h \
   /usr/include/c++/15.2.1/bits/stl_vector.h \
+  /usr/include/c++/15.2.1/bits/unordered_map.h \
   /usr/include/c++/15.2.1/bits/uses_allocator.h \
   /usr/include/c++/15.2.1/bits/uses_allocator_args.h \
   /usr/include/c++/15.2.1/bits/utility.h \
@@ -854,9 +874,11 @@ CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o: /home/ceen/projects/ceren/src/
   /usr/include/c++/15.2.1/cstdio \
   /usr/include/c++/15.2.1/debug/assertions.h \
   /usr/include/c++/15.2.1/debug/debug.h \
+  /usr/include/c++/15.2.1/ext/aligned_buffer.h \
   /usr/include/c++/15.2.1/ext/alloc_traits.h \
   /usr/include/c++/15.2.1/ext/numeric_traits.h \
   /usr/include/c++/15.2.1/ext/type_traits.h \
+  /usr/include/c++/15.2.1/functional \
   /usr/include/c++/15.2.1/initializer_list \
   /usr/include/c++/15.2.1/limits \
   /usr/include/c++/15.2.1/math.h \
@@ -877,6 +899,8 @@ CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o: /home/ceen/projects/ceren/src/
   /usr/include/c++/15.2.1/tr1/special_function_util.h \
   /usr/include/c++/15.2.1/tuple \
   /usr/include/c++/15.2.1/type_traits \
+  /usr/include/c++/15.2.1/typeinfo \
+  /usr/include/c++/15.2.1/unordered_map \
   /usr/include/c++/15.2.1/vector \
   /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++allocator.h \
   /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h \
@@ -1182,6 +1206,7 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: /home/ceen/projects/ceren/src/main.cpp \
   /home/ceen/projects/ceren/include/RegionType.hpp \
   /home/ceen/projects/ceren/include/RigidBodyManager.hpp \
   /home/ceen/projects/ceren/include/RigidPixelConfig.hpp \
+  /home/ceen/projects/ceren/include/RigidPixelGrid.hpp \
   /home/ceen/projects/ceren/include/RigidPixelSystem.hpp \
   /home/ceen/projects/ceren/include/RigidPixelTypes.hpp \
   /home/ceen/projects/ceren/include/RigidPixelWorldView.hpp \
@@ -1324,6 +1349,7 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: /home/ceen/projects/ceren/src/main.cpp \
   /usr/include/bits/wchar.h \
   /usr/include/bits/wordsize.h \
   /usr/include/c++/15.2.1/algorithm \
+  /usr/include/c++/15.2.1/array \
   /usr/include/c++/15.2.1/backward/binders.h \
   /usr/include/c++/15.2.1/bit \
   /usr/include/c++/15.2.1/bits/algorithmfwd.h \
@@ -1370,6 +1396,7 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: /home/ceen/projects/ceren/src/main.cpp \
   /usr/include/c++/15.2.1/bits/requires_hosted.h \
   /usr/include/c++/15.2.1/bits/specfun.h \
   /usr/include/c++/15.2.1/bits/std_abs.h \
+  /usr/include/c++/15.2.1/bits/std_function.h \
   /usr/include/c++/15.2.1/bits/stl_algo.h \
   /usr/include/c++/15.2.1/bits/stl_algobase.h \
   /usr/include/c++/15.2.1/bits/stl_bvector.h \
@@ -1411,6 +1438,7 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: /home/ceen/projects/ceren/src/main.cpp \
   /usr/include/c++/15.2.1/ext/numeric_traits.h \
   /usr/include/c++/15.2.1/ext/string_conversions.h \
   /usr/include/c++/15.2.1/ext/type_traits.h \
+  /usr/include/c++/15.2.1/functional \
   /usr/include/c++/15.2.1/initializer_list \
   /usr/include/c++/15.2.1/iosfwd \
   /usr/include/c++/15.2.1/limits \
@@ -1439,6 +1467,7 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: /home/ceen/projects/ceren/src/main.cpp \
   /usr/include/c++/15.2.1/tr1/special_function_util.h \
   /usr/include/c++/15.2.1/tuple \
   /usr/include/c++/15.2.1/type_traits \
+  /usr/include/c++/15.2.1/typeinfo \
   /usr/include/c++/15.2.1/unordered_map \
   /usr/include/c++/15.2.1/vector \
   /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++allocator.h \
@@ -3198,6 +3227,8 @@ CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o:
 
 /home/ceen/projects/ceren/vendored/imgui/imconfig.h:
 
+/home/ceen/projects/ceren/include/RigidPixelGrid.hpp:
+
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/tmmintrin.h:
 
 /home/ceen/projects/ceren/include/MotionSystem.hpp:
@@ -3229,6 +3260,14 @@ CMakeFiles/Ceren.dir/src/StabilitySystem.cpp.o:
 /home/ceen/projects/ceren/include/StructuralTracker.hpp:
 
 /home/ceen/projects/ceren/src/StabilityResolver.cpp:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h:
+
+/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/float.h:
+
+/usr/include/bits/posix1_lim.h:
+
+/usr/include/wchar.h:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_mutex.h:
 
@@ -3312,6 +3351,12 @@ CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.o:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_scancode.h:
 
+/usr/include/signal.h:
+
+/usr/include/strings.h:
+
+/usr/include/c++/15.2.1/tr1/poly_laguerre.tcc:
+
 /usr/include/bits/types/__sigval_t.h:
 
 /usr/include/gnu/stubs-64.h:
@@ -3323,10 +3368,6 @@ CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.o:
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/mm_malloc.h:
 
 /usr/include/features-time64.h:
-
-/home/ceen/projects/ceren/vendored/imgui/backends/imgui_impl_sdl3.h:
-
-/usr/include/c++/15.2.1/bits/algorithmfwd.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/amxint8intrin.h:
 
@@ -3364,10 +3405,6 @@ CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.o:
 
 /usr/include/c++/15.2.1/concepts:
 
-/usr/include/bits/posix1_lim.h:
-
-/usr/include/wchar.h:
-
 /usr/include/c++/15.2.1/ext/aligned_buffer.h:
 
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/cpu_defines.h:
@@ -3379,8 +3416,6 @@ CMakeFiles/Ceren.dir/src/StructuralGraph.cpp.o:
 /usr/include/bits/sigaction.h:
 
 /usr/include/c++/15.2.1/bits/vector.tcc:
-
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h:
 
 /usr/include/asm-generic/errno.h:
 
@@ -3712,7 +3747,25 @@ CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o:
 
 /usr/include/c++/15.2.1/algorithm:
 
+/home/ceen/projects/ceren/vendored/imgui/backends/imgui_impl_sdl3.h:
+
+/usr/include/c++/15.2.1/bits/algorithmfwd.h:
+
+/usr/include/c++/15.2.1/array:
+
 /usr/include/c++/15.2.1/bits/ranges_algobase.h:
+
+/usr/include/c++/15.2.1/bits/std_function.h:
+
+/usr/include/c++/15.2.1/functional:
+
+/home/ceen/projects/ceren/vendored/imgui/imgui_demo.cpp:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL.h:
+
+/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_process.h:
+
+/usr/include/c++/15.2.1/typeinfo:
 
 /home/ceen/projects/ceren/vendored/imgui/backends/imgui_impl_sdlrenderer3.h:
 
@@ -3864,8 +3917,6 @@ CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_gamepad.h:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/float.h:
-
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_gpu.h:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_keyboard.h:
@@ -3897,12 +3948,6 @@ CMakeFiles/Ceren.dir/src/BasicConnectivityPolicy.cpp.o:
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_oldnames.h:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_pixels.h:
-
-/home/ceen/projects/ceren/vendored/imgui/imgui_demo.cpp:
-
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL.h:
-
-/home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_process.h:
 
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_rect.h:
 
@@ -3961,9 +4006,3 @@ CMakeFiles/Ceren.dir/src/StabilityResolver.cpp.o:
 /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_hidapi.h:
 
 /usr/include/bits/types/__mbstate_t.h:
-
-/usr/include/signal.h:
-
-/usr/include/c++/15.2.1/tr1/poly_laguerre.tcc:
-
-/usr/include/strings.h:

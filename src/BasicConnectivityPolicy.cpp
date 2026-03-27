@@ -34,7 +34,7 @@ void apply_basic_connectivity_policy(const StructuralGraph& graph, std::vector<b
             const auto& candidate = nodes[n_idx];
 
             // DIRECTIONAL RULE:
-            // The 'supporter' provides stability to the 'candidate' 
+            // The 'supporter' provides stability to the 'candidate'
             // ONLY if the supporter's bottom (max_y) is at or below the candidate's bottom.
             // This prevents the inner object of an "O" from being supported by the "O" top/sides.
             if (supporter.bounds.max_y >= candidate.bounds.max_y) {

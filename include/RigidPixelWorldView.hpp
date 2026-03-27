@@ -1,58 +1,24 @@
 #pragma once
 #include <cstdint>
+#include <functional>
 
 namespace world {
 
   using WorldRevision = uint64_t;
   using GroupID  = uint32_t;
   using ObjectID = uint32_t; // 0 = runtime solid, >0 = authored object identity
-  enum class CellSolidity : uint8_t {
-    Empty = 0,
-    Solid = 1
-  };
+
+  enum class CellSolidity : uint8_t { Empty = 0, Solid = 1 };
+
   struct WorldView final {
-    // ---- World bounds ----
-    int width;
-    int height;
-    // ---- Query functions ----
+    int width  = 0;
+    int height = 0;
 
-    /*
-        Returns the solidity of the cell at (x, y).
-
-        Out-of-bounds coordinates are treated as Empty.
-    */
-    CellSolidity (*solidity_at)(int x, int y);
-
-    /*
-        Returns a monotonically increasing revision number representing
-        the state of the world.
-
-        Revision semantics:
-        - The value must remain constant for the duration of a snapshot.
-        - Any mutation that affects solidity must increment the revision.
-    */
-    WorldRevision (*world_revision)();
-
-    /*
-        Returns a revision number associated with the region containing
-        (x, y).
-
-        Region revision semantics:
-        - Equal values imply no solidity-affecting change in that region.
-        - Different values imply at least one such change.
-        - Granularity is implementation-defined (cell, chunk, stripe, etc).
-    */
-    WorldRevision (*region_revision)(int x, int y);
-    GroupID  (*group_id_at)(int x, int y);
-    /*
-        Returns the authored object identity of the cell at (x, y).
-
-        object_id semantics:
-        - 0 = runtime solid: merges only with neighbours sharing the same group_id.
-        - >0 = authored object: merges with any solid neighbour that shares the same object_id,
-               regardless of material / group_id.
-    */
-    ObjectID (*object_id_at)(int x, int y);
+    std::function<CellSolidity(int x, int y)>    solidity_at;
+    std::function<WorldRevision()>               world_revision;
+    std::function<WorldRevision(int x, int y)>   region_revision;
+    std::function<GroupID(int x, int y)>         group_id_at;
+    std::function<ObjectID(int x, int y)>        object_id_at;
   };
-} 
 
+} // namespace world

@@ -23,7 +23,7 @@ struct RigidPixelConfig {
 
     // ── World physics ─────────────────────────────────────────────────────
     float gravity_x        = 0.0f;  // world gravity, x-axis
-    float gravity_y        = 9.8f;  // world gravity, y-axis  (positive = downward)
+    float gravity_y        = 9.0f;  // world gravity, y-axis  (positive = downward)
     bool  bodies_can_sleep = true;  // let Box2D sleep idle bodies (better perf)
     int   velocity_iters   = 1;     // Box2D sub-steps per tick (higher = more accurate)
 
@@ -41,7 +41,7 @@ struct RigidPixelConfig {
     //   idle_force_x =  0.3f   →  constant wind drift
     //   (leave at 0 for normal behaviour)
     float idle_force_x     = 0.0f;
-    float idle_force_y     = 1.0f;
+    float idle_force_y     = 0.0f;
 
     // ── Stability policy ──────────────────────────────────────────────────
     // Controls which regions get a static physics body vs a dynamic (falling) one.

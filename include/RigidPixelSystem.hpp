@@ -11,6 +11,7 @@
 #include <StabilityResolver.hpp>
 #include "RegionMesher.hpp"
 #include "RigidPixelConfig.hpp"
+#include "MotionSystem.hpp"
 
 namespace rigid {
 
@@ -34,6 +35,9 @@ public:
     /*  init — call once at startup.
         cfg is optional; defaults are used when omitted.  */
     void init(int width, int height, const RigidPixelConfig& cfg = {}) {
+        _width  = width;
+        _height = height;
+
         b2WorldDef wd  = b2DefaultWorldDef();
         wd.gravity     = { cfg.gravity_x, cfg.gravity_y };
         wd.enableSleep = cfg.bodies_can_sleep;
@@ -65,6 +69,9 @@ public:
     }
 
     // ── Per-frame pipeline ────────────────────────────────────────────────
+
+    /*  update — sync rigid regions with the current world state.
+        Call once per frame (not per physics sub-step).  */
     void update(const world::WorldView& view) {
         const uint64_t current_rev = view.world_revision();
 
@@ -103,6 +110,25 @@ public:
             last_processed_rev = current_rev;
             std::fill(structural_engine.dirty_flags.begin(), structural_engine.dirty_flags.end(), 0);
         }
+
+        // Always read back physics transforms so motion is up-to-date this frame
+        if (b2World_IsValid(body_store.world_id))
+            physics_read_transforms(body_store, tracker.active_regions);
+    }
+
+    /*  apply_motion — move pixel data in your grid to match physics body positions.
+        Call once per frame, after update().
+
+        PixelT  : your cell/pixel struct type
+        grid    : pointer to your flat pixel array  (width * height elements)
+        empty   : the value used to clear vacated cells  (e.g. Cell{})
+        revision: your world revision counter — incremented when pixels move  */
+    template<typename PixelT>
+    void apply_motion(PixelT* grid, const PixelT& empty, uint64_t& revision) {
+        if (!b2World_IsValid(body_store.world_id) || geometry_cache.empty()) return;
+        ApplyRegionMotion(grid, extractor.label_grid.data(),
+                          _width, _height, revision,
+                          tracker.active_regions, empty);
     }
 
 private:
@@ -155,6 +181,8 @@ private:
     }
 
     int _velocity_iters = 4;
+    int _width  = 0;
+    int _height = 0;
 
     void cleanup_dead_geometry() {
         const auto& active = tracker.active_regions;

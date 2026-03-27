@@ -215,8 +215,6 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: \
  /usr/include/c++/15.2.1/bits/ranges_algo.h \
  /usr/include/c++/15.2.1/bits/ranges_algobase.h \
  /usr/include/c++/15.2.1/pstl/glue_algorithm_defs.h \
- /home/ceen/projects/ceren/include/regionScratch.hpp \
- /home/ceen/projects/ceren/include/RigidPixelTypes.hpp \
  /home/ceen/projects/ceren/include/RigidPixelSystem.hpp \
  /usr/include/c++/15.2.1/unordered_map \
  /usr/include/c++/15.2.1/bits/unordered_map.h \
@@ -226,10 +224,15 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: \
  /usr/include/c++/15.2.1/bits/enable_special_members.h \
  /usr/include/c++/15.2.1/bits/node_handle.h \
  /usr/include/c++/15.2.1/bits/erase_if.h \
+ /home/ceen/projects/ceren/include/RigidPixelTypes.hpp \
  /home/ceen/projects/ceren/include/RegionExtractor.hpp \
+ /home/ceen/projects/ceren/include/regionScratch.hpp \
  /home/ceen/projects/ceren/include/RegionTracker.hpp \
  /home/ceen/projects/ceren/include/RegionType.hpp \
  /home/ceen/projects/ceren/include/RigidPixelWorldView.hpp \
+ /usr/include/c++/15.2.1/functional \
+ /usr/include/c++/15.2.1/bits/std_function.h \
+ /usr/include/c++/15.2.1/typeinfo /usr/include/c++/15.2.1/array \
  /home/ceen/projects/ceren/include/StructuralTracker.hpp \
  /home/ceen/projects/ceren/include/StructuralGraph.hpp \
  /home/ceen/projects/ceren/include/RigidBodyManager.hpp \
@@ -244,4 +247,5 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: \
  /home/ceen/projects/ceren/include/RegionMesher.hpp \
  /home/ceen/projects/ceren/include/RigidPixelConfig.hpp \
  /home/ceen/projects/ceren/include/StabilityResolver.hpp \
- /home/ceen/projects/ceren/include/MotionSystem.hpp
+ /home/ceen/projects/ceren/include/MotionSystem.hpp \
+ /home/ceen/projects/ceren/include/RigidPixelGrid.hpp
