@@ -313,7 +313,7 @@ static void SimplifyContour(std::vector<Vertex>& points) {
         // If the point is closer than 3.0 units, Nuke it.
         // This is the "Detail" slider. Increase 9.0f to 16.0f for even less detail.
         float distSq = std::pow(curr.x - last.x, 2) + std::pow(curr.y - last.y, 2);
-        if (distSq < 9.0f) continue; 
+        if (distSq < 8.0f) continue; 
 
         simplified.push_back(curr);
     }
@@ -374,11 +374,11 @@ RegionGeometry build_geometry(
     };
 
     auto getEdgePoint = [&](int x, int y, int edgeIdx) -> IPoint {
-        if (edgeIdx == 0) return { x * 2 + 1, y * 2 };
-        if (edgeIdx == 1) return { x * 2 + 2, y * 2 + 1 };
-        if (edgeIdx == 2) return { x * 2 + 1, y * 2 + 2 };
-        if (edgeIdx == 3) return { x * 2,     y * 2 + 1 };
-        return {0,0};
+      if (edgeIdx == 0) return { x * 2 + 1, y * 2 };     // Top Boundary
+    if (edgeIdx == 1) return { x * 2 + 2, y * 2 + 1 }; // Right Midpoint
+    if (edgeIdx == 2) return { x * 2 + 1, (y + 1) * 2 }; // Bottom Boundary (snapped to y+1)
+    if (edgeIdx == 3) return { x * 2,     y * 2 + 1 };
+          return {0,0};
     };
 
     // =====================================================
@@ -392,8 +392,9 @@ RegionGeometry build_geometry(
                 count++;
               geo.topology_hash = hash;
               if (count > 0) {
-                geo.center.x = (float)(centerX / count);
-                geo.center.y = (float)(centerY / count);
+                geo.center.x = (float)(centerX / count) -0.5f ;
+    geo.center.y = (float)(centerY / count) -0.5f ;
+ 
               } 
                 uint32_t localX = x - bounds.min_x;
                 uint32_t localY = y - bounds.min_y;
@@ -547,7 +548,7 @@ if (outerIt != geo.contours.end()) {
    // }
 
     std::vector<Vertex> optimizedPoly;
-DouglasPeucker(mainPoly, 0.25f, optimizedPoly); 
+DouglasPeucker(mainPoly, 0.1f, optimizedPoly); 
 RemoveCollinearPoints(optimizedPoly);
 if (optimizedPoly.size() >= 3) {
         bayazit::Decompose(optimizedPoly, convexPolygons);
@@ -560,16 +561,31 @@ if (optimizedPoly.size() >= 3) {
 
 // CRITICAL: Copy the resulting convex polygons into the geo record
 for (const auto& polyPoints : convexPolygons) {
-    if (polyPoints.size() >= 3) {
+
+  if (polyPoints.size() >= 3) {
         std::vector<Vertex> localPoints = polyPoints;
+        
         for (auto& pt : localPoints) {
-            // Subtract ONCE here
+            // 1. Get the vector from the center to this vertex
+            float dx = pt.x - geo.center.x;
+            float dy = pt.y - geo.center.y;
+            float dist = std::sqrt(dx * dx + dy * dy);
+
+            // 2. INSET: Move the vertex slightly TOWARD the center
+            // This pulls spiky corners and edges inward.
+            if (dist > 0.001f) {
+                float insetAmount = 0.15f; // Pull inward by 0.15 pixels
+                pt.x -= (dx / dist) * insetAmount;
+                pt.y -= (dy / dist) * insetAmount;
+            }
+
+            // 3. Convert to local coordinates for Box2D
             pt.x -= geo.center.x; 
             pt.y -= geo.center.y;
         }
         geo.convex_pieces.push_back({ localPoints });
     }
-}
+   }
 
 return geo;
    }

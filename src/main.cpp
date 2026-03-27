@@ -273,7 +273,8 @@ int main(int argc, char* argv[]) {
             for (auto const& [id, geo] : rigidSystem.geometry_cache) {
                 auto it = rigidSystem.tracker.active_regions.find(id);
                 if (it == rigidSystem.tracker.active_regions.end()) continue;
-                float cx = it->second.center_f.x, cy = it->second.center_f.y;
+                float cx = std::round(it->second.center_f.x); 
+        float cy = std::round(it->second.center_f.y);
                 SDL_SetRenderDrawColor(renderer, 255, 100, 0, 255);
                 for (const auto& piece : geo.convex_pieces) {
                     const auto& pts = piece.points;

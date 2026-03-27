@@ -43,10 +43,18 @@ void ApplyRegionMotion(
         // delta actually applied, NOT set to center_f directly.  This prevents sub-pixel
         // remainders from being discarded each frame, which would cause pixels to drift behind
         // the physics body over time and appear to float above objects they've landed on.
-        float fdx = region.center_f.x - region.prev_center_f.x;
-        float fdy = region.center_f.y - region.prev_center_f.y;
-        int dx = static_cast<int>(std::round(fdx));
-        int dy = static_cast<int>(std::round(fdy));
+        //
+        //
+        // Snap both centers to grid BEFORE diffing
+int target_cx = static_cast<int>(std::round(region.center_f.x));
+int target_cy = static_cast<int>(std::round(region.center_f.y));
+
+int prev_cx = static_cast<int>(std::round(region.prev_center_f.x));
+int prev_cy = static_cast<int>(std::round(region.prev_center_f.y));
+
+int dx = target_cx - prev_cx;
+int dy = target_cy - prev_cy;
+   
 
         // Sanity-clamp: skip insane deltas that would trash the grid
         if (std::abs(dx) > width || std::abs(dy) > height) {
@@ -81,15 +89,23 @@ void ApplyRegionMotion(
                 int tx = x + dx;
                 int ty = y + dy;
                 if (tx >= 0 && tx < width && ty >= 0 && ty < height) {
-                    write_buffer[static_cast<size_t>(ty) * width + tx] = pixel_grid[src_idx];
+                  size_t dst_idx = static_cast<size_t>(ty) * width + tx;
+
+// Only write if empty (simple conservative rule)
+if (write_buffer[dst_idx].type == empty_value.type) {
+    write_buffer[dst_idx] = pixel_grid[src_idx];
+}
                 }
             }
         }
 
         // Advance prev_center_f by exactly the integer pixels we moved —
         // the fractional remainder is preserved for the next frame.
-        region.prev_center_f.x += dx;
-        region.prev_center_f.y += dy;
+        //
+        // Snap prev to the SAME discrete position we just used
+region.prev_center_f.x = static_cast<float>(target_cx);
+region.prev_center_f.y = static_cast<float>(target_cy);
+
         region.bounds.min_x += dx;
         region.bounds.max_x += dx;
         region.bounds.min_y += dy;

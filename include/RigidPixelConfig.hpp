@@ -30,7 +30,7 @@ struct RigidPixelConfig {
     // ── Per-body material defaults ────────────────────────────────────────
     float density          = 1.0f;
     float friction         = 0.5f;
-    float restitution      = 0.1f;  // bounciness  (0 = no bounce, 1 = elastic)
+    float restitution      = 0.0f;  // bounciness  (0 = no bounce, 1 = elastic)
     float linear_damping   = 2.5f;  // air resistance on linear velocity
     float angular_damping  = 0.1f;  // air resistance on rotation
 
