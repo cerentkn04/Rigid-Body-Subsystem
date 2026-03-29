@@ -353,12 +353,14 @@ RegionGeometry build_geometry(
     const CellAABB& bounds,
     const std::vector<uint32_t>& labelGrid,
     int gridWidth,
-    int gridHeight)
+    int gridHeight,
+    Vertex stableCenter)
 {
     RegionGeometry geo;
     geo.region_id = regionID;
     geo.version = 0;
-
+    geo.center.x = stableCenter.x; // ✅ Works
+geo.center.y = stableCenter.y;
     uint64_t hash = 0x811C9DC5;
 
     double centerX = 0.0;
@@ -560,32 +562,35 @@ if (optimizedPoly.size() >= 3) {
 }
 
 // CRITICAL: Copy the resulting convex polygons into the geo record
+//
+//
+
+
 for (const auto& polyPoints : convexPolygons) {
+        if (polyPoints.size() >= 3) {
+            std::vector<Vertex> localPoints = polyPoints;
+            
+            for (auto& pt : localPoints) {
+                // Calculate vector from the STABLE center to vertex
+                float dx = pt.x - stableCenter.x;
+                float dy = pt.y - stableCenter.y;
+                float dist = std::sqrt(dx * dx + dy * dy);
 
-  if (polyPoints.size() >= 3) {
-        std::vector<Vertex> localPoints = polyPoints;
-        
-        for (auto& pt : localPoints) {
-            // 1. Get the vector from the center to this vertex
-            float dx = pt.x - geo.center.x;
-            float dy = pt.y - geo.center.y;
-            float dist = std::sqrt(dx * dx + dy * dy);
+                // Apply your inset logic relative to the stable center
+                if (dist > 0.001f) {
+                    float insetAmount = 0.15f; 
+                    pt.x -= (dx / dist) * insetAmount;
+                    pt.y -= (dy / dist) * insetAmount;
+                }
 
-            // 2. INSET: Move the vertex slightly TOWARD the center
-            // This pulls spiky corners and edges inward.
-            if (dist > 0.001f) {
-                float insetAmount = 0.15f; // Pull inward by 0.15 pixels
-                pt.x -= (dx / dist) * insetAmount;
-                pt.y -= (dy / dist) * insetAmount;
+                // Convert to local coordinates relative to stable center
+                pt.x -= stableCenter.x; 
+                pt.y -= stableCenter.y;
             }
-
-            // 3. Convert to local coordinates for Box2D
-            pt.x -= geo.center.x; 
-            pt.y -= geo.center.y;
+            geo.convex_pieces.push_back({ localPoints });
         }
-        geo.convex_pieces.push_back({ localPoints });
     }
-   }
+
 
 return geo;
    }

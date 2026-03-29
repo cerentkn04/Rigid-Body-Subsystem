@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-#include <cstdint>
 #include "regionScratch.hpp"
 namespace world { struct WorldView; }
 

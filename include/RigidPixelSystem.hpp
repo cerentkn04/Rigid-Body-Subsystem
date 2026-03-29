@@ -173,7 +173,8 @@ private:
             const RegionRecord& region = rec_it->second;
             auto cache_it = geometry_cache.find(id);
             if (cache_it == geometry_cache.end() || cache_it->second.version != region.version) {
-                RegionGeometry geo = build_geometry(idx, build_records[idx].bounds, extractor.label_grid, view.width, view.height);
+                RegionGeometry geo = build_geometry(idx, build_records[idx].bounds, extractor.label_grid, view.width, view.height,Vertex{ region.center_f.x, region.center_f.y });
+
                 geo.version = region.version;
                 geometry_cache[id] = std::move(geo);
             }

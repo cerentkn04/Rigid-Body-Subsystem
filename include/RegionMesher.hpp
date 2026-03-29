@@ -31,6 +31,7 @@ RegionGeometry build_geometry(
     const CellAABB& bounds,
     const std::vector<uint32_t>& label_grid,
     int grid_width,
-    int grid_height);
+    int grid_height,
+    Vertex stableCenter);
 
 } // namespace rigid
