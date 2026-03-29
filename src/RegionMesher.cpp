@@ -363,9 +363,7 @@ RegionGeometry build_geometry(
 geo.center.y = stableCenter.y;
     uint64_t hash = 0x811C9DC5;
 
-    double centerX = 0.0;
-    double centerY = 0.0;
-    uint32_t count = 0;
+ 
 
     std::vector<Edge> edges;
 
@@ -389,15 +387,7 @@ geo.center.y = stableCenter.y;
     for (int y = bounds.min_y - 1; y <= bounds.max_y +1; ++y) {
         for (int x = bounds.min_x - 1; x <= bounds.max_x +1; ++x) {
             if (getLabel(x, y) == regionID) {
-              centerX += x;
-                centerY += y;
-                count++;
-              geo.topology_hash = hash;
-              if (count > 0) {
-                geo.center.x = (float)(centerX / count) -0.5f ;
-    geo.center.y = (float)(centerY / count) -0.5f ;
- 
-              } 
+    
                 uint32_t localX = x - bounds.min_x;
                 uint32_t localY = y - bounds.min_y;
                 uint32_t combined = (localX << 16) | localY;
