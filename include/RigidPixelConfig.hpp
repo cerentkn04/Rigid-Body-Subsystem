@@ -28,11 +28,11 @@ struct RigidPixelConfig {
     int   velocity_iters   = 1;     // Box2D sub-steps per tick (higher = more accurate)
 
     // ── Per-body material defaults ────────────────────────────────────────
-    float density          = 1.0f;
+    float density          = 100.0f;
     float friction         = 0.5f;
-    float restitution      = 0.0f;  // bounciness  (0 = no bounce, 1 = elastic)
+    float restitution      = 0.5f;  // bounciness  (0 = no bounce, 1 = elastic)
     float linear_damping   = 2.5f;  // air resistance on linear velocity
-    float angular_damping  = 0.1f;  // air resistance on rotation
+    float angular_damping  = 0.5f;  // air resistance on rotation
 
     // ── Ambient / idle force ──────────────────────────────────────────────
     // Applied to every dynamic body every physics step.

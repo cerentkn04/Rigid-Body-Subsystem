@@ -7,6 +7,7 @@ namespace rigid {
 
 struct ExtractorState {
     std::vector<RegionIndex> label_grid;
+    bool merge_same_type = false;
 };
 
 void extractor_extract(

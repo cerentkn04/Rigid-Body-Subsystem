@@ -81,8 +81,9 @@ public:
         }
     }
 
-    void placeCell(int x, int y, CellType type, int brushSize = 1) {
+    void placeCell(int x, int y, CellType type, int brushSize = 1, uint32_t instanceId = 0) {
         std::uniform_int_distribution<uint8_t> dist(0, 30);
+        bool isSolid = (type == CellType::Rock || type == CellType::Wood);
         for (int dy = -brushSize+1; dy < brushSize; ++dy) {
             for (int dx = -brushSize+1; dx < brushSize; ++dx) {
                 int nx = x+dx, ny = y+dy;
@@ -91,6 +92,7 @@ public:
                 if (old == type) continue;
                 at(nx, ny).type           = type;
                 at(nx, ny).colorVariation = dist(rng);
+                at(nx, ny).object_id      = isSolid ? instanceId : 0;
                 bool solid_change = old == CellType::Rock || old == CellType::Wood
                                  || type == CellType::Rock || type == CellType::Wood;
                 if (solid_change) grid.mark_solid_changed(nx, ny);
@@ -173,6 +175,8 @@ int main(int argc, char* argv[]) {
     bool colorByRegion    = true;
     bool running = true, paused = false, mouseDown = false;
     int  selectedMaterial = 0, brushSize = 3;
+    uint32_t nextInstanceId = 2; // 1 is reserved for the authored dagger
+    uint32_t currentStrokeId = 0;
     const char* materials[] = { "Sand", "Water", "Wood", "Rock", "Eraser" };
 
     SDL_Texture* gridTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, GRID_WIDTH, GRID_HEIGHT);
@@ -188,7 +192,10 @@ int main(int argc, char* argv[]) {
         while (SDL_PollEvent(&event)) {
             ImGui_ImplSDL3_ProcessEvent(&event);
             if (event.type == SDL_EVENT_QUIT) running = false;
-            if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN && !io.WantCaptureMouse) mouseDown = true;
+            if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN && !io.WantCaptureMouse) {
+                mouseDown = true;
+                currentStrokeId = nextInstanceId++;
+            }
             if (event.type == SDL_EVENT_MOUSE_BUTTON_UP)   mouseDown = false;
             if (event.type == SDL_EVENT_KEY_DOWN && !io.WantCaptureKeyboard) {
                 switch (event.key.key) {
@@ -211,7 +218,9 @@ int main(int argc, char* argv[]) {
                             selectedMaterial == 1 ? CellType::Water :
                             selectedMaterial == 2 ? CellType::Wood  :
                             selectedMaterial == 3 ? CellType::Rock  : CellType::Empty;
-            sim.placeCell(gx, gy, type, brushSize);
+            bool isSolid = (type == CellType::Rock || type == CellType::Wood);
+            uint32_t instanceId = (isSolid && !rigidSystem.extractor.merge_same_type) ? currentStrokeId : 0;
+            sim.placeCell(gx, gy, type, brushSize, instanceId);
         }
 
         Uint64 now = SDL_GetTicks();
@@ -302,6 +311,7 @@ int main(int argc, char* argv[]) {
         ImGui::Checkbox("Paused (Space)", &paused);
         ImGui::Checkbox("Color by Region ID", &colorByRegion);
         ImGui::Checkbox("Show Physics Hulls (Debug)", &showPhysicsHulls);
+        ImGui::Checkbox("Merge Same Type", &rigidSystem.extractor.merge_same_type);
         if (ImGui::Button("Clear (C)")) sim.clear();
         ImGui::Text("Active Regions: %zu", rigidSystem.tracker.active_regions.size());
         ImGui::Text("Geometry Cache: %zu", rigidSystem.geometry_cache.size());

@@ -46,7 +46,7 @@ void extractor_extract(
         world::ObjectID oa = world.object_id_at(ax, ay);
         world::ObjectID ob = world.object_id_at(bx, by);
         if (oa != 0 && oa == ob) return true;               // same authored object
-        if (oa == 0 && ob == 0)
+        if (oa == 0 && ob == 0 && state.merge_same_type)
             return world.group_id_at(ax, ay) == world.group_id_at(bx, by); // same runtime material
         return false;
     };
