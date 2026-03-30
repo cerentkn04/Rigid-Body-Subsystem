@@ -131,8 +131,13 @@ void tracker_process_frame(
                            (old.bounds.min_y != build.bounds.min_y);
             rec.version = changed ? old.version + 1 : old.version;
         } else {
-            rec.center_f      = { 0.0f, 0.0f };
-            rec.prev_center_f = { 0.0f, 0.0f };
+            // Seed center_f at bounding box midpoint so the first-frame body
+            // is placed at the correct world position instead of the origin.
+            rec.center_f = {
+                (build.bounds.min_x + build.bounds.max_x) * 0.5f,
+                (build.bounds.min_y + build.bounds.max_y) * 0.5f
+            };
+            rec.prev_center_f = rec.center_f;
             rec.version       = 1;
         }
     }

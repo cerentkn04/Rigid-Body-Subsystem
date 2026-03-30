@@ -16,6 +16,8 @@ static void store_remove_slot(BodyStore& store, uint32_t slot) {
         store.versions[slot]        = store.versions[last];
         store.topo_hashes[slot]     = store.topo_hashes[last];
         store.dirty[slot]           = store.dirty[last];
+        store.subpixel_x[slot]      = store.subpixel_x[last];
+        store.subpixel_y[slot]      = store.subpixel_y[last];
         store.id_to_slot[moved_id]  = slot;
     }
     store.ids.pop_back();
@@ -23,6 +25,8 @@ static void store_remove_slot(BodyStore& store, uint32_t slot) {
     store.versions.pop_back();
     store.topo_hashes.pop_back();
     store.dirty.pop_back();
+    store.subpixel_x.pop_back();
+    store.subpixel_y.pop_back();
     store.id_to_slot.erase(removed_id);
 }
 
@@ -107,6 +111,8 @@ void body_store_destroy(BodyStore& store) {
     store.versions.clear();
     store.topo_hashes.clear();
     store.dirty.clear();
+    store.subpixel_x.clear();
+    store.subpixel_y.clear();
     store.id_to_slot.clear();
 }
 
@@ -150,6 +156,8 @@ void physics_sync(
             store.versions.push_back(record.version);
             store.topo_hashes.push_back(geo.topology_hash);
             store.dirty.push_back(0);
+            store.subpixel_x.push_back(0.0f);
+            store.subpixel_y.push_back(0.0f);
             store.id_to_slot[id] = slot;
         } else {
             uint32_t   slot    = slot_it->second;
@@ -213,7 +221,7 @@ void physics_sync(
 }
 
 void physics_read_transforms(
-    const BodyStore& store,
+    BodyStore& store,
     std::unordered_map<RegionID, RegionRecord>& active_regions)
 {
     for (auto& [id, record] : active_regions)
@@ -228,13 +236,31 @@ void physics_read_transforms(
 
         RegionRecord& record = it->second;
         b2Vec2 pos = b2Body_GetPosition(bid);
+        FloatPos new_center_f = { pos.x * MTP, pos.y * MTP };
 
         if (!record.motion_initialized) {
-            record.center_f           = { pos.x * MTP, pos.y * MTP };
-            record.prev_center_f      = record.center_f;
+            record.center_f           = new_center_f;
+            record.prev_center_f      = new_center_f;
             record.motion_initialized = true;
+            record.pending_dx         = 0;
+            record.pending_dy         = 0;
+            store.subpixel_x[i]       = 0.0f;
+            store.subpixel_y[i]       = 0.0f;
         } else {
-            record.center_f = { pos.x * MTP, pos.y * MTP };
+            // Accumulate the true continuous delta into the per-body subpixel buffer.
+            // Small impulses and contact corrections accumulate until they cross a pixel.
+            store.subpixel_x[i] += new_center_f.x - record.prev_center_f.x;
+            store.subpixel_y[i] += new_center_f.y - record.prev_center_f.y;
+
+            int dx = static_cast<int>(std::round(store.subpixel_x[i]));
+            int dy = static_cast<int>(std::round(store.subpixel_y[i]));
+            store.subpixel_x[i] -= static_cast<float>(dx);
+            store.subpixel_y[i] -= static_cast<float>(dy);
+
+            record.pending_dx    = dx;
+            record.pending_dy    = dy;
+            record.center_f      = new_center_f;
+            record.prev_center_f = new_center_f;
         }
         record.is_dynamic = (b2Body_GetType(bid) == b2_dynamicBody);
     }

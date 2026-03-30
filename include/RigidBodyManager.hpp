@@ -22,6 +22,8 @@ struct BodyStore {
   std::vector<uint64_t>   versions;
   std::vector<uint64_t>   topo_hashes;
   std::vector<uint8_t>    dirty;       // 1 = fixture rebuild pending
+  std::vector<float>      subpixel_x;  // per-body subpixel remainder (x)
+  std::vector<float>      subpixel_y;  // per-body subpixel remainder (y)
   std::unordered_map<RegionID, uint32_t> id_to_slot;
 };
 
@@ -36,7 +38,7 @@ void physics_sync(
   const std::unordered_map<RegionID, RegionRecord>& active_regions);
 
 void physics_read_transforms(
-    const BodyStore& store,
+    BodyStore& store,
     std::unordered_map<RegionID, RegionRecord>& active_regions);
 
 void physics_render_debug(

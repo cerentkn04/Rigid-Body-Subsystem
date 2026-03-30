@@ -23,12 +23,12 @@ struct RigidPixelConfig {
 
     // ── World physics ─────────────────────────────────────────────────────
     float gravity_x        = 0.0f;  // world gravity, x-axis
-    float gravity_y        = 9.0f;  // world gravity, y-axis  (positive = downward)
+    float gravity_y        = 0.0f;  // world gravity, y-axis  (positive = downward)
     bool  bodies_can_sleep = true;  // let Box2D sleep idle bodies (better perf)
     int   velocity_iters   = 1;     // Box2D sub-steps per tick (higher = more accurate)
 
     // ── Per-body material defaults ────────────────────────────────────────
-    float density          = 100.0f;
+    float density          = 1.0f;
     float friction         = 0.5f;
     float restitution      = 0.5f;  // bounciness  (0 = no bounce, 1 = elastic)
     float linear_damping   = 2.5f;  // air resistance on linear velocity

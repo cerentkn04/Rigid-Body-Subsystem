@@ -31,6 +31,8 @@ struct RegionRecord {
     uint32_t current_index = UINT32_MAX; // frame-local index into label_grid
     FloatPos center_f;
     FloatPos prev_center_f;
+    int pending_dx = 0;  // integer pixel delta computed per-body in physics_read_transforms
+    int pending_dy = 0;
 };
 
 } // namespace rigid

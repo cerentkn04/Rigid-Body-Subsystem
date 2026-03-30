@@ -38,23 +38,11 @@ void ApplyRegionMotion(
             continue;
         }
 
-        // Delta from where pixels currently ARE (prev_center_f) to where Box2D says they should be.
-        // prev_center_f tracks the pixel position in float space — it is updated by the integer
-        // delta actually applied, NOT set to center_f directly.  This prevents sub-pixel
-        // remainders from being discarded each frame, which would cause pixels to drift behind
-        // the physics body over time and appear to float above objects they've landed on.
-        //
-        //
-        // Snap both centers to grid BEFORE diffing
-int target_cx = static_cast<int>(std::round(region.center_f.x));
-int target_cy = static_cast<int>(std::round(region.center_f.y));
+        // Integer pixel delta computed per-body in physics_read_transforms.
+        // Subpixel remainders accumulate in BodyStore (per body), not here.
+        int dx = region.pending_dx;
+        int dy = region.pending_dy;
 
-int prev_cx = static_cast<int>(std::round(region.prev_center_f.x));
-int prev_cy = static_cast<int>(std::round(region.prev_center_f.y));
-
-int dx = target_cx - prev_cx;
-int dy = target_cy - prev_cy;
-   
 
         // Sanity-clamp: skip insane deltas that would trash the grid
         if (std::abs(dx) > width || std::abs(dy) > height) {
@@ -98,13 +86,6 @@ if (write_buffer[dst_idx].type == empty_value.type) {
                 }
             }
         }
-
-        // Advance prev_center_f by exactly the integer pixels we moved —
-        // the fractional remainder is preserved for the next frame.
-        //
-        // Snap prev to the SAME discrete position we just used
-region.prev_center_f.x = static_cast<float>(target_cx);
-region.prev_center_f.y = static_cast<float>(target_cy);
 
         region.bounds.min_x += dx;
         region.bounds.max_x += dx;

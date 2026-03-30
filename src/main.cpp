@@ -131,7 +131,10 @@ int main(int argc, char* argv[]) {
     );
 
     rigid::RigidPixelSystem rigidSystem;
-    rigidSystem.init(GRID_WIDTH, GRID_HEIGHT);
+    rigid::RigidPixelConfig cfg;
+    cfg.linear_damping = 0.1f;   // nearly no air resistance so the block reaches the target
+    cfg.gravity_y      = 0.0f;   // horizontal-only test
+    rigidSystem.init(GRID_WIDTH, GRID_HEIGHT, cfg);
 
     // ── Initial object: dagger (object_id = 1) ───────────────────────────
     // Blade (Rock) — tapers from single-pixel tip down to a 9-pixel base
@@ -160,9 +163,19 @@ int main(int argc, char* argv[]) {
             sim.placeCell(x, y, CellType::Wood, 1);
             sim.at(x, y).object_id = 1;
         }
-    //
-
-
+    // ── Test: two blocks — static (id=2) on the right, moving (id=3) on the left ─
+    // Static block
+    for (int y = 65; y <= 80; ++y)
+        for (int x = 145; x <= 165; ++x) {
+            sim.placeCell(x, y, CellType::Rock, 1);
+            sim.at(x, y).object_id = 2;
+        }
+    // Moving block
+    for (int y = 65; y <= 80; ++y)
+        for (int x = 30; x <= 50; ++x) {
+            sim.placeCell(x, y, CellType::Rock, 1);
+            sim.at(x, y).object_id = 3;
+        }
 
 
     IMGUI_CHECKVERSION();
@@ -171,6 +184,8 @@ int main(int argc, char* argv[]) {
     ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
     ImGui_ImplSDLRenderer3_Init(renderer);
 
+    bool  velocity_kicked   = false;
+    float kick_velocity     = 6.0f;   // exposed in UI
     bool showPhysicsHulls = false;
     bool colorByRegion    = true;
     bool running = true, paused = false, mouseDown = false;
@@ -236,6 +251,23 @@ int main(int argc, char* argv[]) {
 
         // ── Rigid system ──────────────────────────────────────────────────
         rigidSystem.update(view);
+
+        // One-shot: kick the moving block (object_id=3) rightward on first frame.
+        // Identify it by its bounding box (x=30-50, y=65-80).
+        if (!velocity_kicked) {
+            for (uint32_t i = 0; i < (uint32_t)rigidSystem.body_store.ids.size(); ++i) {
+                b2BodyId bid = rigidSystem.body_store.body_ids[i];
+                if (!b2Body_IsValid(bid)) continue;
+                auto it = rigidSystem.tracker.active_regions.find(rigidSystem.body_store.ids[i]);
+                if (it == rigidSystem.tracker.active_regions.end()) continue;
+                const auto& b = it->second.bounds;
+                if (b.min_x >= 25 && b.max_x <= 60 && b.min_y >= 60 && b.max_y <= 85) {
+                    b2Body_SetLinearVelocity(bid, { kick_velocity, 0.0f });
+                    velocity_kicked = true;
+                    break;
+                }
+            }
+        }
         rigidSystem.apply_motion(sim.grid.data(), Cell{ CellType::Empty }, sim.grid.world_revision);
 
         // ── Render ────────────────────────────────────────────────────────
@@ -322,6 +354,26 @@ int main(int argc, char* argv[]) {
             ImGui::Text("World ID: %llu", (unsigned long long)rigidSystem.body_store.world_id.index1);
         }
         ImGui::Text("FPS: %.1f", io.Framerate);
+        ImGui::Separator();
+        ImGui::Text("Physics Test:");
+        ImGui::SliderFloat("Kick Speed (m/s)", &kick_velocity, 0.5f, 30.0f);
+        if (ImGui::Button("Re-launch Block")) {
+            for (uint32_t i = 0; i < (uint32_t)rigidSystem.body_store.ids.size(); ++i) {
+                b2BodyId bid = rigidSystem.body_store.body_ids[i];
+                if (!b2Body_IsValid(bid)) continue;
+                auto it = rigidSystem.tracker.active_regions.find(rigidSystem.body_store.ids[i]);
+                if (it == rigidSystem.tracker.active_regions.end()) continue;
+                const auto& bnd = it->second.bounds;
+                int cx = (bnd.min_x + bnd.max_x) / 2;
+                int cy = (bnd.min_y + bnd.max_y) / 2;
+                // Identify the moving block by its approximate bounding region
+                if (cx > 0 && cx < 100 && cy > 50 && cy < 100 &&
+                    b2Body_GetType(bid) == b2_dynamicBody) {
+                    b2Body_SetLinearVelocity(bid, { kick_velocity, 0.0f });
+                    break;
+                }
+            }
+        }
         ImGui::End();
         ImGui::Render();
         ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
