@@ -18,6 +18,7 @@ static void store_remove_slot(BodyStore& store, uint32_t slot) {
         store.dirty[slot]           = store.dirty[last];
         store.subpixel_x[slot]      = store.subpixel_x[last];
         store.subpixel_y[slot]      = store.subpixel_y[last];
+        store.prev_angle[slot]      = store.prev_angle[last];
         store.id_to_slot[moved_id]  = slot;
     }
     store.ids.pop_back();
@@ -27,6 +28,7 @@ static void store_remove_slot(BodyStore& store, uint32_t slot) {
     store.dirty.pop_back();
     store.subpixel_x.pop_back();
     store.subpixel_y.pop_back();
+    store.prev_angle.pop_back();
     store.id_to_slot.erase(removed_id);
 }
 
@@ -88,7 +90,7 @@ static b2BodyId make_body(b2WorldId world_id, const RegionGeometry& geo,
     def.linearDamping  = (type == b2_dynamicBody) ? cfg.linear_damping : 0.0f;
     def.angularDamping = cfg.angular_damping;
     def.position       = { geo.center.x * PTM, geo.center.y * PTM };
-    def.fixedRotation  = true;
+    def.fixedRotation  = false;
     def.gravityScale   = 1.0f;
 
     b2BodyId body_id = b2CreateBody(world_id, &def);
@@ -113,6 +115,7 @@ void body_store_destroy(BodyStore& store) {
     store.dirty.clear();
     store.subpixel_x.clear();
     store.subpixel_y.clear();
+    store.prev_angle.clear();
     store.id_to_slot.clear();
 }
 
@@ -158,6 +161,7 @@ void physics_sync(
             store.dirty.push_back(0);
             store.subpixel_x.push_back(0.0f);
             store.subpixel_y.push_back(0.0f);
+            store.prev_angle.push_back(0.0f);
             store.id_to_slot[id] = slot;
         } else {
             uint32_t   slot    = slot_it->second;
@@ -238,17 +242,22 @@ void physics_read_transforms(
         b2Vec2 pos = b2Body_GetPosition(bid);
         FloatPos new_center_f = { pos.x * MTP, pos.y * MTP };
 
+        b2Rot rot        = b2Body_GetRotation(bid);
+        float curr_angle = std::atan2(rot.s, rot.c);
+
         if (!record.motion_initialized) {
             record.center_f           = new_center_f;
             record.prev_center_f      = new_center_f;
             record.motion_initialized = true;
             record.pending_dx         = 0;
             record.pending_dy         = 0;
+            record.pending_angle      = 0.0f;
+            record.absolute_angle     = curr_angle;
             store.subpixel_x[i]       = 0.0f;
             store.subpixel_y[i]       = 0.0f;
+            store.prev_angle[i]       = curr_angle;
         } else {
-            // Accumulate the true continuous delta into the per-body subpixel buffer.
-            // Small impulses and contact corrections accumulate until they cross a pixel.
+            // Translation — accumulate continuous delta into per-body subpixel buffer
             store.subpixel_x[i] += new_center_f.x - record.prev_center_f.x;
             store.subpixel_y[i] += new_center_f.y - record.prev_center_f.y;
 
@@ -257,10 +266,22 @@ void physics_read_transforms(
             store.subpixel_x[i] -= static_cast<float>(dx);
             store.subpixel_y[i] -= static_cast<float>(dy);
 
-            record.pending_dx    = dx;
-            record.pending_dy    = dy;
-            record.center_f      = new_center_f;
-            record.prev_center_f = new_center_f;
+            // Rotation — delta angle since last frame, normalised to [-π, π]
+            float d_angle = curr_angle - store.prev_angle[i];
+            if (d_angle >  M_PI) d_angle -= 2.0f * M_PI;
+            if (d_angle < -M_PI) d_angle += 2.0f * M_PI;
+
+            // Pivot = body center in pixel space before this frame's motion
+            record.pending_pivot_x = static_cast<int>(std::round(record.prev_center_f.x));
+            record.pending_pivot_y = static_cast<int>(std::round(record.prev_center_f.y));
+            record.pending_dx      = dx;
+            record.pending_dy      = dy;
+            record.pending_angle   = d_angle;
+
+            store.prev_angle[i]    = curr_angle;
+            record.absolute_angle  = curr_angle;
+            record.center_f        = new_center_f;
+            record.prev_center_f   = new_center_f;
         }
         record.is_dynamic = (b2Body_GetType(bid) == b2_dynamicBody);
     }

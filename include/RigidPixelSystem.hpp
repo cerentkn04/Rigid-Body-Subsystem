@@ -126,7 +126,7 @@ public:
     template<typename PixelT>
     void apply_motion(PixelT* grid, const PixelT& empty, uint64_t& revision) {
         if (!b2World_IsValid(body_store.world_id) || geometry_cache.empty()) return;
-        ApplyRegionMotion(grid, extractor.label_grid.data(),
+        ApplyRegionMotion(grid, extractor.label_grid.data(),  // label_grid updated in-place
                           _width, _height, revision,
                           tracker.active_regions, empty);
     }

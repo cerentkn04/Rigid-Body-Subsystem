@@ -24,6 +24,7 @@ struct BodyStore {
   std::vector<uint8_t>    dirty;       // 1 = fixture rebuild pending
   std::vector<float>      subpixel_x;  // per-body subpixel remainder (x)
   std::vector<float>      subpixel_y;  // per-body subpixel remainder (y)
+  std::vector<float>      prev_angle;  // per-body angle from last frame (radians)
   std::unordered_map<RegionID, uint32_t> id_to_slot;
 };
 

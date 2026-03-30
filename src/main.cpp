@@ -164,19 +164,26 @@ int main(int argc, char* argv[]) {
             sim.at(x, y).object_id = 1;
         }
     // ── Test: two blocks — static (id=2) on the right, moving (id=3) on the left ─
+    // Placed at y=105-120, safely below the dagger (y=18-86)
     // Static block
-    for (int y = 65; y <= 80; ++y)
+    for (int y = 105; y <= 120; ++y)
         for (int x = 145; x <= 165; ++x) {
             sim.placeCell(x, y, CellType::Rock, 1);
             sim.at(x, y).object_id = 2;
         }
     // Moving block
-    for (int y = 65; y <= 80; ++y)
+    for (int y = 105; y <= 120; ++y)
         for (int x = 30; x <= 50; ++x) {
             sim.placeCell(x, y, CellType::Rock, 1);
             sim.at(x, y).object_id = 3;
         }
-
+    // ── Rotation test block (id=4) — isolated, upper-right area ─────────────
+    // Rectangular block so rotation is visually obvious (not square)
+    for (int y = 20; y <= 30; ++y)
+        for (int x = 155; x <= 185; ++x) {
+            sim.placeCell(x, y, CellType::Rock, 1);
+            sim.at(x, y).object_id = 4;
+        }
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -185,7 +192,8 @@ int main(int argc, char* argv[]) {
     ImGui_ImplSDLRenderer3_Init(renderer);
 
     bool  velocity_kicked   = false;
-    float kick_velocity     = 6.0f;   // exposed in UI
+    float kick_velocity     = 0.0f;   // exposed in UI
+    float spin_velocity     = 10.0f;   // rad/s, exposed in UI
     bool showPhysicsHulls = false;
     bool colorByRegion    = true;
     bool running = true, paused = false, mouseDown = false;
@@ -252,8 +260,7 @@ int main(int argc, char* argv[]) {
         // ── Rigid system ──────────────────────────────────────────────────
         rigidSystem.update(view);
 
-        // One-shot: kick the moving block (object_id=3) rightward on first frame.
-        // Identify it by its bounding box (x=30-50, y=65-80).
+        // One-shot: kick the moving block (object_id=3) rightward
         if (!velocity_kicked) {
             for (uint32_t i = 0; i < (uint32_t)rigidSystem.body_store.ids.size(); ++i) {
                 b2BodyId bid = rigidSystem.body_store.body_ids[i];
@@ -261,11 +268,27 @@ int main(int argc, char* argv[]) {
                 auto it = rigidSystem.tracker.active_regions.find(rigidSystem.body_store.ids[i]);
                 if (it == rigidSystem.tracker.active_regions.end()) continue;
                 const auto& b = it->second.bounds;
-                if (b.min_x >= 25 && b.max_x <= 60 && b.min_y >= 60 && b.max_y <= 85) {
+                if (b.min_x >= 25 && b.max_x <= 60 && b.min_y >= 100 && b.max_y <= 125) {
                     b2Body_SetLinearVelocity(bid, { kick_velocity, 0.0f });
                     velocity_kicked = true;
                     break;
                 }
+            }
+        }
+        // Every frame: force the rotation test block to keep spinning at spin_velocity.
+        // This bypasses angular damping so the rotation is always visible.
+        for (uint32_t i = 0; i < (uint32_t)rigidSystem.body_store.ids.size(); ++i) {
+            b2BodyId bid = rigidSystem.body_store.body_ids[i];
+            if (!b2Body_IsValid(bid)) continue;
+            if (b2Body_GetType(bid) != b2_dynamicBody) continue;
+            auto it = rigidSystem.tracker.active_regions.find(rigidSystem.body_store.ids[i]);
+            if (it == rigidSystem.tracker.active_regions.end()) continue;
+            const auto& b = it->second.bounds;
+            int cx = (b.min_x + b.max_x) / 2;
+            int cy = (b.min_y + b.max_y) / 2;
+            if (cx > 140 && cx < 200 && cy > 10 && cy < 50) {
+                b2Body_SetAngularVelocity(bid, spin_velocity);
+                break;
             }
         }
         rigidSystem.apply_motion(sim.grid.data(), Cell{ CellType::Empty }, sim.grid.world_revision);
@@ -357,6 +380,24 @@ int main(int argc, char* argv[]) {
         ImGui::Separator();
         ImGui::Text("Physics Test:");
         ImGui::SliderFloat("Kick Speed (m/s)", &kick_velocity, 0.5f, 30.0f);
+        ImGui::SliderFloat("Spin Speed (rad/s)", &spin_velocity, 0.1f, 20.0f);
+        if (ImGui::Button("Re-spin Block")) {
+            for (uint32_t i = 0; i < (uint32_t)rigidSystem.body_store.ids.size(); ++i) {
+                b2BodyId bid = rigidSystem.body_store.body_ids[i];
+                if (!b2Body_IsValid(bid)) continue;
+                auto it = rigidSystem.tracker.active_regions.find(rigidSystem.body_store.ids[i]);
+                if (it == rigidSystem.tracker.active_regions.end()) continue;
+                const auto& bnd = it->second.bounds;
+                int cx = (bnd.min_x + bnd.max_x) / 2;
+                int cy = (bnd.min_y + bnd.max_y) / 2;
+                if (cx > 140 && cx < 200 && cy > 10 && cy < 50 &&
+                    b2Body_GetType(bid) == b2_dynamicBody) {
+                    b2Body_SetAngularVelocity(bid, spin_velocity);
+                    break;
+                }
+            }
+        }
+        ImGui::SameLine();
         if (ImGui::Button("Re-launch Block")) {
             for (uint32_t i = 0; i < (uint32_t)rigidSystem.body_store.ids.size(); ++i) {
                 b2BodyId bid = rigidSystem.body_store.body_ids[i];
@@ -367,7 +408,7 @@ int main(int argc, char* argv[]) {
                 int cx = (bnd.min_x + bnd.max_x) / 2;
                 int cy = (bnd.min_y + bnd.max_y) / 2;
                 // Identify the moving block by its approximate bounding region
-                if (cx > 0 && cx < 100 && cy > 50 && cy < 100 &&
+                if (cx > 0 && cx < 100 && cy > 100 && cy < 130 &&
                     b2Body_GetType(bid) == b2_dynamicBody) {
                     b2Body_SetLinearVelocity(bid, { kick_velocity, 0.0f });
                     break;
