@@ -129,14 +129,14 @@ void ApplyRegionMotion(
             }
         }
 
-        // ── Pass 2: inverse mapping — scan destination AABB, pull from snapshot
-        // For each destination pixel, apply R(-abs_angle) to find its local coord,
-        // look up in the snapshot grid.  Single rounding step → no drift.
+        // ── Pass 2a: inverse mapping — scan destination AABB, pull from snapshot.
+        // Each destination cell is looked up exactly once → no write collisions.
+        // After this pass, run a forward fill (2b) for any source pixels that
+        // no destination cell claimed, to close the rare boundary holes.
         if (!snap.grid.empty()) {
             float cos_a = std::cos(abs_angle);
             float sin_a = std::sin(abs_angle);
 
-            // True half-extents of the local bounding box
             float hw = static_cast<float>(
                 std::max(std::abs(snap.lmin_x), std::abs(snap.lmin_x + snap.lw - 1)));
             float hh = static_cast<float>(
@@ -150,11 +150,14 @@ void ApplyRegionMotion(
             int dst_min_y = std::max(0,        new_cy - new_hh);
             int dst_max_y = std::min(height-1, new_cy + new_hh);
 
+            // Use a per-snapshot claimed bitset so Pass 2b can find missed pixels.
+            static std::vector<uint8_t> claimed;
+            claimed.assign(static_cast<size_t>(snap.lw) * snap.lh, 0);
+
             for (int ty = dst_min_y; ty <= dst_max_y; ++ty) {
                 for (int tx = dst_min_x; tx <= dst_max_x; ++tx) {
                     float dlx = static_cast<float>(tx - new_cx);
                     float dly = static_cast<float>(ty - new_cy);
-                    // R(-abs_angle) * (dlx, dly)
                     int lx = static_cast<int>(std::round( cos_a * dlx + sin_a * dly));
                     int ly = static_cast<int>(std::round(-sin_a * dlx + cos_a * dly));
 
@@ -162,10 +165,38 @@ void ApplyRegionMotion(
                     int gi_y = ly - snap.lmin_y;
                     if (gi_x < 0 || gi_x >= snap.lw || gi_y < 0 || gi_y >= snap.lh) continue;
 
-                    const PixelType& src_val = snap.grid[static_cast<size_t>(gi_y) * snap.lw + gi_x];
+                    size_t gi = static_cast<size_t>(gi_y) * snap.lw + gi_x;
+                    const PixelType& src_val = snap.grid[gi];
                     if (src_val.type == empty_value.type) continue;
 
                     size_t dst_idx = static_cast<size_t>(ty) * width + tx;
+                    if (write_buffer[dst_idx].type == empty_value.type ||
+                        label_grid[dst_idx] == region.current_index) {
+                        write_buffer[dst_idx] = src_val;
+                        label_grid[dst_idx]   = region.current_index;
+                        claimed[gi] = 1;
+                    }
+                }
+            }
+
+            // ── Pass 2b: forward fill — place any snapshot pixel that was not
+            // claimed by any destination lookup above (rare boundary holes).
+            for (int ly_i = 0; ly_i < snap.lh; ++ly_i) {
+                int ly = ly_i + snap.lmin_y;
+                for (int lx_i = 0; lx_i < snap.lw; ++lx_i) {
+                    size_t gi = static_cast<size_t>(ly_i) * snap.lw + lx_i;
+                    if (claimed[gi]) continue;
+                    const PixelType& src_val = snap.grid[gi];
+                    if (src_val.type == empty_value.type) continue;
+
+                    int lx = lx_i + snap.lmin_x;
+                    int tx = static_cast<int>(std::round(
+                        new_cx + cos_a * lx - sin_a * ly));
+                    int ty_fw = static_cast<int>(std::round(
+                        new_cy + sin_a * lx + cos_a * ly));
+
+                    if (tx < 0 || tx >= width || ty_fw < 0 || ty_fw >= height) continue;
+                    size_t dst_idx = static_cast<size_t>(ty_fw) * width + tx;
                     if (write_buffer[dst_idx].type == empty_value.type ||
                         label_grid[dst_idx] == region.current_index) {
                         write_buffer[dst_idx] = src_val;

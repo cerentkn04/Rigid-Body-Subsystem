@@ -184,6 +184,22 @@ int main(int argc, char* argv[]) {
             sim.placeCell(x, y, CellType::Rock, 1);
             sim.at(x, y).object_id = 4;
         }
+    // ── X-blade (id=5) — upper-left, two diagonal arms crossing at center ──
+    {
+        const int bx = 50, by = 45, arm = 14, half_w = 1;
+        for (int dy = -arm; dy <= arm; ++dy) {
+            for (int dx = -arm; dx <= arm; ++dx) {
+                if (dx*dx + dy*dy > arm*arm) continue;          // clip to circle
+                bool on_d1 = std::abs(dx - dy) <= half_w;       // \ arm
+                bool on_d2 = std::abs(dx + dy) <= half_w;       // / arm
+                if (!on_d1 && !on_d2) continue;
+                int x = bx + dx, y = by + dy;
+                if (!sim.inBounds(x, y)) continue;
+                sim.placeCell(x, y, CellType::Rock, 1);
+                sim.at(x, y).object_id = 5;
+            }
+        }
+    }
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -275,8 +291,7 @@ int main(int argc, char* argv[]) {
                 }
             }
         }
-        // Every frame: force the rotation test block to keep spinning at spin_velocity.
-        // This bypasses angular damping so the rotation is always visible.
+        // Every frame: keep spinning both the test block and the X blade.
         for (uint32_t i = 0; i < (uint32_t)rigidSystem.body_store.ids.size(); ++i) {
             b2BodyId bid = rigidSystem.body_store.body_ids[i];
             if (!b2Body_IsValid(bid)) continue;
@@ -286,10 +301,10 @@ int main(int argc, char* argv[]) {
             const auto& b = it->second.bounds;
             int cx = (b.min_x + b.max_x) / 2;
             int cy = (b.min_y + b.max_y) / 2;
-            if (cx > 140 && cx < 200 && cy > 10 && cy < 50) {
+            bool is_rect_block = (cx > 140 && cx < 200 && cy > 10  && cy < 50);
+            bool is_x_blade    = (cx > 25  && cx < 75  && cy > 25  && cy < 65);
+            if (is_rect_block || is_x_blade)
                 b2Body_SetAngularVelocity(bid, spin_velocity);
-                break;
-            }
         }
         rigidSystem.apply_motion(sim.grid.data(), Cell{ CellType::Empty }, sim.grid.world_revision);
 

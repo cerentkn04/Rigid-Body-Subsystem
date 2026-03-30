@@ -169,9 +169,13 @@ void physics_sync(
             b2BodyType current = b2Body_GetType(bid);
 
             bool version_changed = (store.versions[slot] != record.version);
-            if (version_changed) {
-                store.dirty[slot]    = 1;
-                store.versions[slot] = record.version;
+            store.versions[slot] = record.version;
+            // Only rebuild fixtures for static bodies.  Dynamic bodies must
+            // never be fed re-extracted (already-rotated) vertices: Box2D
+            // would apply its own R(θ) on top, creating a double-rotation that
+            // shifts the centre of mass and causes the body to drift in a circle.
+            if (version_changed && current == b2_staticBody) {
+                store.dirty[slot] = 1;
             }
 
             if (current != target) {
