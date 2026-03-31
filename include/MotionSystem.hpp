@@ -29,11 +29,13 @@ void ApplyRegionMotion(
     static std::vector<PixelType>  write_buffer;
     static std::vector<size_t>     src_indices;
     static std::unordered_map<uint32_t, Snapshot> snapshots;
+    static std::vector<std::pair<size_t, PixelType>> displaced_pixels;
 
     size_t grid_size = static_cast<size_t>(width) * height;
 
     if (write_buffer.size() != grid_size)
         write_buffer.resize(grid_size);
+    displaced_pixels.clear();
 
     std::copy(pixel_grid, pixel_grid + grid_size, write_buffer.begin());
 
@@ -170,8 +172,14 @@ void ApplyRegionMotion(
                     if (src_val.type == empty_value.type) continue;
 
                     size_t dst_idx = static_cast<size_t>(ty) * width + tx;
-                    if (write_buffer[dst_idx].type == empty_value.type ||
-                        label_grid[dst_idx] == region.current_index) {
+                    bool dst_empty = write_buffer[dst_idx].type == empty_value.type;
+                    bool dst_own   = label_grid[dst_idx] == region.current_index;
+                    // Non-rigid material (sand/water): label is invalid, cell is not empty
+                    bool dst_fluid = !dst_empty && !dst_own &&
+                                     label_grid[dst_idx] == static_cast<uint32_t>(-1);
+                    if (dst_empty || dst_own || dst_fluid) {
+                        if (dst_fluid)
+                            displaced_pixels.push_back({dst_idx, write_buffer[dst_idx]});
                         write_buffer[dst_idx] = src_val;
                         label_grid[dst_idx]   = region.current_index;
                         claimed[gi] = 1;
@@ -197,8 +205,13 @@ void ApplyRegionMotion(
 
                     if (tx < 0 || tx >= width || ty_fw < 0 || ty_fw >= height) continue;
                     size_t dst_idx = static_cast<size_t>(ty_fw) * width + tx;
-                    if (write_buffer[dst_idx].type == empty_value.type ||
-                        label_grid[dst_idx] == region.current_index) {
+                    bool dst_empty = write_buffer[dst_idx].type == empty_value.type;
+                    bool dst_own   = label_grid[dst_idx] == region.current_index;
+                    bool dst_fluid = !dst_empty && !dst_own &&
+                                     label_grid[dst_idx] == static_cast<uint32_t>(-1);
+                    if (dst_empty || dst_own || dst_fluid) {
+                        if (dst_fluid)
+                            displaced_pixels.push_back({dst_idx, write_buffer[dst_idx]});
                         write_buffer[dst_idx] = src_val;
                         label_grid[dst_idx]   = region.current_index;
                     }
@@ -228,6 +241,29 @@ void ApplyRegionMotion(
             region.bounds.min_y = new_cy - new_hh;
             region.bounds.max_y = new_cy + new_hh;
         }
+    }
+
+    // Place sand/water pixels that were displaced by moving bodies.
+    // Try to push them into an adjacent empty cell (prefer downward for gravity).
+    if (!displaced_pixels.empty()) {
+        struct Offset { int dx, dy; };
+        constexpr Offset offsets[] = {{0,1},{-1,0},{1,0},{0,-1},{-1,1},{1,1},{-1,-1},{1,-1}};
+        for (auto& [orig_idx, pixel] : displaced_pixels) {
+            int ox = static_cast<int>(orig_idx % static_cast<size_t>(width));
+            int oy = static_cast<int>(orig_idx / static_cast<size_t>(width));
+            for (auto [ddx, ddy] : offsets) {
+                int nx = ox + ddx, ny = oy + ddy;
+                if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
+                size_t nidx = static_cast<size_t>(ny) * width + nx;
+                if (write_buffer[nidx].type == empty_value.type) {
+                    write_buffer[nidx] = pixel;
+                    // label_grid[nidx] remains -1 (not a rigid body cell)
+                    break;
+                }
+            }
+            // If no empty neighbour is found the pixel is absorbed (body fully surrounded)
+        }
+        moved_any = true;
     }
 
     if (moved_any) {
