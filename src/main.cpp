@@ -267,8 +267,8 @@ int main(int argc, char* argv[]) {
         if (!paused) {
             accumulator += dt;
             while (accumulator >= fixedDt) {
-                sim.update();
                 rigidSystem.step(fixedDt);
+                sim.update();
                 accumulator -= fixedDt;
             }
         }

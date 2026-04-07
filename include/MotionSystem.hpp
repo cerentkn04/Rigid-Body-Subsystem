@@ -244,24 +244,43 @@ void ApplyRegionMotion(
     }
 
     // Place sand/water pixels that were displaced by moving bodies.
-    // Try to push them into an adjacent empty cell (prefer downward for gravity).
+    // Search outward with increasing radius so fast-spinning bodies don't absorb pixels.
     if (!displaced_pixels.empty()) {
-        struct Offset { int dx, dy; };
-        constexpr Offset offsets[] = {{0,1},{-1,0},{1,0},{0,-1},{-1,1},{1,1},{-1,-1},{1,-1}};
+        constexpr int kMaxRadius = 12;
         for (auto& [orig_idx, pixel] : displaced_pixels) {
             int ox = static_cast<int>(orig_idx % static_cast<size_t>(width));
             int oy = static_cast<int>(orig_idx / static_cast<size_t>(width));
-            for (auto [ddx, ddy] : offsets) {
-                int nx = ox + ddx, ny = oy + ddy;
-                if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
-                size_t nidx = static_cast<size_t>(ny) * width + nx;
-                if (write_buffer[nidx].type == empty_value.type) {
-                    write_buffer[nidx] = pixel;
-                    // label_grid[nidx] remains -1 (not a rigid body cell)
-                    break;
+            bool placed = false;
+            for (int r = 1; r <= kMaxRadius && !placed; ++r) {
+                // Walk the perimeter of the square at radius r, prefer downward (positive y first)
+                for (int ddx = -r; ddx <= r && !placed; ++ddx) {
+                    for (int sign = 1; sign >= -1 && !placed; sign -= 2) {
+                        int ddy = sign * r;
+                        int nx = ox + ddx, ny = oy + ddy;
+                        if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
+                        size_t nidx = static_cast<size_t>(ny) * width + nx;
+                        if (write_buffer[nidx].type == empty_value.type) {
+                            write_buffer[nidx] = pixel;
+                            placed = true;
+                        }
+                    }
+                }
+                if (placed) break;
+                // Also check left/right edges of the ring
+                for (int ddy = -(r-1); ddy <= (r-1) && !placed; ++ddy) {
+                    for (int sign = 1; sign >= -1 && !placed; sign -= 2) {
+                        int ddx = sign * r;
+                        int nx = ox + ddx, ny = oy + ddy;
+                        if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
+                        size_t nidx = static_cast<size_t>(ny) * width + nx;
+                        if (write_buffer[nidx].type == empty_value.type) {
+                            write_buffer[nidx] = pixel;
+                            placed = true;
+                        }
+                    }
                 }
             }
-            // If no empty neighbour is found the pixel is absorbed (body fully surrounded)
+            // If still no empty cell found within kMaxRadius, pixel is truly absorbed
         }
         moved_any = true;
     }
