@@ -1,3 +1,3 @@
 file(REMOVE_RECURSE
-  "libbox2d.a"
+  "libbox2dd.a"
 )

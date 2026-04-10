@@ -49,7 +49,7 @@ vendored/SDL/CMakeFiles/SDL3-shared.dir/src/audio/pipewire/SDL_pipewire.c.o: \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdbool.h \
  /usr/include/locale.h /usr/include/bits/locale.h \
- /usr/include/bits/types/locale_t.h \
+ /usr/include/bits/types/locale_t.h /usr/include/sys/types.h \
  /usr/include/pipewire-0.3/pipewire/proxy.h \
  /usr/include/pipewire-0.3/pipewire/protocol.h \
  /usr/include/pipewire-0.3/pipewire/context.h \
@@ -67,7 +67,7 @@ vendored/SDL/CMakeFiles/SDL3-shared.dir/src/audio/pipewire/SDL_pipewire.c.o: \
  /usr/include/bits/types/clock_t.h /usr/include/bits/types/time_t.h \
  /usr/include/bits/types/struct_tm.h /usr/include/bits/types/clockid_t.h \
  /usr/include/bits/types/timer_t.h \
- /usr/include/bits/types/struct_itimerspec.h /usr/include/sys/types.h \
+ /usr/include/bits/types/struct_itimerspec.h \
  /usr/include/pipewire-0.3/pipewire/utils.h /usr/include/sys/un.h \
  /usr/include/sys/cdefs.h /usr/include/bits/sockaddr.h \
  /usr/include/spa-0.2/spa/pod/pod.h \
@@ -108,7 +108,8 @@ vendored/SDL/CMakeFiles/SDL3-shared.dir/src/audio/pipewire/SDL_pipewire.c.o: \
  /usr/include/pipewire-0.3/pipewire/extensions/metadata.h \
  /usr/include/spa-0.2/spa/param/audio/format-utils.h \
  /usr/include/spa-0.2/spa/pod/parser.h \
- /usr/include/spa-0.2/spa/pod/iter.h \
+ /usr/include/spa-0.2/spa/pod/body.h \
+ /usr/include/spa-0.2/spa/utils/atomic.h \
  /usr/include/spa-0.2/spa/pod/vararg.h \
  /usr/include/spa-0.2/spa/pod/builder.h \
  /usr/include/spa-0.2/spa/param/audio/format.h \
@@ -129,8 +130,14 @@ vendored/SDL/CMakeFiles/SDL3-shared.dir/src/audio/pipewire/SDL_pipewire.c.o: \
  /usr/include/spa-0.2/spa/param/audio/flac.h \
  /usr/include/spa-0.2/spa/param/audio/ape.h \
  /usr/include/spa-0.2/spa/param/audio/opus.h \
+ /usr/include/spa-0.2/spa/param/audio/ac3.h \
+ /usr/include/spa-0.2/spa/param/audio/eac3.h \
+ /usr/include/spa-0.2/spa/param/audio/truehd.h \
+ /usr/include/spa-0.2/spa/param/audio/dts.h \
+ /usr/include/spa-0.2/spa/param/audio/mpegh.h \
  /usr/include/spa-0.2/spa/param/format-utils.h \
  /usr/include/spa-0.2/spa/param/audio/raw-utils.h \
+ /usr/include/spa-0.2/spa/pod/iter.h \
  /usr/include/spa-0.2/spa/param/audio/dsp-utils.h \
  /usr/include/spa-0.2/spa/param/audio/iec958-utils.h \
  /usr/include/spa-0.2/spa/param/audio/dsd-utils.h \
@@ -143,4 +150,9 @@ vendored/SDL/CMakeFiles/SDL3-shared.dir/src/audio/pipewire/SDL_pipewire.c.o: \
  /usr/include/spa-0.2/spa/param/audio/alac-utils.h \
  /usr/include/spa-0.2/spa/param/audio/flac-utils.h \
  /usr/include/spa-0.2/spa/param/audio/ape-utils.h \
+ /usr/include/spa-0.2/spa/param/audio/ac3-utils.h \
+ /usr/include/spa-0.2/spa/param/audio/eac3-utils.h \
+ /usr/include/spa-0.2/spa/param/audio/truehd-utils.h \
+ /usr/include/spa-0.2/spa/param/audio/dts-utils.h \
+ /usr/include/spa-0.2/spa/param/audio/mpegh-utils.h \
  /usr/include/spa-0.2/spa/utils/json.h

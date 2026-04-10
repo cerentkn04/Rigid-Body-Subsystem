@@ -1,4 +1,4 @@
-Ceren: \
+Debug/Ceren: \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/Scrt1.o \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o \
@@ -23,8 +23,8 @@ Ceren: \
   CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o \
   CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdl3.cpp.o \
   CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp.o \
-  libSDL3.so.0.2.24 \
-  vendored/box2d/src/libbox2d.a \
+  Debug/libSDL3.so.0.2.24 \
+  vendored/box2d/src/libbox2dd.a \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/libstdc++.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/libm.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/libm.so \
@@ -101,9 +101,9 @@ CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdl3.cpp.o:
 
 CMakeFiles/Ceren.dir/vendored/imgui/backends/imgui_impl_sdlrenderer3.cpp.o:
 
-libSDL3.so.0.2.24:
+Debug/libSDL3.so.0.2.24:
 
-vendored/box2d/src/libbox2d.a:
+vendored/box2d/src/libbox2dd.a:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/libstdc++.so:
 

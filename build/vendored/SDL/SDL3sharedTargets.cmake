@@ -7,7 +7,7 @@ if(CMAKE_VERSION VERSION_LESS "2.8.3")
    message(FATAL_ERROR "CMake >= 2.8.3 required")
 endif()
 cmake_policy(PUSH)
-cmake_policy(VERSION 2.8.3...4.0)
+cmake_policy(VERSION 2.8.3...4.1)
 #----------------------------------------------------------------
 # Generated CMake target import file.
 #----------------------------------------------------------------
@@ -58,11 +58,11 @@ set_target_properties(SDL3::SDL3-shared PROPERTIES
   INTERFACE_SDL_VERSION "SDL3"
 )
 
-# Import target "SDL3::SDL3-shared" for configuration ""
-set_property(TARGET SDL3::SDL3-shared APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
+# Import target "SDL3::SDL3-shared" for configuration "Debug"
+set_property(TARGET SDL3::SDL3-shared APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
 set_target_properties(SDL3::SDL3-shared PROPERTIES
-  IMPORTED_LOCATION_NOCONFIG "/home/ceen/projects/ceren/build/libSDL3.so.0.2.24"
-  IMPORTED_SONAME_NOCONFIG "libSDL3.so.0"
+  IMPORTED_LOCATION_DEBUG "/home/ceen/projects/ceren/build/Debug/libSDL3.so.0.2.24"
+  IMPORTED_SONAME_DEBUG "libSDL3.so.0"
   )
 
 # Make sure the targets which have been exported in some other

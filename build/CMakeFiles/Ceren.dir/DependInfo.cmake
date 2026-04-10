@@ -29,7 +29,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/ceen/projects/ceren/vendored/imgui/imgui_draw.cpp" "CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.o" "gcc" "CMakeFiles/Ceren.dir/vendored/imgui/imgui_draw.cpp.o.d"
   "/home/ceen/projects/ceren/vendored/imgui/imgui_tables.cpp" "CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o" "gcc" "CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o.d"
   "/home/ceen/projects/ceren/vendored/imgui/imgui_widgets.cpp" "CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o" "gcc" "CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o.d"
-  "" "Ceren" "gcc" "CMakeFiles/Ceren.dir/link.d"
+  "" "Debug/Ceren" "gcc" "CMakeFiles/Ceren.dir/link.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

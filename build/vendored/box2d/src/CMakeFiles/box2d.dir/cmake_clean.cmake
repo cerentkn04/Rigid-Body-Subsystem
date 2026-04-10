@@ -69,8 +69,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/box2d.dir/wheel_joint.c.o.d"
   "CMakeFiles/box2d.dir/world.c.o"
   "CMakeFiles/box2d.dir/world.c.o.d"
-  "libbox2d.a"
-  "libbox2d.pdb"
+  "libbox2dd.a"
+  "libbox2dd.pdb"
 )
 
 # Per-language clean rules from dependency scanning.

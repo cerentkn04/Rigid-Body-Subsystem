@@ -6,6 +6,9 @@
 #include <algorithm>
 #include "RigidPixelSystem.hpp"
 #include "RigidPixelGrid.hpp"
+#include "runic_classifier.h"
+#include "canvas_iface.h"
+#include "simple_canvas.h"
 
 constexpr int WINDOW_WIDTH  = 800;
 constexpr int WINDOW_HEIGHT = 600;
@@ -201,6 +204,12 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    // ── Runic classifier ─────────────────────────────────────────────────
+    RunicWeights runic_weights;
+    bool runic_loaded = runic_load_weights(runic_weights, RUNIC_WEIGHTS_PATH);
+    SimpleCanvas<64, 64> runic_canvas;
+    int runic_result = -2; // -2 = nothing classified yet
+  //-----------------------------------------------------------------------
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -371,6 +380,76 @@ int main(int argc, char* argv[]) {
         ImGui_ImplSDLRenderer3_NewFrame(); ImGui_ImplSDL3_NewFrame(); ImGui::NewFrame();
         ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
         ImGui::Begin("Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+
+        // ── Runic Classifier ─────────────────────────────────────────────
+        ImGui::Text("Runic Classifier:");
+        if (!runic_loaded) {
+            ImGui::TextColored(ImVec4(1.f, 0.3f, 0.3f, 1.f), "runic_weights.bin not found");
+        } else {
+            constexpr int CW = 64, CH = 64, CPX = 2;
+            ImVec2 canvas_origin = ImGui::GetCursorScreenPos();
+            ImVec2 canvas_size(CW * CPX, CH * CPX);
+
+            ImDrawList* dl = ImGui::GetWindowDrawList();
+            dl->AddRectFilled(canvas_origin,
+                ImVec2(canvas_origin.x + canvas_size.x, canvas_origin.y + canvas_size.y),
+                IM_COL32(255, 255, 255, 255));
+            for (int y = 0; y < CH; ++y) {
+                for (int x = 0; x < CW; ++x) {
+                    float v = runic_canvas.get(x, y);
+                    if (v < 1.f) {
+                        uint8_t c = (uint8_t)(v * 255.f);
+                        dl->AddRectFilled(
+                            ImVec2(canvas_origin.x + x * CPX, canvas_origin.y + y * CPX),
+                            ImVec2(canvas_origin.x + (x+1) * CPX, canvas_origin.y + (y+1) * CPX),
+                            IM_COL32(c, c, c, 255));
+                    }
+                }
+            }
+            dl->AddRect(canvas_origin,
+                ImVec2(canvas_origin.x + canvas_size.x, canvas_origin.y + canvas_size.y),
+                IM_COL32(160, 160, 160, 255));
+
+            ImGui::InvisibleButton("runic_canvas", canvas_size);
+            if (ImGui::IsItemActive() && io.MouseDown[0]) {
+                ImVec2 mouse = io.MousePos;
+                int mx = (int)((mouse.x - canvas_origin.x) / CPX);
+                int my = (int)((mouse.y - canvas_origin.y) / CPX);
+                canvas_paint(runic_canvas, mx, my, 2, 0.f);
+            }
+
+            if (ImGui::Button("Done")) {
+                float img32[1024];
+                canvas_to_input(runic_canvas, img32);
+                runic_result = runic_classify(runic_weights, img32);
+                if (runic_result >= 1 && runic_result <= 6)
+                    printf("[Runic] Symbol: %d\n", runic_result);
+                else if (runic_result == 0)
+                    printf("[Runic] Low confidence\n");
+                else
+                    printf("[Runic] Nothing drawn\n");
+                fflush(stdout);
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Clear")) {
+                runic_canvas.clear();
+                runic_result = -2;
+            }
+
+            if (runic_result >= 1 && runic_result <= 6)
+                ImGui::TextColored(ImVec4(0.2f, 1.f, 0.4f, 1.f), "Symbol: %d", runic_result);
+            else if (runic_result == 0)
+                ImGui::TextColored(ImVec4(1.f, 0.8f, 0.f, 1.f), "Low confidence");
+            else
+                ImGui::TextDisabled("Draw a symbol above");
+        }
+        //till here was ai prediction window and debug
+        //
+        //
+        //
+
+        ImGui::Separator();
+
         ImGui::Text("Material (1-4):");
         for (int i = 0; i < 5; ++i) {
             if (i > 0) ImGui::SameLine();
@@ -431,6 +510,7 @@ int main(int argc, char* argv[]) {
             }
         }
         ImGui::End();
+
         ImGui::Render();
         ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
         SDL_RenderPresent(renderer);

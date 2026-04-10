@@ -42,8 +42,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/Ceren.dir/vendored/imgui/imgui_tables.cpp.o.d"
   "CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o"
   "CMakeFiles/Ceren.dir/vendored/imgui/imgui_widgets.cpp.o.d"
-  "Ceren"
-  "Ceren.pdb"
+  "Debug/Ceren"
+  "Debug/Ceren.pdb"
 )
 
 # Per-language clean rules from dependency scanning.

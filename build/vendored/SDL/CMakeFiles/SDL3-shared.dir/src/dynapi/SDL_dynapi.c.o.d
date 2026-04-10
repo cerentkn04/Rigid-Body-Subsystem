@@ -1,7 +1,7 @@
 vendored/SDL/CMakeFiles/SDL3-shared.dir/src/dynapi/SDL_dynapi.c.o: \
  /home/ceen/projects/ceren/vendored/SDL/src/dynapi/SDL_dynapi.c \
  /usr/include/stdc-predef.h \
- /home/ceen/projects/ceren/build/vendored/SDL/include-config-/build_config/SDL_build_config.h \
+ /home/ceen/projects/ceren/build/vendored/SDL/include-config-debug/build_config/SDL_build_config.h \
  /home/ceen/projects/ceren/vendored/SDL/include/SDL3/SDL_platform_defines.h \
  /home/ceen/projects/ceren/vendored/SDL/src/dynapi/SDL_dynapi.h \
  /home/ceen/projects/ceren/vendored/SDL/src/dynapi/SDL_dynapi_unsupported.h \

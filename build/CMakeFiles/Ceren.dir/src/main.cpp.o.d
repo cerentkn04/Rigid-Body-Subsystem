@@ -256,4 +256,8 @@ CMakeFiles/Ceren.dir/src/main.cpp.o: \
  /usr/include/bits/pthread_stack_min-dynamic.h \
  /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
  /usr/include/bits/uio_lim.h \
- /home/ceen/projects/ceren/include/RigidPixelGrid.hpp
+ /home/ceen/projects/ceren/include/RigidPixelGrid.hpp \
+ /home/ceen/projects/ceren/include/runic_classifier.h \
+ /usr/include/c++/15.2.1/cstring \
+ /home/ceen/projects/ceren/include/canvas_iface.h \
+ /home/ceen/projects/ceren/include/simple_canvas.h

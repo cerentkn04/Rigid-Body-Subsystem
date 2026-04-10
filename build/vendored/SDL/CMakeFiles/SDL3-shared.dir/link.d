@@ -1,4 +1,4 @@
-../../libSDL3.so.0.2.24: \
+../../Debug/libSDL3.so.0.2.24: \
   /home/ceen/projects/ceren/vendored/SDL/src/dynapi/SDL_dynapi.sym \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/../../../../lib/crti.o \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/crtbeginS.o \

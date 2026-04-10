@@ -1,8 +1,8 @@
 file(REMOVE_RECURSE
-  "../../libSDL3.pdb"
-  "../../libSDL3.so"
-  "../../libSDL3.so.0"
-  "../../libSDL3.so.0.2.24"
+  "../../Debug/libSDL3.pdb"
+  "../../Debug/libSDL3.so"
+  "../../Debug/libSDL3.so.0"
+  "../../Debug/libSDL3.so.0.2.24"
   ".0"
   "CMakeFiles/SDL3-shared.dir/link.d"
   "CMakeFiles/SDL3-shared.dir/cmake_pch.h.gch"
