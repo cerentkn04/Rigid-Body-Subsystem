@@ -35,11 +35,11 @@ target_include_directories(Ceren PUBLIC
 
 add_custom_command(TARGET Ceren POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_CURRENT_SOURCE_DIR}/mufidofufi/runic_weights.bin"
+        "${CMAKE_CURRENT_SOURCE_DIR}/ml/runic_weights.bin"
         "$<TARGET_FILE_DIR:Ceren>/runic_weights.bin"
 )
 
 target_compile_definitions(Ceren PRIVATE
-    RUNIC_WEIGHTS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/mufidofufi/runic_weights.bin"
+    RUNIC_WEIGHTS_PATH="runic_weights.bin"
 )
 

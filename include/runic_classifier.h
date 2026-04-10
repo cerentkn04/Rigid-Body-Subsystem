@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstring>
+#include <vector>
 
 // Hand-rolled CNN inference for runic symbol classification.
 // Architecture: Conv2D(32,3x3) -> MaxPool(2x2) -> Conv2D(64,3x3) -> MaxPool(2x2)
@@ -142,13 +143,13 @@ inline int runic_classify_rgb(const RunicWeights& wts,
     const unsigned char* src, int w, int h)
 {
     if (!src) return -1;
-    float gray[w * h];
+    std::vector<float> gray(w * h);
     for (int i = 0; i < w * h; i++)
         gray[i] = (0.299f * src[i*3+0] + 0.587f * src[i*3+1] + 0.114f * src[i*3+2]) / 255.f;
 
     // Resize to 32x32 via bilinear if needed, then classify
     if (w == 32 && h == 32)
-        return runic_classify(wts, gray);
+        return runic_classify(wts, gray.data());
 
     float img32[1024];
     float rw = (float)(w - 1) / 31.f, rh = (float)(h - 1) / 31.f;
@@ -170,12 +171,12 @@ inline int runic_classify_rgba(const RunicWeights& wts,
     const unsigned char* src, int w, int h)
 {
     if (!src) return -1;
-    float gray[w * h];
+    std::vector<float> gray(w * h);
     for (int i = 0; i < w * h; i++)
         gray[i] = (0.299f * src[i*4+0] + 0.587f * src[i*4+1] + 0.114f * src[i*4+2]) / 255.f;
 
     if (w == 32 && h == 32)
-        return runic_classify(wts, gray);
+        return runic_classify(wts, gray.data());
 
     float img32[1024];
     float rw = (float)(w - 1) / 31.f, rh = (float)(h - 1) / 31.f;

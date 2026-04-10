@@ -85,7 +85,7 @@ public:
     }
 
     void placeCell(int x, int y, CellType type, int brushSize = 1, uint32_t instanceId = 0) {
-        std::uniform_int_distribution<uint8_t> dist(0, 30);
+        std::uniform_int_distribution<unsigned int> dist(0, 30);
         bool isSolid = (type == CellType::Rock || type == CellType::Wood);
         for (int dy = -brushSize+1; dy < brushSize; ++dy) {
             for (int dx = -brushSize+1; dx < brushSize; ++dx) {
